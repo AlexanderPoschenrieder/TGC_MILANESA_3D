@@ -12,56 +12,65 @@ using TgcViewer.Utils.TgcSceneLoader;
 
 namespace AlumnoEjemplos.MiGrupo
 {
-    /// <summary>
-    /// Ejemplo del alumno
-    /// </summary>
+
     public class EjemploAlumno : TgcExample
     {
-        TgcBox box;
+        TgcSphere sphere;
         TgcScene scene;
-        string alumnoMediaFolder = GuiController.Instance.AlumnoEjemplosDir;
+        SphereCollisionManager collisionManager;
+        List<TgcBoundingBox> objetosColisionables = new List<TgcBoundingBox>();
 
-        /// <summary>
-        /// Categoría a la que pertenece el ejemplo.
-        /// Influye en donde se va a haber en el árbol de la derecha de la pantalla.
-        /// </summary>
+        
+
+        static string rootDir = GuiController.Instance.AlumnoEjemplosDir;
+        static string mediaFolder = rootDir + "MiGrupo\\media\\";
+        static string sceneFolder = mediaFolder + "meshes\\scenes\\";
+
+
         public override string getCategory()
         {
             return "AlumnoEjemplos";
         }
-
-        /// <summary>
-        /// Completar nombre del grupo en formato Grupo NN
-        /// </summary>
+        
         public override string getName()
         {
             return "Grupo 99";
         }
-
-        /// <summary>
-        /// Completar con la descripción del TP
-        /// </summary>
+        
         public override string getDescription()
         {
-            return "MiIdea - Descripcion de la idea";
+            return "Rocket League";
         }
 
-        /// <summary>
-        /// Método que se llama una sola vez,  al principio cuando se ejecuta el ejemplo.
-        /// Escribir aquí todo el código de inicialización: cargar modelos, texturas, modifiers, uservars, etc.
-        /// Borrar todo lo que no haga falta
-        /// </summary>
+        
         public override void init()
         {
             TgcSceneLoader loader = new TgcSceneLoader();
-            scene = loader.loadSceneFromFile(alumnoMediaFolder + "MiGrupo\\media\\PuebloJapones\\PuebloJapones-TgcScene.xml");
+            scene = loader.loadSceneFromFile(sceneFolder + "PuebloJapones\\PuebloJapones-TgcScene.xml");
 
 
-            box = new TgcBox();
-            box.Size = new Vector3(20, 20, 20);
-            box.Position = new Vector3(0, 0, 0);
-            box.Color = Color.Crimson;
-            
+            objetosColisionables.Clear();
+            foreach (TgcMesh mesh in scene.Meshes)
+            {
+                objetosColisionables.Add(mesh.BoundingBox);
+            }
+
+            collisionManager = new SphereCollisionManager();
+            collisionManager.GravityEnabled = true;
+            collisionManager.GravityForce = new Vector3(0, -1, 0);
+
+
+            sphere = new TgcSphere();
+            sphere.Radius = 5;
+            sphere.Position = new Vector3(0, 10, 0);
+            sphere.setColor(Color.Blue);
+
+
+            Vector3 movementVector = Vector3.Empty;
+
+
+
+
             //GuiController.Instance: acceso principal a todas las herramientas del Framework
 
             //Device de DirectX para crear primitivas
@@ -70,36 +79,34 @@ namespace AlumnoEjemplos.MiGrupo
 
             GuiController.Instance.RotCamera.CameraDistance = 100;
             
-
-            //Carpeta de archivos Media del alumno
         
         }
 
-
-        /// <summary>
-        /// Método que se llama cada vez que hay que refrescar la pantalla.
-        /// Escribir aquí todo el código referido al renderizado.
-        /// Borrar todo lo que no haga falta
-        /// </summary>
+        
         /// <param name="elapsedTime">Tiempo en segundos transcurridos desde el último frame</param>
         public override void render(float elapsedTime)
         {
+
+            float moveForward = 0;
+            float jump = 0;
+
+
             //Device de DirectX para renderizar
             Device d3dDevice = GuiController.Instance.D3dDevice;
-            GuiController.Instance.RotCamera.targetObject(box.BoundingBox);
 
-
-            //box.setTexture(TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosDir + "\\MiGrupo\\media\\original.png"));
-
-
-            ///////////////INPUT//////////////////
+            
             //conviene deshabilitar ambas camaras para que no haya interferencia
 
             //Capturar Input teclado 
             if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.F))
             {
-                box.move(0.1f, 0, 0);
+                moveForward = 100*elapsedTime;
                 //Tecla F apretada
+            }
+
+            if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.Space))
+            {
+                jump = 100 *elapsedTime;
             }
 
             //Capturar Input Mouse
@@ -107,20 +114,28 @@ namespace AlumnoEjemplos.MiGrupo
             {
                 //Boton izq apretado
             }
+            
 
-            box.updateValues();
+            Vector3 movementVector = new Vector3(
+                    FastMath.Sin(sphere.Rotation.Y) * moveForward,
+                    jump,
+                    FastMath.Cos(sphere.Rotation.Y) * moveForward
+                    );
+
+            Vector3 realMovement = collisionManager.moveCharacter(sphere.BoundingSphere, movementVector, objetosColisionables);
+            sphere.move(realMovement);
+
+
+            sphere.updateValues();
             scene.renderAll();
-            box.render();
-
+            sphere.render();
+            GuiController.Instance.RotCamera.CameraCenter = sphere.Position;
+            
         }
-
-        /// <summary>
-        /// Método que se llama cuando termina la ejecución del ejemplo.
-        /// Hacer dispose() de todos los objetos creados.
-        /// </summary>
+        
         public override void close()
         {
-            box.dispose();
+            sphere.dispose();
         }
 
     }
