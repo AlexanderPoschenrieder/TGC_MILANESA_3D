@@ -17,6 +17,8 @@ namespace AlumnoEjemplos.MiGrupo
     {
         TgcSphere sphere;
         TgcScene scene;
+        TgcMesh mainCarMesh;
+        Auto mainCar;
         SphereCollisionManager collisionManager;
         List<TgcBoundingBox> objetosColisionables = new List<TgcBoundingBox>();
 
@@ -47,7 +49,8 @@ namespace AlumnoEjemplos.MiGrupo
         {
             TgcSceneLoader loader = new TgcSceneLoader();
             scene = loader.loadSceneFromFile(sceneFolder + "PuebloJapones\\PuebloJapones-TgcScene.xml");
-
+            mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
+            mainCar = new Auto(mainCarMesh);
 
             objetosColisionables.Clear();
             foreach (TgcMesh mesh in scene.Meshes)
@@ -91,6 +94,10 @@ namespace AlumnoEjemplos.MiGrupo
             float jump = 0;
 
 
+            //Mover Auto
+            mainCar.Mover();
+            //
+
             //Device de DirectX para renderizar
             Device d3dDevice = GuiController.Instance.D3dDevice;
 
@@ -114,7 +121,6 @@ namespace AlumnoEjemplos.MiGrupo
             {
                 //Boton izq apretado
             }
-            
 
             Vector3 movementVector = new Vector3(
                     FastMath.Sin(sphere.Rotation.Y) * moveForward,
@@ -124,7 +130,6 @@ namespace AlumnoEjemplos.MiGrupo
 
             Vector3 realMovement = collisionManager.moveCharacter(sphere.BoundingSphere, movementVector, objetosColisionables);
             sphere.move(realMovement);
-
 
             sphere.updateValues();
             scene.renderAll();
