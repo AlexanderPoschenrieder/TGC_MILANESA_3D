@@ -49,8 +49,8 @@ namespace AlumnoEjemplos.MiGrupo
         {
             TgcSceneLoader loader = new TgcSceneLoader();
             scene = loader.loadSceneFromFile(sceneFolder + "PuebloJapones\\PuebloJapones-TgcScene.xml");
-            mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
-            mainCar = new Auto(mainCarMesh);
+            //mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
+            //mainCar = new Auto(mainCarMesh);
 
             objetosColisionables.Clear();
             foreach (TgcMesh mesh in scene.Meshes)
@@ -71,19 +71,15 @@ namespace AlumnoEjemplos.MiGrupo
 
             Vector3 movementVector = Vector3.Empty;
 
-
-
-
             //GuiController.Instance: acceso principal a todas las herramientas del Framework
 
             //Device de DirectX para crear primitivas
             Device d3dDevice = GuiController.Instance.D3dDevice;
-
-
             GuiController.Instance.RotCamera.CameraDistance = 100;
-            
+            //initCarCamera();
         
         }
+
 
         
         /// <param name="elapsedTime">Tiempo en segundos transcurridos desde el último frame</param>
@@ -94,9 +90,7 @@ namespace AlumnoEjemplos.MiGrupo
             float jump = 0;
 
 
-            //Mover Auto
-            mainCar.Mover();
-            //
+
 
             //Device de DirectX para renderizar
             Device d3dDevice = GuiController.Instance.D3dDevice;
@@ -135,9 +129,30 @@ namespace AlumnoEjemplos.MiGrupo
             scene.renderAll();
             sphere.render();
             GuiController.Instance.RotCamera.CameraCenter = sphere.Position;
-            
+
+            //Mover Auto
+            //mainCar.elapsedTime = elapsedTime;
+            //mainCar.Mover();
+            //
+
+            //mainCar.meshAuto.render();
+            //SetCarCamera();
         }
-        
+
+        private void SetCarCamera()
+        {
+            GuiController.Instance.ThirdPersonCamera.RotationY = mainCar.rotacion;
+            GuiController.Instance.ThirdPersonCamera.Target = mainCar.meshAuto.Position;
+            GuiController.Instance.ThirdPersonCamera.updateCamera();
+        }
+
+        private void initCarCamera()
+        {
+            GuiController.Instance.ThirdPersonCamera.Enable = true;
+            GuiController.Instance.ThirdPersonCamera.setCamera(mainCar.meshAuto.Position, 50, 200);
+            GuiController.Instance.RotCamera.CameraDistance = 50;
+        }
+
         public override void close()
         {
             sphere.dispose();

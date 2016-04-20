@@ -12,25 +12,34 @@ namespace AlumnoEjemplos.MiGrupo
 {
     public class Auto
     {
+        #region Constantes
+
+        const float CONSTANTEAVANZAR = 600f;
+        const float CONSTANTEFRENAR = 800f;
+        const float CONSTANTEMARCHAATRAS = 400f;
+        const float ROZAMIENTOCOEF = 200f;
+
+        #endregion
+
+        #region Atributos
+
         public float velocidad;
-        float rozamientoCoef = 200f;
+        float velocidadMaxima = -2000f;
+        float velocidadMinima = 3000f;
         public float rotacion;
         public float elapsedTime;
-        float aceleracionAvanzar = 600f;
-        float aceleracionFrenar = 800f;
-        float aceleracionMarchaAtras = 400f;
-        float velocidadMinima = -2000f;
-        float velocidadMaxima = 3000f;
         List<TgcViewer.Utils.TgcSceneLoader.TgcMesh> ruedas;
         public TgcMesh meshAuto;
         float direccion;
 
-        //Interfaz de usuario
+        #endregion
+
+        #region Constructor
+        
         public Auto(TgcMesh mesh)
         {
             meshAuto = mesh;
         }
-
 
         public Auto(float rot, TgcMesh auto, List<TgcViewer.Utils.TgcSceneLoader.TgcMesh> unasRuedas = null)
         {
@@ -39,6 +48,9 @@ namespace AlumnoEjemplos.MiGrupo
             meshAuto = auto;
         }
 
+        #endregion
+
+        #region Métodos
         public void Mover()
         {
             ///////////////INPUT//////////////////
@@ -52,44 +64,47 @@ namespace AlumnoEjemplos.MiGrupo
             {
                 Rotar(1);
             }
+
             if (input.keyDown(Key.Up) || input.keyDown(Key.W))
             {
-                Avanzar();
+                Acelerar(CONSTANTEAVANZAR);
             }
             else if (input.keyDown(Key.Down) || input.keyDown(Key.S))
             {
                 Retroceder();
             }
-            //else
-            //{
-            //    auto.noMover();
-            //}
+            else
+            {
+                Acelerar(0);    
+            }
+
+            MoverMesh();
         }
 
-        public void Avanzar()
+        private void MoverMesh()
         {
-            Acelerar(aceleracionAvanzar);
+            this.meshAuto.Rotation = new Vector3(0f, this.rotacion, 0f);
             meshAuto.moveOrientedY(-this.velocidad * elapsedTime);
         }
+
 
         public void Retroceder()
         {
             if (velocidad > 0) Frenar();
             if (velocidad < 0) MarchaAtras();
-            meshAuto.moveOrientedY(-this.velocidad * elapsedTime);
-        }
-
-        public void NoMover()
-        {
-            Acelerar(0);
         }
 
         public void Rotar(float unaDireccion)
         {
+            if (velocidad == 0)
+            {
+                return;
+            }
+
             direccion = unaDireccion;
             rotacion += (elapsedTime * direccion * (velocidad / 1000)); //direccion puede ser 1 o -1, 1 es derecha y -1 izquierda
             AjustarRotacion();
-            this.meshAuto.Rotation = new Vector3(0f, this.rotacion, 0f);
+            
         }
 
         public float RotarRueda(int i)
@@ -105,41 +120,39 @@ namespace AlumnoEjemplos.MiGrupo
 
         private void Acelerar(float aumento)
         {
-
             velocidad += (aumento - Rozamiento()) * elapsedTime;
             AjustarVelocidad();
-
         }
 
         public void AjustarVelocidad()
         {
-            if (velocidad > velocidadMaxima) velocidad = velocidadMaxima;
-            if (velocidad < velocidadMinima) velocidad = velocidadMinima;
+            if (velocidad > velocidadMinima) velocidad = velocidadMinima;
+            if (velocidad < velocidadMaxima) velocidad = velocidadMaxima;
         }
 
         public void EstablecerVelocidadMáximaEn(float velMaxima)
         {
-            velocidadMaxima = velMaxima;
+            velocidadMinima = velMaxima;
         }
 
         public float Rozamiento()
         {
-            return rozamientoCoef * Math.Sign(velocidad);
+            return ROZAMIENTOCOEF * Math.Sign(velocidad);
         }
 
         private void Frenar()
         {
-            Acelerar(-aceleracionFrenar);
+            Acelerar(-CONSTANTEFRENAR);
         }
 
         public void FrenoDeMano()
         {
-            Acelerar(-aceleracionFrenar * 2.5f);
+            Acelerar(-CONSTANTEFRENAR * 2.5f);
         }
 
         public void MarchaAtras()
         {
-            Acelerar(-aceleracionMarchaAtras);
+            Acelerar(-CONSTANTEMARCHAATRAS);
         }
 
 
@@ -155,8 +168,8 @@ namespace AlumnoEjemplos.MiGrupo
         //para que el auto se quede quieto cuando perdio el jugador
         public void Estatico()
         {
-            velocidadMaxima = 0f;
             velocidadMinima = 0f;
+            velocidadMaxima = 0f;
             AjustarVelocidad();
         }
 
@@ -165,5 +178,6 @@ namespace AlumnoEjemplos.MiGrupo
             return this.rotacion;
         }
 
+        #endregion
     }
 }
