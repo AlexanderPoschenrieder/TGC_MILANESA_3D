@@ -103,6 +103,8 @@ namespace AlumnoEjemplos.MiGrupo
 
             scene.renderAll();
 
+            pelota.aplicarGravedad(elapsedTime);
+            pelota.updateValues();
             pelota.render();
 
             mainCar.meshAuto.render();

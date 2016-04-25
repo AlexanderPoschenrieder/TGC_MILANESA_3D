@@ -23,9 +23,7 @@ namespace AlumnoEjemplos.MiGrupo
         Matrix translate = Matrix. Identity;
         Matrix rotate = Matrix.Identity;
         Matrix move = Matrix.Identity;
-
-        Matrix temp;
-
+        
         const float GRAVEDAD = -9.81f;
         public TgcSphere ownSphere;
         List<TgcMesh> obstaculos = new List<TgcMesh>();
@@ -35,19 +33,17 @@ namespace AlumnoEjemplos.MiGrupo
         {
             ownSphere = new TgcSphere();
 
-            ownSphere.Radius = 50;
+            ownSphere.Radius = 20;
             ownSphere.setColor(Color.Red);
+            ownSphere.Position = new Vector3(0, 80, 0);
 
             //ownSphere.AutoTransformEnable = false;
-            ownSphere.Transform = move;
         }
 
-        public void aplicarGravedad()
+        public void aplicarGravedad(float elapsedTime)
         {
             exposicionAGravedad = exposicionAGravedad + 1;
-            temp = Matrix.Translation(0, exposicionAGravedad * GRAVEDAD, 0);
-
-            translate = translate * temp;
+            ownSphere.move(0, exposicionAGravedad * GRAVEDAD * elapsedTime * 0.25f, 0);
         }
 
         public void chequearColisiones()
@@ -56,15 +52,15 @@ namespace AlumnoEjemplos.MiGrupo
             
         }
 
+        public void updateValues()
+        {
+            
+            ownSphere.updateValues();
+            
+        }
+
         public void render()
         {
-            aplicarGravedad();
-
-            move = Matrix.Identity;
-
-            move = move * translate;
-            ownSphere.Transform = move;
-            ownSphere.updateValues();
             ownSphere.render();
         }
 
