@@ -19,6 +19,7 @@ namespace AlumnoEjemplos.MiGrupo
         TgcScene scene;
         TgcMesh mainCarMesh;
         Auto mainCar;
+        Pelota pelota;
         List<TgcBoundingBox> objetosColisionables = new List<TgcBoundingBox>();
 
         
@@ -50,6 +51,8 @@ namespace AlumnoEjemplos.MiGrupo
             scene = loader.loadSceneFromFile(sceneFolder + "Futbol\\indoor+fieldx150-TgcScene.xml");
             mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
 
+            pelota = new Pelota();
+        
 
             mainCar = new Auto(mainCarMesh);
 
@@ -99,6 +102,9 @@ namespace AlumnoEjemplos.MiGrupo
             //
 
             scene.renderAll();
+
+            pelota.render();
+
             mainCar.meshAuto.render();
             SetCarCamera();
         }
@@ -120,6 +126,7 @@ namespace AlumnoEjemplos.MiGrupo
         public override void close()
         {
             mainCar.meshAuto.dispose();
+            pelota.ownSphere.dispose();
             scene.disposeAll();
         }
 
