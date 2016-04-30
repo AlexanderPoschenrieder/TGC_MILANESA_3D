@@ -22,6 +22,7 @@ namespace AlumnoEjemplos.MiGrupo
         Pelota pelota;
         List<TgcBoundingBox> objetosColisionables = new List<TgcBoundingBox>();
 
+        public TgcBoundingBox piso = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-100000, -100, -100000), new Vector3(0, 0, 0), new Vector3(100000, 0, 10000)});
         
 
         static string rootDir = GuiController.Instance.AlumnoEjemplosDir;
@@ -41,7 +42,7 @@ namespace AlumnoEjemplos.MiGrupo
         
         public override string getDescription()
         {
-            return "Rocket League";
+            return "Rocket League - Futbol de autos";
         }
 
         
@@ -51,7 +52,8 @@ namespace AlumnoEjemplos.MiGrupo
             scene = loader.loadSceneFromFile(sceneFolder + "Futbol\\indoor+fieldx150-TgcScene.xml");
             mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
 
-            pelota = new Pelota();
+
+            pelota = new Pelota(this);
         
 
             mainCar = new Auto(mainCarMesh);
@@ -103,10 +105,12 @@ namespace AlumnoEjemplos.MiGrupo
 
             scene.renderAll();
 
-            pelota.aplicarGravedad(elapsedTime);
+
+            pelota.mover(elapsedTime);
             pelota.updateValues();
             pelota.render();
 
+            piso.render();
             mainCar.meshAuto.render();
             SetCarCamera();
         }
@@ -121,7 +125,7 @@ namespace AlumnoEjemplos.MiGrupo
         private void initCarCamera()
         {
             GuiController.Instance.ThirdPersonCamera.Enable = true;
-            GuiController.Instance.ThirdPersonCamera.setCamera(mainCar.meshAuto.Position, 50, 200);
+            GuiController.Instance.ThirdPersonCamera.setCamera(mainCar.meshAuto.Position, 40, 250);
             GuiController.Instance.RotCamera.CameraDistance = 50;
         }
 
