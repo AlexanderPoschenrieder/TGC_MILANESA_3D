@@ -34,7 +34,7 @@ namespace AlumnoEjemplos.MiGrupo
         public Pelota(EjemploAlumno p)
         {
             parent = p;
-            velocity = new Vector3(0, 0, 0);
+            velocity = new Vector3(50, 0, 0);
             ownSphere = new TgcSphere();
 
 
@@ -48,7 +48,7 @@ namespace AlumnoEjemplos.MiGrupo
 
         public void aplicarGravedad(float elapsedTime)
         {
-            velocity = velocity + new Vector3(0,  GRAVEDAD * 50f * elapsedTime, 0);
+            velocity = velocity + new Vector3(0,  GRAVEDAD * 20f * elapsedTime, 0);
         }
 
         public void chequearColisiones(float elapsedTime)
@@ -59,7 +59,8 @@ namespace AlumnoEjemplos.MiGrupo
 
             if (TgcCollisionUtils.testSphereAABB(ownSphere.BoundingSphere, parent.piso))
             {
-                velocity = -velocity;  
+                velocity.Y = -(velocity.Y);
+                velocity = velocity * 0.85f; //rozamiento con el piso
                 ownSphere.Position = oldpos;
             }
 
