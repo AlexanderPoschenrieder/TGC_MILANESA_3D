@@ -7,6 +7,7 @@ using TgcViewer.Utils.TgcSceneLoader;
 using Microsoft.DirectX;
 using TgcViewer.Utils.Input;
 using Microsoft.DirectX.DirectInput;
+using TgcViewer.Utils.TgcGeometry;
 
 namespace AlumnoEjemplos.MiGrupo
 {
@@ -31,6 +32,7 @@ namespace AlumnoEjemplos.MiGrupo
         List<TgcViewer.Utils.TgcSceneLoader.TgcMesh> ruedas;
         public TgcMesh meshAuto;
         float direccion;
+        public TgcObb obb;
 
         #endregion
 
@@ -39,6 +41,7 @@ namespace AlumnoEjemplos.MiGrupo
         public Auto(TgcMesh mesh)
         {
             meshAuto = mesh;
+            obb = TgcObb.computeFromAABB(mesh.BoundingBox);
         }
 
         public Auto(float rot, TgcMesh auto, List<TgcViewer.Utils.TgcSceneLoader.TgcMesh> unasRuedas = null)
@@ -46,6 +49,7 @@ namespace AlumnoEjemplos.MiGrupo
             this.rotacion = rot;
             this.ruedas = unasRuedas;
             meshAuto = auto;
+            obb = TgcObb.computeFromAABB(auto.BoundingBox);
         }
 
         #endregion
@@ -83,8 +87,13 @@ namespace AlumnoEjemplos.MiGrupo
 
         private void MoverMesh()
         {
+            Vector3 lastPos = meshAuto.Position;
             this.meshAuto.Rotation = new Vector3(0f, this.rotacion, 0f);
             meshAuto.moveOrientedY(-this.velocidad * elapsedTime);
+
+            Vector3 newPos = meshAuto.Position;
+            obb.setRotation(new Vector3(0f, this.rotacion, 0f));
+            obb.move(newPos - lastPos);
         }
 
 

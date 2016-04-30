@@ -112,6 +112,7 @@ namespace AlumnoEjemplos.MiGrupo
 
             piso.render();
             mainCar.meshAuto.render();
+            mainCar.obb.render();
             SetCarCamera();
         }
 
