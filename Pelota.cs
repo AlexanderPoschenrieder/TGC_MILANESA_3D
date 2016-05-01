@@ -38,9 +38,9 @@ namespace AlumnoEjemplos.MiGrupo
             velocity = new Vector3(50, 0, 0);
             ownSphere = new TgcSphere();
             
-            ownSphere.Radius = 20;
+            ownSphere.Radius = 50;
             ownSphere.setColor(Color.Red);
-            ownSphere.Position = new Vector3(0, 80, -100);
+            ownSphere.Position = new Vector3(0, 200, -100);
 
             
         }
@@ -68,7 +68,7 @@ namespace AlumnoEjemplos.MiGrupo
                     TgcRay ray = new TgcRay(oldpos, autoPosition - oldpos);
                     TgcCollisionUtils.intersectRayObb(ray, a.obb, out collisionPos);
                     
-                    velocity = velocity + (0.2f*(oldpos - collisionPos));
+                    velocity = velocity + (0.02f*(oldpos - collisionPos));
                     velocity = velocity + new Vector3(0, 3, 0);
                 }
 

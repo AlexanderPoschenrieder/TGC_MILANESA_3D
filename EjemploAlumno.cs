@@ -15,7 +15,10 @@ namespace AlumnoEjemplos.MiGrupo
 
     public class EjemploAlumno : TgcExample
     {
+        TgcBox box;
 
+
+<<<<<<< Updated upstream
         TgcScene scene;
         TgcMesh mainCarMesh;
         Auto mainCar;
@@ -31,6 +34,12 @@ namespace AlumnoEjemplos.MiGrupo
         static string sceneFolder = mediaFolder + "meshes\\scenes\\";
 
 
+=======
+        /// <summary>
+        /// Categoría a la que pertenece el ejemplo.
+        /// Influye en donde se va a ver en el árbol de la derecha de la pantalla.
+        /// </summary>
+>>>>>>> Stashed changes
         public override string getCategory()
         {
             return "AlumnoEjemplos";
@@ -54,6 +63,7 @@ namespace AlumnoEjemplos.MiGrupo
             mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
 
 
+<<<<<<< Updated upstream
             pelota = new Pelota(this);
         
             mainCar = new Auto(mainCarMesh, this);
@@ -67,6 +77,37 @@ namespace AlumnoEjemplos.MiGrupo
             GuiController.Instance.RotCamera.CameraDistance = 100;
             initCarCamera();
         
+=======
+
+            box = new TgcBox();
+            
+           
+
+
+            //Carpeta de archivos Media del alumno
+            string alumnoMediaFolder = GuiController.Instance.AlumnoEjemplosMediaDir;
+
+            
+
+
+            ///////////////CONFIGURAR CAMARA ROTACIONAL//////////////////
+            //Es la camara que viene por default, asi que no hace falta hacerlo siempre
+            GuiController.Instance.RotCamera.Enable = true;
+            //Configurar centro al que se mira y distancia desde la que se mira
+            GuiController.Instance.RotCamera.setCamera(new Vector3(0, 0, 0), 100);
+
+
+            /*
+            ///////////////CONFIGURAR CAMARA PRIMERA PERSONA//////////////////
+            //Camara en primera persona, tipo videojuego FPS
+            //Solo puede haber una camara habilitada a la vez. Al habilitar la camara FPS se deshabilita la camara rotacional
+            //Por default la camara FPS viene desactivada
+            GuiController.Instance.FpsCamera.Enable = true;
+            //Configurar posicion y hacia donde se mira
+            GuiController.Instance.FpsCamera.setCamera(new Vector3(0, 0, -20), new Vector3(0, 0, 0));
+            */
+
+>>>>>>> Stashed changes
         }
 
 
@@ -77,6 +118,7 @@ namespace AlumnoEjemplos.MiGrupo
             
             //Device de DirectX para renderizar
             Device d3dDevice = GuiController.Instance.D3dDevice;
+<<<<<<< Updated upstream
 
             
             //conviene deshabilitar ambas camaras para que no haya interferencia
@@ -108,6 +150,11 @@ namespace AlumnoEjemplos.MiGrupo
 
             scene.renderAll();
 
+=======
+            box.setTexture(TgcTexture.createTexture(GuiController.Instance.ExamplesMediaDir + "\\Texturas\\madera.jpg"));
+            GuiController.Instance.RotCamera.CameraDistance = 50;
+            box.render();
+>>>>>>> Stashed changes
 
             pelota.mover(elapsedTime);
             pelota.updateValues();
@@ -128,6 +175,7 @@ namespace AlumnoEjemplos.MiGrupo
 
         private void initCarCamera()
         {
+<<<<<<< Updated upstream
             GuiController.Instance.ThirdPersonCamera.Enable = true;
             GuiController.Instance.ThirdPersonCamera.setCamera(mainCar.meshAuto.Position, 40, 250);
             GuiController.Instance.RotCamera.CameraDistance = 50;
@@ -138,6 +186,9 @@ namespace AlumnoEjemplos.MiGrupo
             mainCar.meshAuto.dispose();
             pelota.ownSphere.dispose();
             scene.disposeAll();
+=======
+            box.dispose();
+>>>>>>> Stashed changes
         }
 
     }

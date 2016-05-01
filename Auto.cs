@@ -91,29 +91,41 @@ namespace AlumnoEjemplos.MiGrupo
 
         public void chequearColisiones()
         {
-            Vector3 lastPos = meshAuto.Position;
-            this.meshAuto.Rotation = new Vector3(0f, this.rotacion, 0f);
-            meshAuto.moveOrientedY(-this.velocidad * DELTA_T);
+            int i = 0;
+            float dt = DELTA_T * 2;
 
-            if (TgcCollisionUtils.testSphereOBB(parent.pelota.ownSphere.BoundingSphere, obb))
+            while(i < 5)
             {
+                i++;
+                dt = dt / 2;
 
-                Vector3 collisionPos = new Vector3();
-                Vector3 spherePosition = new Vector3();
-                spherePosition = parent.pelota.ownSphere.Position;
+                Vector3 lastPos = meshAuto.Position;
+                this.meshAuto.Rotation = new Vector3(0f, this.rotacion, 0f);
+                meshAuto.moveOrientedY(-this.velocidad * dt);
 
-                TgcRay ray = new TgcRay(lastPos, spherePosition - lastPos);
-                TgcCollisionUtils.intersectRayObb(ray, obb, out collisionPos);
+                if (TgcCollisionUtils.testSphereOBB(parent.pelota.ownSphere.BoundingSphere, obb))
+                {
 
-                parent.pelota.velocity = parent.pelota.velocity + (0.2f * (spherePosition - collisionPos));
-                parent.pelota.velocity = parent.pelota.velocity + new Vector3(0, 3, 0);
-                this.velocidad = this.velocidad * 0.25f;
+                    Vector3 collisionPos = new Vector3();
+                    Vector3 spherePosition = new Vector3();
+                    spherePosition = parent.pelota.ownSphere.Position;
 
+                    TgcRay ray = new TgcRay(lastPos, spherePosition - lastPos);
+                    TgcCollisionUtils.intersectRayObb(ray, obb, out collisionPos);
+                    
+
+                    parent.pelota.velocity = parent.pelota.velocity + (0.02f*(spherePosition - collisionPos));
+                    parent.pelota.velocity = parent.pelota.velocity * (0.04f * this.velocidad);
+                    this.velocidad = this.velocidad * (i/5);
+                    this.meshAuto.Position = lastPos;
+                    break;
+                }
+                else
+                {
+                    this.meshAuto.Position = lastPos;
+                    continue;
+                }
             }
-
-            this.meshAuto.Position = lastPos;
-            
-            
         }
 
         private void MoverMesh()
