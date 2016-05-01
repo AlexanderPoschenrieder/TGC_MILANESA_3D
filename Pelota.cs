@@ -68,8 +68,7 @@ namespace AlumnoEjemplos.MiGrupo
                     TgcRay ray = new TgcRay(oldpos, autoPosition - oldpos);
                     TgcCollisionUtils.intersectRayObb(ray, a.obb, out collisionPos);
                     
-                    velocity = velocity + (0.02f*(oldpos - collisionPos));
-                    velocity = velocity + new Vector3(0, 3, 0);
+                    velocity = velocity + (0.1f*(oldpos - collisionPos));
                 }
 
             }

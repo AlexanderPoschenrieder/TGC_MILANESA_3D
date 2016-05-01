@@ -19,7 +19,7 @@ namespace AlumnoEjemplos.MiGrupo
         const float CONSTANTEFRENAR = 800f;
         const float CONSTANTEMARCHAATRAS = 400f;
         const float ROZAMIENTOCOEF = 200f;
-        const float DELTA_T = 0.01f;
+        const float DELTA_T = 0.1f;
 
         #endregion
 
@@ -94,7 +94,7 @@ namespace AlumnoEjemplos.MiGrupo
             int i = 0;
             float dt = DELTA_T * 2;
 
-            while(i < 7)
+            while(i < 5)
             {
                 i++;
                 dt = dt / 2;
@@ -114,9 +114,8 @@ namespace AlumnoEjemplos.MiGrupo
                     TgcCollisionUtils.intersectRayObb(ray, obb, out collisionPos);
                     
 
-                    parent.pelota.velocity = parent.pelota.velocity + (0.02f*(spherePosition - collisionPos));
-                    parent.pelota.velocity = parent.pelota.velocity * (0.04f * this.velocidad);
-                    this.velocidad = this.velocidad * (i/5);
+                    parent.pelota.velocity = parent.pelota.velocity + (0.005f*(spherePosition - collisionPos) * this.velocidad);
+                    this.velocidad = this.velocidad * (i/3);
                     this.meshAuto.Position = lastPos;
                     break;
                 }
