@@ -9,6 +9,7 @@ using Microsoft.DirectX;
 using TgcViewer.Utils.Modifiers;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
+using TgcViewer.Utils._2D;
 
 namespace AlumnoEjemplos.MiGrupo
 {
@@ -20,6 +21,12 @@ namespace AlumnoEjemplos.MiGrupo
         TgcMesh mainCarMesh;
         Auto mainCar;
         public Pelota pelota;
+        TgcText2d txtScoreLocal = new TgcText2d();
+        TgcText2d txtScoreVisitante = new TgcText2d();
+
+
+        public int scoreLocal = 0;
+        public int scoreVisitante = 0;
 
         public List<Auto> autitus = new List<Auto>();
         public List<TgcBoundingBox> paredes = new List<TgcBoundingBox>();
@@ -66,6 +73,17 @@ namespace AlumnoEjemplos.MiGrupo
 
         public override void init()
         {
+            
+            txtScoreLocal.Text = scoreLocal.ToString();
+            txtScoreLocal.Position = new Point(300, 100);
+            txtScoreLocal.Size = new Size(300, 100);
+            
+            txtScoreVisitante.Text = scoreVisitante.ToString();
+            txtScoreVisitante.Position = new Point(600, 100);
+            txtScoreVisitante.Size = new Size(300, 100);
+
+
+
             TgcSceneLoader loader = new TgcSceneLoader();
             scene = loader.loadSceneFromFile(sceneFolder + "Futbol\\indoor+fieldx150-TgcScene.xml");
             mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
@@ -153,6 +171,8 @@ namespace AlumnoEjemplos.MiGrupo
             piso.render();
             mainCar.meshAuto.render();
             mainCar.obb.render();
+            txtScoreLocal.render();
+            txtScoreVisitante.render();
             SetCarCamera();
         }
 
