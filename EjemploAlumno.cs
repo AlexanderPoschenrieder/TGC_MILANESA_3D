@@ -23,7 +23,20 @@ namespace AlumnoEjemplos.MiGrupo
 
         public List<Auto> autitus = new List<Auto>();
 
-        public TgcBoundingBox piso = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-100000, -100, -100000), new Vector3(0, 0, 0), new Vector3(100000, 0, 10000) });
+        public TgcBoundingBox piso = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-7000, -100, -11000), new Vector3(0, 0, 0), new Vector3(7000, 0, 11000) });
+        public TgcBoundingBox arcoPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 0, 11000), new Vector3(500, 400, 12000) });
+        public TgcBoundingBox arcoNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 0, -11000), new Vector3(500, 400, -12000) });
+
+        public TgcBoundingBox paredArcoNegativo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-7000, 0, -11000), new Vector3(-500, 2000, -11050) });
+        public TgcBoundingBox paredArcoNegativo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(7000, 0, -11000), new Vector3(500, 2000, -11050) });
+        public TgcBoundingBox paredArcoNegativo3 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 400, -11000), new Vector3(500, 2000, -11050) });
+
+        public TgcBoundingBox paredArcoPositivo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-7000, 0, 11000), new Vector3(-500, 2000, 11050) });
+        public TgcBoundingBox paredArcoPositivo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(7000, 0, 11000), new Vector3(500, 2000, 11050) });
+        public TgcBoundingBox paredArcoPositivo3 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 400, 11000), new Vector3(500, 2000, 11050) });
+
+        public TgcBoundingBox lateralPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-7000, 0, -11000), new Vector3(-7050, 2000, 11000)});
+        public TgcBoundingBox lateralNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(7000, 0, -11000), new Vector3(7050, 2000, 11000) });
 
 
         static string rootDir = GuiController.Instance.AlumnoEjemplosDir;
@@ -106,13 +119,23 @@ namespace AlumnoEjemplos.MiGrupo
             mainCar.Mover();
             //
 
-            scene.renderAll();
+            //scene.renderAll();
 
 
             pelota.mover(elapsedTime);
             pelota.updateValues();
             pelota.render();
 
+            paredArcoNegativo1.render();
+            paredArcoNegativo2.render();
+            paredArcoNegativo3.render();
+            paredArcoPositivo1.render();
+            paredArcoPositivo2.render();
+            paredArcoPositivo3.render();
+            lateralNegativo.render();
+            lateralPositivo.render();
+            arcoPositivo.render();
+            arcoNegativo.render();
             piso.render();
             mainCar.meshAuto.render();
             mainCar.obb.render();

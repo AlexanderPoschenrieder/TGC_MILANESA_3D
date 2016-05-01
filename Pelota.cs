@@ -76,7 +76,7 @@ namespace AlumnoEjemplos.MiGrupo
             if (TgcCollisionUtils.testSphereAABB(ownSphere.BoundingSphere, parent.piso))
             {
                 velocity.Y = -(velocity.Y);
-                velocity = velocity * 0.85f; //rozamiento con el piso
+                velocity = velocity * 0.8f; //rozamiento con el piso
                 ownSphere.Position = oldpos;
             }
 
