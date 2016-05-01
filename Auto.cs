@@ -94,7 +94,7 @@ namespace AlumnoEjemplos.MiGrupo
             int i = 0;
             float dt = DELTA_T * 2;
 
-            while(i < 5)
+            while(i < 7)
             {
                 i++;
                 dt = dt / 2;
