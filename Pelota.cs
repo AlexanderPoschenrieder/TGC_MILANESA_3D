@@ -80,8 +80,26 @@ namespace AlumnoEjemplos.MiGrupo
                 ownSphere.Position = oldpos;
             }
 
-            
-            
+            foreach(TgcBoundingBox pared in parent.paredes)
+            {
+                if(TgcCollisionUtils.testSphereAABB(ownSphere.BoundingSphere, pared))
+                {
+                    velocity.Z = -(velocity.Z);
+                    velocity = velocity * 0.9f;
+                    ownSphere.Position = oldpos;
+                }
+            }
+
+            foreach (TgcBoundingBox lateral in parent.laterales)
+            {
+                if (TgcCollisionUtils.testSphereAABB(ownSphere.BoundingSphere, lateral))
+                {
+                    velocity.X = -(velocity.X);
+                    velocity = velocity * 0.9f;
+                    ownSphere.Position = oldpos;
+                }
+            }
+
         }
 
         public void updateValues()
