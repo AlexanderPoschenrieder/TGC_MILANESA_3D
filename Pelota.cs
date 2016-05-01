@@ -14,21 +14,22 @@ using TgcViewer.Example;
 
 namespace AlumnoEjemplos.MiGrupo
 {
-    class Pelota
+    public class Pelota
     {
         EjemploAlumno parent;
         Vector3 pos;
-        Vector3 velocity;
+       public  Vector3 velocity;
 
         Matrix scale = Matrix.Identity;
         Matrix translate = Matrix. Identity;
         Matrix rotate = Matrix.Identity;
         Matrix move = Matrix.Identity;
 
+        SphereCollisionManager collisionManager = new SphereCollisionManager();
+
         const float DELTA_T = 0.01f;
         const float GRAVEDAD = -9.81f;
         public TgcSphere ownSphere;
-        List<TgcMesh> obstaculos = new List<TgcMesh>();
 
 
         public Pelota(EjemploAlumno p)
@@ -36,14 +37,12 @@ namespace AlumnoEjemplos.MiGrupo
             parent = p;
             velocity = new Vector3(50, 0, 0);
             ownSphere = new TgcSphere();
-
-
-
+            
             ownSphere.Radius = 20;
             ownSphere.setColor(Color.Red);
-            ownSphere.Position = new Vector3(0, 80, 0);
+            ownSphere.Position = new Vector3(0, 80, -100);
 
-            //ownSphere.AutoTransformEnable = false;
+            
         }
 
         public void aplicarGravedad(float elapsedTime)
@@ -56,6 +55,24 @@ namespace AlumnoEjemplos.MiGrupo
             Vector3 oldpos = ownSphere.Position;
 
             ownSphere.move(velocity * DELTA_T);
+
+            foreach (Auto a in parent.autitus)
+            {
+                if (TgcCollisionUtils.testSphereOBB(ownSphere.BoundingSphere, a.obb))
+                {
+                    Vector3 collisionPos = new Vector3();
+                    ownSphere.Position = oldpos;
+                    Vector3 autoPosition = new Vector3();
+                    autoPosition = a.obb.Position;
+                    
+                    TgcRay ray = new TgcRay(oldpos, autoPosition - oldpos);
+                    TgcCollisionUtils.intersectRayObb(ray, a.obb, out collisionPos);
+                    
+                    velocity = velocity + (0.2f*(oldpos - collisionPos));
+                    velocity = velocity + new Vector3(0, 3, 0);
+                }
+
+            }
 
             if (TgcCollisionUtils.testSphereAABB(ownSphere.BoundingSphere, parent.piso))
             {

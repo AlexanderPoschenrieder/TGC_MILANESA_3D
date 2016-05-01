@@ -19,8 +19,9 @@ namespace AlumnoEjemplos.MiGrupo
         TgcScene scene;
         TgcMesh mainCarMesh;
         Auto mainCar;
-        Pelota pelota;
-        List<TgcBoundingBox> objetosColisionables = new List<TgcBoundingBox>();
+        public Pelota pelota;
+
+        public List<Auto> autitus = new List<Auto>();
 
         public TgcBoundingBox piso = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-100000, -100, -100000), new Vector3(0, 0, 0), new Vector3(100000, 0, 10000)});
         
@@ -55,8 +56,9 @@ namespace AlumnoEjemplos.MiGrupo
 
             pelota = new Pelota(this);
         
+            mainCar = new Auto(mainCarMesh, this);
+            autitus.Add(mainCar);
 
-            mainCar = new Auto(mainCarMesh);
 
             //GuiController.Instance: acceso principal a todas las herramientas del Framework
 
@@ -96,7 +98,8 @@ namespace AlumnoEjemplos.MiGrupo
             {
                 //Boton izq apretado
             }
-                   
+            
+
 
             //Mover Auto
             mainCar.elapsedTime = elapsedTime;

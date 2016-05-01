@@ -19,6 +19,7 @@ namespace AlumnoEjemplos.MiGrupo
         const float CONSTANTEFRENAR = 800f;
         const float CONSTANTEMARCHAATRAS = 400f;
         const float ROZAMIENTOCOEF = 200f;
+        const float DELTA_T = 0.01f;
 
         #endregion
 
@@ -33,13 +34,15 @@ namespace AlumnoEjemplos.MiGrupo
         public TgcMesh meshAuto;
         float direccion;
         public TgcObb obb;
+        EjemploAlumno parent;
 
         #endregion
 
         #region Constructor
         
-        public Auto(TgcMesh mesh)
+        public Auto(TgcMesh mesh, EjemploAlumno p)
         {
+            parent = p;
             meshAuto = mesh;
             obb = TgcObb.computeFromAABB(mesh.BoundingBox);
         }
@@ -82,7 +85,35 @@ namespace AlumnoEjemplos.MiGrupo
                 Acelerar(0);    
             }
 
+            chequearColisiones();
             MoverMesh();
+        }
+
+        public void chequearColisiones()
+        {
+            Vector3 lastPos = meshAuto.Position;
+            this.meshAuto.Rotation = new Vector3(0f, this.rotacion, 0f);
+            meshAuto.moveOrientedY(-this.velocidad * DELTA_T);
+
+            if (TgcCollisionUtils.testSphereOBB(parent.pelota.ownSphere.BoundingSphere, obb))
+            {
+
+                Vector3 collisionPos = new Vector3();
+                Vector3 spherePosition = new Vector3();
+                spherePosition = parent.pelota.ownSphere.Position;
+
+                TgcRay ray = new TgcRay(lastPos, spherePosition - lastPos);
+                TgcCollisionUtils.intersectRayObb(ray, obb, out collisionPos);
+
+                parent.pelota.velocity = parent.pelota.velocity + (0.2f * (spherePosition - collisionPos));
+                parent.pelota.velocity = parent.pelota.velocity + new Vector3(0, 3, 0);
+                this.velocidad = this.velocidad * 0.25f;
+
+            }
+
+            this.meshAuto.Position = lastPos;
+            
+            
         }
 
         private void MoverMesh()
@@ -93,7 +124,12 @@ namespace AlumnoEjemplos.MiGrupo
 
             Vector3 newPos = meshAuto.Position;
             obb.setRotation(new Vector3(0f, this.rotacion, 0f));
+
+            
             obb.move(newPos - lastPos);
+           
+
+            
         }
 
 
