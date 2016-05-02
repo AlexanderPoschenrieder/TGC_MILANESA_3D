@@ -9,6 +9,7 @@ using Microsoft.DirectX;
 using TgcViewer.Utils.Modifiers;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
+using TgcViewer.Utils._2D;
 using TgcViewer.Utils.Input;
 using Microsoft.DirectX.DirectInput;
 
@@ -24,8 +25,16 @@ namespace AlumnoEjemplos.MiGrupo
         TwoTargetsCamera camaraPelota = new TwoTargetsCamera();
         TgcThirdPersonCamera camaraAuto = GuiController.Instance.ThirdPersonCamera;
         public Pelota pelota;
+        TgcText2d txtScoreLocal = new TgcText2d();
+        TgcText2d txtScoreVisitante = new TgcText2d();
+
+
+        public int scoreLocal = 0;
+        public int scoreVisitante = 0;
 
         public List<Auto> autitus = new List<Auto>();
+        public List<TgcBoundingBox> paredes = new List<TgcBoundingBox>();
+        public List<TgcBoundingBox> laterales = new List<TgcBoundingBox>();
 
         public TgcBoundingBox piso = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-7000, -100, -11000), new Vector3(0, 0, 0), new Vector3(7000, 0, 11000) });
         public TgcBoundingBox arcoPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 0, 11000), new Vector3(500, 400, 12000) });
@@ -41,6 +50,8 @@ namespace AlumnoEjemplos.MiGrupo
 
         public TgcBoundingBox lateralPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-7000, 0, -11000), new Vector3(-7050, 2000, 11000)});
         public TgcBoundingBox lateralNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(7000, 0, -11000), new Vector3(7050, 2000, 11000) });
+
+        
 
 
         static string rootDir = GuiController.Instance.AlumnoEjemplosDir;
@@ -66,10 +77,29 @@ namespace AlumnoEjemplos.MiGrupo
 
         public override void init()
         {
+            
+            txtScoreLocal.Text = scoreLocal.ToString();
+            txtScoreLocal.Position = new Point(300, 100);
+            txtScoreLocal.Size = new Size(300, 100);
+            
+            txtScoreVisitante.Text = scoreVisitante.ToString();
+            txtScoreVisitante.Position = new Point(600, 100);
+            txtScoreVisitante.Size = new Size(300, 100);
+
+
+
             TgcSceneLoader loader = new TgcSceneLoader();
             scene = loader.loadSceneFromFile(sceneFolder + "Futbol\\indoor+fieldx150-TgcScene.xml");
             mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
 
+            paredes.Add(paredArcoNegativo3);
+            paredes.Add(paredArcoNegativo2);
+            paredes.Add(paredArcoNegativo1);
+            paredes.Add(paredArcoPositivo3);
+            paredes.Add(paredArcoPositivo2);
+            paredes.Add(paredArcoPositivo1);
+            laterales.Add(lateralNegativo);
+            laterales.Add(lateralPositivo);
 
             pelota = new Pelota(this);
 
@@ -130,19 +160,23 @@ namespace AlumnoEjemplos.MiGrupo
             pelota.updateValues();
             pelota.render();
 
-            paredArcoNegativo1.render();
-            paredArcoNegativo2.render();
-            paredArcoNegativo3.render();
-            paredArcoPositivo1.render();
-            paredArcoPositivo2.render();
-            paredArcoPositivo3.render();
-            lateralNegativo.render();
-            lateralPositivo.render();
+            foreach(TgcBoundingBox p in paredes)
+            {
+                p.render();
+            }
+
+            foreach (TgcBoundingBox l in laterales)
+            {
+                l.render();
+            }
+
             arcoPositivo.render();
             arcoNegativo.render();
             piso.render();
             mainCar.meshAuto.render();
             mainCar.obb.render();
+            txtScoreLocal.render();
+            txtScoreVisitante.render();
             SetCarCamera();
         }
 

@@ -64,11 +64,11 @@ namespace AlumnoEjemplos.MiGrupo
                     ownSphere.Position = oldpos;
                     Vector3 autoPosition = new Vector3();
                     autoPosition = a.obb.Position;
-                    
+
                     TgcRay ray = new TgcRay(oldpos, autoPosition - oldpos);
                     TgcCollisionUtils.intersectRayObb(ray, a.obb, out collisionPos);
-                    
-                    velocity = velocity + (0.1f*(oldpos - collisionPos));
+
+                    velocity = velocity + (0.1f * (oldpos - collisionPos));
                 }
 
             }
@@ -76,12 +76,44 @@ namespace AlumnoEjemplos.MiGrupo
             if (TgcCollisionUtils.testSphereAABB(ownSphere.BoundingSphere, parent.piso))
             {
                 velocity.Y = -(velocity.Y);
-                velocity = velocity * 0.8f; //rozamiento con el piso
+                velocity = velocity * 0.75f; //rozamiento con el piso
                 ownSphere.Position = oldpos;
             }
 
-            
-            
+            foreach (TgcBoundingBox pared in parent.paredes)
+            {
+                if (TgcCollisionUtils.testSphereAABB(ownSphere.BoundingSphere, pared))
+                {
+                    velocity.Z = -(velocity.Z);
+                    velocity = velocity * 0.9f;
+                    ownSphere.Position = oldpos;
+                }
+            }
+
+            foreach (TgcBoundingBox lateral in parent.laterales)
+            {
+                if (TgcCollisionUtils.testSphereAABB(ownSphere.BoundingSphere, lateral))
+                {
+                    velocity.X = -(velocity.X);
+                    velocity = velocity * 0.9f;
+                    ownSphere.Position = oldpos;
+                }
+            }
+
+            if (TgcCollisionUtils.testSphereAABB(ownSphere.BoundingSphere, parent.arcoNegativo))
+            {
+                parent.scoreVisitante++;
+                parent.close();
+                parent.init();
+            }
+
+            if (TgcCollisionUtils.testSphereAABB(ownSphere.BoundingSphere, parent.arcoPositivo))
+            {
+                parent.scoreLocal++;
+                parent.close();
+                parent.init();
+            }
+
         }
 
         public void updateValues()
