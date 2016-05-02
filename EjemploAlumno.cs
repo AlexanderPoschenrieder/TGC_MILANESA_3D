@@ -9,6 +9,8 @@ using Microsoft.DirectX;
 using TgcViewer.Utils.Modifiers;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
+using TgcViewer.Utils.Input;
+using Microsoft.DirectX.DirectInput;
 
 namespace AlumnoEjemplos.MiGrupo
 {
@@ -19,6 +21,8 @@ namespace AlumnoEjemplos.MiGrupo
         TgcScene scene;
         TgcMesh mainCarMesh;
         Auto mainCar;
+        TwoTargetsCamera camaraPelota = new TwoTargetsCamera();
+        TgcThirdPersonCamera camaraAuto = GuiController.Instance.ThirdPersonCamera;
         public Pelota pelota;
 
         public List<Auto> autitus = new List<Auto>();
@@ -76,7 +80,7 @@ namespace AlumnoEjemplos.MiGrupo
             //GuiController.Instance: acceso principal a todas las herramientas del Framework
 
             //Device de DirectX para crear primitivas
-            Device d3dDevice = GuiController.Instance.D3dDevice;
+            var d3dDevice = GuiController.Instance.D3dDevice;
             GuiController.Instance.RotCamera.CameraDistance = 100;
             initCarCamera();
 
@@ -89,7 +93,7 @@ namespace AlumnoEjemplos.MiGrupo
         {
 
             //Device de DirectX para renderizar
-            Device d3dDevice = GuiController.Instance.D3dDevice;
+            var d3dDevice = GuiController.Instance.D3dDevice;
 
 
             //conviene deshabilitar ambas camaras para que no haya interferencia
@@ -144,17 +148,37 @@ namespace AlumnoEjemplos.MiGrupo
 
         private void SetCarCamera()
         {
-            GuiController.Instance.ThirdPersonCamera.RotationY = mainCar.rotacion;
-            GuiController.Instance.ThirdPersonCamera.Target = mainCar.meshAuto.Position;
-            GuiController.Instance.ThirdPersonCamera.updateCamera();
+            var pelotaPos = pelota.ownSphere.Position;
+            var autoPos = mainCarMesh.Position;
+             ///////////////INPUT//////////////////
+            //conviene deshabilitar ambas camaras para que no haya interferencia
+            TgcD3dInput input = GuiController.Instance.D3dInput;
+            if (input.keyDown(Key.LeftShift))
+            {
+                camaraPelota.FirstTarget = autoPos;
+                camaraPelota.SecondTarget = pelotaPos;
+                camaraPelota.Enable=true;;
+                camaraPelota.updateCamera();
+            }
+            else
+            {
+                camaraAuto.Enable = true;
+                camaraAuto.RotationY = mainCar.rotacion;
+                camaraAuto.Target = mainCar.meshAuto.Position;
+                camaraAuto.updateCamera();
+            }
+            
         }
 
         private void initCarCamera()
         {
-            GuiController.Instance.ThirdPersonCamera.Enable = true;
-            GuiController.Instance.ThirdPersonCamera.setCamera(mainCar.meshAuto.Position, 40, 250);
-            GuiController.Instance.RotCamera.CameraDistance = 50;
+            camaraAuto.setCamera(mainCarMesh.Position, 40, 250);
+            camaraAuto.Enable = true;
+
+            camaraPelota.setCamera(mainCar.meshAuto.Position, 0, 0);
+            camaraPelota.TargetDisplacement = new Vector3(0, 40, 0);
         }
+
 
         public override void close()
         {
