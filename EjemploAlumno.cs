@@ -92,6 +92,8 @@ namespace AlumnoEjemplos.MiGrupo
             scene = loader.loadSceneFromFile(sceneFolder + "Futbol\\indoor+fieldx150-TgcScene.xml");
             mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
 
+            GuiController.Instance.UserVars.addVar("Velocidad");
+
             paredes.Add(paredArcoNegativo3);
             paredes.Add(paredArcoNegativo2);
             paredes.Add(paredArcoNegativo1);

@@ -26,8 +26,8 @@ namespace AlumnoEjemplos.MiGrupo
         #region Atributos
 
         public float velocidad;
-        float velocidadMaxima = -2000f;
-        float velocidadMinima = 3000f;
+        float velocidadMaxima = -1500f;
+        float velocidadMinima = 2000f;
         public float rotacion;
         public float elapsedTime;
         List<TgcViewer.Utils.TgcSceneLoader.TgcMesh> ruedas;
@@ -89,12 +89,17 @@ namespace AlumnoEjemplos.MiGrupo
             MoverMesh();
         }
 
+        public void choqueFuerteConParedOLateral()
+        {
+
+        }
+
         public void chequearColisiones()
         {
             int i = 0;
             float dt = DELTA_T * 2;
 
-            while(i < 5)
+            while (i < 5)
             {
                 i++;
                 dt = dt / 2;
@@ -102,6 +107,51 @@ namespace AlumnoEjemplos.MiGrupo
                 Vector3 lastPos = meshAuto.Position;
                 this.meshAuto.Rotation = new Vector3(0f, this.rotacion, 0f);
                 meshAuto.moveOrientedY(-this.velocidad * dt);
+                Vector3 direccionMovimiento = Vector3.Normalize(lastPos - meshAuto.Position);
+                
+                
+                obb.move(direccionMovimiento * velocidad * dt);
+
+                float gradoDeProyeccionAlLateral = Vector3.Dot(direccionMovimiento, new Vector3(0, 0, 1));
+                float gradoDeProyeccionALaPared = Vector3.Dot(direccionMovimiento, new Vector3(1, 0, 0));
+
+
+                foreach (TgcBoundingBox lateral in parent.laterales)
+                {
+                    if(TgcCollisionUtils.testObbAABB(obb, lateral))
+                    {
+                        if (FastMath.Abs(gradoDeProyeccionAlLateral) < 0.4)
+                        {
+                            velocidad = -velocidad * 0.5f;
+                            choqueFuerteConParedOLateral();
+                        }
+                        else
+                        {
+                            if (gradoDeProyeccionAlLateral > 0) rotacion = 0;
+                            else rotacion = FastMath.PI;
+                            velocidad = velocidad * FastMath.Abs(gradoDeProyeccionAlLateral);
+                        }
+                    }
+                }
+
+                foreach (TgcBoundingBox pared in parent.paredes)
+                {
+                    if(TgcCollisionUtils.testObbAABB(obb, pared))
+                    {
+                        if (FastMath.Abs(gradoDeProyeccionALaPared) < 0.4)
+                        {
+                            velocidad = -velocidad * 0.5f;
+                            choqueFuerteConParedOLateral();
+                        }
+                        else
+                        {
+
+                            if (gradoDeProyeccionALaPared > 0) rotacion = FastMath.PI_HALF;
+                            else rotacion = 3 * FastMath.PI_HALF;
+                            velocidad = velocidad * FastMath.Abs(gradoDeProyeccionALaPared);
+                        }
+                    }
+                }
 
                 if (TgcCollisionUtils.testSphereOBB(parent.pelota.ownSphere.BoundingSphere, obb))
                 {
@@ -116,14 +166,14 @@ namespace AlumnoEjemplos.MiGrupo
 
                     parent.pelota.velocity = parent.pelota.velocity + (0.005f*(spherePosition - collisionPos) * this.velocidad);
                     this.velocidad = this.velocidad * (i/3);
-                    this.meshAuto.Position = lastPos;
-                    break;
+                    
                 }
-                else
-                {
-                    this.meshAuto.Position = lastPos;
-                    continue;
-                }
+
+                obb.move(-direccionMovimiento * velocidad * dt);
+                meshAuto.Position = lastPos;
+
+
+                continue;
             }
         }
 
@@ -132,15 +182,13 @@ namespace AlumnoEjemplos.MiGrupo
             Vector3 lastPos = meshAuto.Position;
             this.meshAuto.Rotation = new Vector3(0f, this.rotacion, 0f);
             meshAuto.moveOrientedY(-this.velocidad * elapsedTime);
+            GuiController.Instance.UserVars.setValue("Velocidad", TgcParserUtils.printFloat(velocidad));
 
             Vector3 newPos = meshAuto.Position;
             obb.setRotation(new Vector3(0f, this.rotacion, 0f));
-
             
             obb.move(newPos - lastPos);
            
-
-            
         }
 
 
@@ -215,9 +263,9 @@ namespace AlumnoEjemplos.MiGrupo
         //DeRotacion
         private void AjustarRotacion()
         {
-            while (rotacion > 360)
+            while (rotacion > FastMath.TWO_PI * 100)
             {
-                rotacion -= 360;
+                rotacion -= FastMath.TWO_PI * 100;
             }
         }
 
