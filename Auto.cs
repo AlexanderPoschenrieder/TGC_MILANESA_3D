@@ -20,6 +20,7 @@ namespace AlumnoEjemplos.MiGrupo
         const float CONSTANTEMARCHAATRAS = 400f;
         const float ROZAMIENTOCOEF = 200f;
         const float DELTA_T = 0.1f;
+        const float ALTURA_MAXIMA = 100;
 
         #endregion
 
@@ -35,6 +36,8 @@ namespace AlumnoEjemplos.MiGrupo
         float direccion;
         public TgcObb obb;
         EjemploAlumno parent;
+        bool subiendo=false;
+        bool saltando = false;
 
         #endregion
 
@@ -74,19 +77,79 @@ namespace AlumnoEjemplos.MiGrupo
 
             if (input.keyDown(Key.Up) || input.keyDown(Key.W))
             {
-                Acelerar(CONSTANTEAVANZAR);
+                if (!saltando)
+                {
+                    Acelerar(CONSTANTEAVANZAR);    
+                }
+                
             }
             else if (input.keyDown(Key.Down) || input.keyDown(Key.S))
             {
-                Retroceder();
+                if (!saltando)
+                {
+                    Retroceder();
+                }
+                
             }
             else
             {
                 Acelerar(0);    
             }
 
+            if (input.keyDown(Key.Space))
+            {
+                if (!saltando)
+                {
+                    saltando = true;
+                    subiendo = true;
+                }
+            }
+
+            
             chequearColisiones();
             MoverMesh();
+            Saltar();
+        }
+
+        private void Saltar()
+        {
+            if(!saltando)
+            {
+                return;
+            }
+            
+            float posX =meshAuto.Position.X;
+            float posY =meshAuto.Position.Y;
+            float posZ =meshAuto.Position.Z;
+
+            float movY=0;
+            if (subiendo)
+            {
+                if (posY < ALTURA_MAXIMA)
+                {
+                    movY = elapsedTime*100;
+                }
+                else
+                {
+                    subiendo = false;
+                }
+            }
+            else if (!subiendo)
+            {
+                if (posY > 0)
+                {
+                    movY = -1* elapsedTime * 100;
+                }
+                else
+                {
+                    saltando=false;
+                }
+            }
+
+            meshAuto.move(new Vector3(0,movY,0));
+            obb.move(new Vector3(0,movY,0));
+
+
         }
 
         public void choqueFuerteConParedOLateral()
