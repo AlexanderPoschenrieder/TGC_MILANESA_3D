@@ -152,7 +152,7 @@ namespace AlumnoEjemplos.MiGrupo
 
             //Mover Auto
             mainCar.elapsedTime = elapsedTime;
-            mainCar.Mover();
+            mainCar.Mover(elapsedTime);
             //
 
             //scene.renderAll();

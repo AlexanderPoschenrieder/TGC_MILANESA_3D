@@ -19,7 +19,8 @@ namespace AlumnoEjemplos.MiGrupo
         const float CONSTANTEFRENAR = 800f;
         const float CONSTANTEMARCHAATRAS = 400f;
         const float ROZAMIENTOCOEF = 200f;
-        const float DELTA_T = 0.1f;
+        const float DELTA_T = 0.000000001f;
+        const float CONST_SALTO = 0.1f;
         const float ALTURA_MAXIMA = 100;
         const float GRAVEDAD = -9.81f;
 
@@ -70,8 +71,9 @@ namespace AlumnoEjemplos.MiGrupo
         #endregion
 
         #region Métodos
-        public void Mover()
+        public void Mover(float et)
         {
+            this.elapsedTime = et;
             ///////////////INPUT//////////////////
             //conviene deshabilitar ambas camaras para que no haya interferencia
             TgcD3dInput input = GuiController.Instance.D3dInput;
@@ -129,7 +131,7 @@ namespace AlumnoEjemplos.MiGrupo
             chequearPiso(elapsedTime);
             aplicarGravedad(elapsedTime);
 
-            if (meshAuto.Position.Y + velocidadVertical * DELTA_T < 0)
+            if (meshAuto.Position.Y + velocidadVertical * CONST_SALTO < 0)
             {
                 meshAuto.move(new Vector3(0, meshAuto.Position.Y * -1, 0));
                 obb.move(new Vector3(0, meshAuto.Position.Y * -1, 0));
@@ -137,8 +139,8 @@ namespace AlumnoEjemplos.MiGrupo
             }
             else
             {
-                meshAuto.move(new Vector3(0, velocidadVertical * DELTA_T, 0));
-                obb.move(new Vector3(0, velocidadVertical * DELTA_T, 0));
+                meshAuto.move(new Vector3(0, velocidadVertical * CONST_SALTO, 0));
+                obb.move(new Vector3(0, velocidadVertical * CONST_SALTO, 0));
             }
 
         }
@@ -167,18 +169,22 @@ namespace AlumnoEjemplos.MiGrupo
 
         public void choqueFuerteConParedOLateral()
         {
-
         }
 
         public void chequearColisiones()
         {
             int i = 0;
-            float dt = DELTA_T * 2;
+            float dt = DELTA_T * 2 * elapsedTime;
+
+            Vector3 originalPos = meshAuto.Position;
+            Vector3 originalObbPos = obb.Position;
 
             while (i < 5)
             {
                 i++;
                 dt = dt / 2;
+
+                float velocidadHorInicial = velocidadHorizontal;
 
                 Vector3 lastPos = meshAuto.Position;
                 this.meshAuto.Rotation = new Vector3(0f, this.rotacion, 0f);
@@ -245,12 +251,18 @@ namespace AlumnoEjemplos.MiGrupo
 
                 }
 
-                obb.move(-direccionMovimiento * velocidadHorizontal * dt);
+                else {
+                    obb.move(-direccionMovimiento * velocidadHorInicial * dt);
+                    meshAuto.Position = lastPos;
+                    break;
+                }
+
+                obb.move(-direccionMovimiento * velocidadHorInicial * dt);
                 meshAuto.Position = lastPos;
-
-
+                
                 continue;
             }
+            
         }
 
         private void MoverMesh()
