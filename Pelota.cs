@@ -18,7 +18,7 @@ namespace AlumnoEjemplos.MiGrupo
     {
         EjemploAlumno parent;
         Vector3 pos;
-       public  Vector3 velocity;
+        public  Vector3 velocity;
 
         Matrix scale = Matrix.Identity;
         Matrix translate = Matrix. Identity;

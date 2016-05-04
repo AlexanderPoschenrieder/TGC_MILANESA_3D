@@ -21,12 +21,15 @@ namespace AlumnoEjemplos.MiGrupo
         const float ROZAMIENTOCOEF = 200f;
         const float DELTA_T = 0.1f;
         const float ALTURA_MAXIMA = 100;
+        const float GRAVEDAD = -9.81f;
 
         #endregion
 
         #region Atributos
 
-        public float velocidad;
+        public float velocidadHorizontal;
+        public float velocidadVertical;
+
         float velocidadMaxima = -1500f;
         float velocidadMinima = 2000f;
         public float rotacion;
@@ -36,13 +39,19 @@ namespace AlumnoEjemplos.MiGrupo
         float direccion;
         public TgcObb obb;
         EjemploAlumno parent;
-        bool subiendo=false;
         bool saltando = false;
 
+        public bool subiendo
+        {
+            get
+            {
+                return velocidadVertical > 0;
+            }
+        }
         #endregion
 
         #region Constructor
-        
+
         public Auto(TgcMesh mesh, EjemploAlumno p)
         {
             parent = p;
@@ -79,9 +88,9 @@ namespace AlumnoEjemplos.MiGrupo
             {
                 if (!saltando)
                 {
-                    Acelerar(CONSTANTEAVANZAR);    
+                    Acelerar(CONSTANTEAVANZAR);
                 }
-                
+
             }
             else if (input.keyDown(Key.Down) || input.keyDown(Key.S))
             {
@@ -89,11 +98,10 @@ namespace AlumnoEjemplos.MiGrupo
                 {
                     Retroceder();
                 }
-                
             }
             else
             {
-                Acelerar(0);    
+                Acelerar(0);
             }
 
             if (input.keyDown(Key.Space))
@@ -101,56 +109,61 @@ namespace AlumnoEjemplos.MiGrupo
                 if (!saltando)
                 {
                     saltando = true;
-                    subiendo = true;
+                    velocidadVertical = 100;
                 }
             }
 
-            
+
             chequearColisiones();
             MoverMesh();
             Saltar();
         }
 
-        private void Saltar()
+        public void Saltar()
         {
-            if(!saltando)
+            if (!saltando)
             {
                 return;
             }
-            
-            float posX =meshAuto.Position.X;
-            float posY =meshAuto.Position.Y;
-            float posZ =meshAuto.Position.Z;
 
-            float movY=0;
-            if (subiendo)
+            chequearPiso(elapsedTime);
+            aplicarGravedad(elapsedTime);
+
+            if (meshAuto.Position.Y + velocidadVertical * DELTA_T < 0)
             {
-                if (posY < ALTURA_MAXIMA)
-                {
-                    movY = elapsedTime*100;
-                }
-                else
-                {
-                    subiendo = false;
-                }
+                meshAuto.move(new Vector3(0, meshAuto.Position.Y * -1, 0));
+                obb.move(new Vector3(0, meshAuto.Position.Y * -1, 0));
+                saltando = false;
             }
-            else if (!subiendo)
+            else
             {
-                if (posY > 0)
-                {
-                    movY = -1* elapsedTime * 100;
-                }
-                else
-                {
-                    saltando=false;
-                }
+                meshAuto.move(new Vector3(0, velocidadVertical * DELTA_T, 0));
+                obb.move(new Vector3(0, velocidadVertical * DELTA_T, 0));
             }
-
-            meshAuto.move(new Vector3(0,movY,0));
-            obb.move(new Vector3(0,movY,0));
-
 
         }
+
+        public void aplicarGravedad(float elapsedTime)
+        {
+            velocidadVertical += GRAVEDAD * 20f * elapsedTime;
+        }
+
+        private void chequearPiso(float elapsedTime)
+        {
+            //if (TgcCollisionUtils.testObbAABB(obb, parent.piso))
+            //{
+            //    if (!subiendo)
+            //    {
+            //        if (FastMath.Abs(velocidadVertical) < 0.2)
+            //        {
+            //            saltando = false;
+            //        }
+            //        velocidadVertical = -(velocidadVertical);
+            //        velocidadVertical = velocidadVertical * 0.2f; //rozamiento con el piso
+            //    }
+            //}
+        }
+
 
         public void choqueFuerteConParedOLateral()
         {
@@ -169,11 +182,11 @@ namespace AlumnoEjemplos.MiGrupo
 
                 Vector3 lastPos = meshAuto.Position;
                 this.meshAuto.Rotation = new Vector3(0f, this.rotacion, 0f);
-                meshAuto.moveOrientedY(-this.velocidad * dt);
+                meshAuto.moveOrientedY(-this.velocidadHorizontal * dt);
                 Vector3 direccionMovimiento = Vector3.Normalize(lastPos - meshAuto.Position);
-                
-                
-                obb.move(direccionMovimiento * velocidad * dt);
+
+
+                obb.move(direccionMovimiento * velocidadHorizontal * dt);
 
                 float gradoDeProyeccionAlLateral = Vector3.Dot(direccionMovimiento, new Vector3(0, 0, 1));
                 float gradoDeProyeccionALaPared = Vector3.Dot(direccionMovimiento, new Vector3(1, 0, 0));
@@ -181,29 +194,29 @@ namespace AlumnoEjemplos.MiGrupo
 
                 foreach (TgcBoundingBox lateral in parent.laterales)
                 {
-                    if(TgcCollisionUtils.testObbAABB(obb, lateral))
+                    if (TgcCollisionUtils.testObbAABB(obb, lateral))
                     {
                         if (FastMath.Abs(gradoDeProyeccionAlLateral) < 0.4)
                         {
-                            velocidad = -velocidad * 0.5f;
+                            velocidadHorizontal = -velocidadHorizontal * 0.5f;
                             choqueFuerteConParedOLateral();
                         }
                         else
                         {
                             if (gradoDeProyeccionAlLateral > 0) rotacion = 0;
                             else rotacion = FastMath.PI;
-                            velocidad = velocidad * FastMath.Abs(gradoDeProyeccionAlLateral);
+                            velocidadHorizontal = velocidadHorizontal * FastMath.Abs(gradoDeProyeccionAlLateral);
                         }
                     }
                 }
 
                 foreach (TgcBoundingBox pared in parent.paredes)
                 {
-                    if(TgcCollisionUtils.testObbAABB(obb, pared))
+                    if (TgcCollisionUtils.testObbAABB(obb, pared))
                     {
                         if (FastMath.Abs(gradoDeProyeccionALaPared) < 0.4)
                         {
-                            velocidad = -velocidad * 0.5f;
+                            velocidadHorizontal = -velocidadHorizontal * 0.5f;
                             choqueFuerteConParedOLateral();
                         }
                         else
@@ -211,7 +224,7 @@ namespace AlumnoEjemplos.MiGrupo
 
                             if (gradoDeProyeccionALaPared > 0) rotacion = FastMath.PI_HALF;
                             else rotacion = 3 * FastMath.PI_HALF;
-                            velocidad = velocidad * FastMath.Abs(gradoDeProyeccionALaPared);
+                            velocidadHorizontal = velocidadHorizontal * FastMath.Abs(gradoDeProyeccionALaPared);
                         }
                     }
                 }
@@ -225,14 +238,14 @@ namespace AlumnoEjemplos.MiGrupo
 
                     TgcRay ray = new TgcRay(lastPos, spherePosition - lastPos);
                     TgcCollisionUtils.intersectRayObb(ray, obb, out collisionPos);
-                    
 
-                    parent.pelota.velocity = parent.pelota.velocity + (0.005f*(spherePosition - collisionPos) * this.velocidad);
-                    this.velocidad = this.velocidad * (i/3);
-                    
+
+                    parent.pelota.velocity = parent.pelota.velocity + (0.005f * (spherePosition - collisionPos) * this.velocidadHorizontal);
+                    this.velocidadHorizontal = this.velocidadHorizontal * (i / 3);
+
                 }
 
-                obb.move(-direccionMovimiento * velocidad * dt);
+                obb.move(-direccionMovimiento * velocidadHorizontal * dt);
                 meshAuto.Position = lastPos;
 
 
@@ -244,34 +257,34 @@ namespace AlumnoEjemplos.MiGrupo
         {
             Vector3 lastPos = meshAuto.Position;
             this.meshAuto.Rotation = new Vector3(0f, this.rotacion, 0f);
-            meshAuto.moveOrientedY(-this.velocidad * elapsedTime);
-            GuiController.Instance.UserVars.setValue("Velocidad", TgcParserUtils.printFloat(velocidad));
+            meshAuto.moveOrientedY(-this.velocidadHorizontal * elapsedTime);
+            GuiController.Instance.UserVars.setValue("Velocidad", TgcParserUtils.printFloat(velocidadHorizontal));
 
             Vector3 newPos = meshAuto.Position;
             obb.setRotation(new Vector3(0f, this.rotacion, 0f));
-            
+
             obb.move(newPos - lastPos);
-           
+
         }
 
 
         public void Retroceder()
         {
-            if (velocidad > 0) Frenar();
-            if (velocidad < 0) MarchaAtras();
+            if (velocidadHorizontal > 0) Frenar();
+            if (velocidadHorizontal < 0) MarchaAtras();
         }
 
         public void Rotar(float unaDireccion)
         {
-            if (velocidad == 0)
+            if (velocidadHorizontal == 0)
             {
                 return;
             }
 
             direccion = unaDireccion;
-            rotacion += (elapsedTime * direccion * (velocidad / 1000)); //direccion puede ser 1 o -1, 1 es derecha y -1 izquierda
+            rotacion += (elapsedTime * direccion * (velocidadHorizontal / 1000)); //direccion puede ser 1 o -1, 1 es derecha y -1 izquierda
             AjustarRotacion();
-            
+
         }
 
         public float RotarRueda(int i)
@@ -287,14 +300,14 @@ namespace AlumnoEjemplos.MiGrupo
 
         private void Acelerar(float aumento)
         {
-            velocidad += (aumento - Rozamiento()) * elapsedTime;
+            velocidadHorizontal += (aumento - Rozamiento()) * elapsedTime;
             AjustarVelocidad();
         }
 
         public void AjustarVelocidad()
         {
-            if (velocidad > velocidadMinima) velocidad = velocidadMinima;
-            if (velocidad < velocidadMaxima) velocidad = velocidadMaxima;
+            if (velocidadHorizontal > velocidadMinima) velocidadHorizontal = velocidadMinima;
+            if (velocidadHorizontal < velocidadMaxima) velocidadHorizontal = velocidadMaxima;
         }
 
         public void EstablecerVelocidadMáximaEn(float velMaxima)
@@ -304,7 +317,7 @@ namespace AlumnoEjemplos.MiGrupo
 
         public float Rozamiento()
         {
-            return ROZAMIENTOCOEF * Math.Sign(velocidad);
+            return ROZAMIENTOCOEF * Math.Sign(velocidadHorizontal);
         }
 
         private void Frenar()
