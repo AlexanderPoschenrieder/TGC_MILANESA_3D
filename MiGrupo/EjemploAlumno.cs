@@ -86,7 +86,7 @@ namespace AlumnoEjemplos.MiGrupo
             txtScoreVisitante.Position = new Point(600, 100);
             txtScoreVisitante.Size = new Size(300, 100);
 
-
+            
 
             TgcSceneLoader loader = new TgcSceneLoader();
             scene = loader.loadSceneFromFile(sceneFolder + "Futbol\\indoor+fieldx150-TgcScene.xml");
@@ -152,7 +152,7 @@ namespace AlumnoEjemplos.MiGrupo
 
             //Mover Auto
             mainCar.elapsedTime = elapsedTime;
-            mainCar.Mover();
+            mainCar.Mover(elapsedTime);
             //
 
             //scene.renderAll();
