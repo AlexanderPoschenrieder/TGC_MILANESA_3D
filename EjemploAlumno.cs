@@ -175,7 +175,7 @@ namespace AlumnoEjemplos.MiGrupo
             arcoPositivo.render();
             arcoNegativo.render();
             piso.render();
-            mainCar.meshAuto.render();
+            mainCar.render();
             mainCar.obb.render();
             txtScoreLocal.render();
             txtScoreVisitante.render();

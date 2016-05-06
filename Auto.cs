@@ -49,6 +49,14 @@ namespace AlumnoEjemplos.MiGrupo
                 return velocidadVertical > 0;
             }
         }
+
+        public bool bajando
+        {
+            get
+            {
+                return velocidadVertical < 0;
+            }
+        }
         #endregion
 
         #region Constructor
@@ -117,8 +125,8 @@ namespace AlumnoEjemplos.MiGrupo
 
 
             chequearColisiones();
-            MoverMesh();
             Saltar();
+            MoverMesh();
         }
 
         public void Saltar()
@@ -127,22 +135,19 @@ namespace AlumnoEjemplos.MiGrupo
             {
                 return;
             }
-
-            chequearPiso(elapsedTime);
-            aplicarGravedad(elapsedTime);
-
-            if (meshAuto.Position.Y + velocidadVertical * CONST_SALTO < 0)
+            int i;
+            for (i = 0; i <= 5; i++)
             {
-                meshAuto.move(new Vector3(0, meshAuto.Position.Y * -1, 0));
-                obb.move(new Vector3(0, meshAuto.Position.Y * -1, 0));
-                saltando = false;
-            }
-            else
-            {
+                if (bajando && chocaPiso())
+                {
+                    break;
+                }
+
                 meshAuto.move(new Vector3(0, velocidadVertical * CONST_SALTO, 0));
                 obb.move(new Vector3(0, velocidadVertical * CONST_SALTO, 0));
+                aplicarGravedad(elapsedTime);
+                break;
             }
-
         }
 
         public void aplicarGravedad(float elapsedTime)
@@ -150,20 +155,18 @@ namespace AlumnoEjemplos.MiGrupo
             velocidadVertical += GRAVEDAD * 20f * elapsedTime;
         }
 
-        private void chequearPiso(float elapsedTime)
+        private bool chocaPiso()
         {
-            //if (TgcCollisionUtils.testObbAABB(obb, parent.piso))
-            //{
-            //    if (!subiendo)
-            //    {
-            //        if (FastMath.Abs(velocidadVertical) < 0.2)
-            //        {
-            //            saltando = false;
-            //        }
-            //        velocidadVertical = -(velocidadVertical);
-            //        velocidadVertical = velocidadVertical * 0.2f; //rozamiento con el piso
-            //    }
-            //}
+            if (TgcCollisionUtils.testObbAABB(obb, parent.piso))
+            {
+                meshAuto.move(new Vector3(0, meshAuto.Position.Y * -1, 0));
+                obb.move(new Vector3(0, meshAuto.Position.Y * -1, 0));
+                saltando = false;
+                return true;
+            }
+
+            return false;
+
         }
 
 
@@ -251,7 +254,8 @@ namespace AlumnoEjemplos.MiGrupo
 
                 }
 
-                else {
+                else
+                {
                     obb.move(-direccionMovimiento * velocidadHorInicial * dt);
                     meshAuto.Position = lastPos;
                     break;
@@ -259,10 +263,10 @@ namespace AlumnoEjemplos.MiGrupo
 
                 obb.move(-direccionMovimiento * velocidadHorInicial * dt);
                 meshAuto.Position = lastPos;
-                
+
                 continue;
             }
-            
+
         }
 
         private void MoverMesh()
@@ -368,6 +372,11 @@ namespace AlumnoEjemplos.MiGrupo
         public float GetRotacion()
         {
             return this.rotacion;
+        }
+
+        public void render()
+        {
+            meshAuto.render();
         }
 
         #endregion
