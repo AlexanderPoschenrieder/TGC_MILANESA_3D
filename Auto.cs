@@ -159,8 +159,10 @@ namespace AlumnoEjemplos.MiGrupo
         {
             if (TgcCollisionUtils.testObbAABB(obb, parent.piso))
             {
-                meshAuto.move(new Vector3(0, meshAuto.Position.Y * -1, 0));
                 obb.move(new Vector3(0, meshAuto.Position.Y * -1, 0));
+                meshAuto.move(new Vector3(0, meshAuto.Position.Y * -1, 0));
+                
+                
                 saltando = false;
                 return true;
             }
@@ -177,7 +179,7 @@ namespace AlumnoEjemplos.MiGrupo
         public void chequearColisiones()
         {
             int i = 0;
-            float dt = DELTA_T * 2 * elapsedTime;
+            float dt = DELTA_T * 2 * elapsedTime * 0.01f;
 
             Vector3 originalPos = meshAuto.Position;
             Vector3 originalObbPos = obb.Position;
