@@ -211,7 +211,7 @@ namespace AlumnoEjemplos.MiGrupo
                         if (FastMath.Abs(gradoDeProyeccionAlLateral) < 0.4)
                         {
                             velocidadHorizontal = -velocidadHorizontal * 0.5f;
-                            velocidadHorizontal = velocidadHorizontal - 1 * Math.Sign(velocidadHorInicial); ;
+                            
                             choqueFuerteConParedOLateral();
                         }
                         else
@@ -220,6 +220,7 @@ namespace AlumnoEjemplos.MiGrupo
                             else rotacion = FastMath.PI;
                             velocidadHorizontal = velocidadHorizontal * FastMath.Abs(gradoDeProyeccionAlLateral);
                         }
+                        velocidadHorizontal = velocidadHorizontal - 10 * Math.Sign(velocidadHorInicial);
                     }
                 }
 
@@ -230,7 +231,7 @@ namespace AlumnoEjemplos.MiGrupo
                         if (FastMath.Abs(gradoDeProyeccionALaPared) < 0.4)
                         {
                             velocidadHorizontal = -velocidadHorizontal * 0.5f;
-                            velocidadHorizontal = velocidadHorizontal - 1 * Math.Sign(velocidadHorInicial);
+                            
                             choqueFuerteConParedOLateral();
                         }
                         else
@@ -240,6 +241,7 @@ namespace AlumnoEjemplos.MiGrupo
                             else rotacion = 3 * FastMath.PI_HALF;
                             velocidadHorizontal = velocidadHorizontal * FastMath.Abs(gradoDeProyeccionALaPared);
                         }
+                        velocidadHorizontal = velocidadHorizontal - 10 * Math.Sign(velocidadHorInicial);
                     }
                 }
 

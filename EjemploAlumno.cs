@@ -32,7 +32,7 @@ namespace AlumnoEjemplos.MiGrupo
         public int scoreLocal = 0;
         public int scoreVisitante = 0;
 
-        public List<Auto> autitus = new List<Auto>();
+        public List<Auto> autitus;
         public List<TgcBoundingBox> paredes; 
         public List<TgcBoundingBox> laterales; 
 
@@ -108,6 +108,8 @@ namespace AlumnoEjemplos.MiGrupo
             laterales.Add(lateralPositivo);
 
             pelota = new Pelota(this);
+
+            autitus = new List<Auto>();
 
             mainCar = new Auto(mainCarMesh, this);
             autitus.Add(mainCar);
