@@ -33,8 +33,8 @@ namespace AlumnoEjemplos.MiGrupo
         public int scoreVisitante = 0;
 
         public List<Auto> autitus = new List<Auto>();
-        public List<TgcBoundingBox> paredes = new List<TgcBoundingBox>();
-        public List<TgcBoundingBox> laterales = new List<TgcBoundingBox>();
+        public List<TgcBoundingBox> paredes; 
+        public List<TgcBoundingBox> laterales; 
 
         public TgcBoundingBox piso = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-7000, -100, -11000), new Vector3(0, 0, 0), new Vector3(7000, 0, 11000) });
         public TgcBoundingBox arcoPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 0, 11000), new Vector3(500, 400, 12000) });
@@ -93,6 +93,10 @@ namespace AlumnoEjemplos.MiGrupo
             mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
 
             GuiController.Instance.UserVars.addVar("Velocidad");
+
+
+            paredes = new List<TgcBoundingBox>();
+            laterales = new List<TgcBoundingBox>();
 
             paredes.Add(paredArcoNegativo3);
             paredes.Add(paredArcoNegativo2);

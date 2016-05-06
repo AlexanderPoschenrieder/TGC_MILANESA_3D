@@ -159,10 +159,11 @@ namespace AlumnoEjemplos.MiGrupo
         {
             if (TgcCollisionUtils.testObbAABB(obb, parent.piso))
             {
+
                 obb.move(new Vector3(0, meshAuto.Position.Y * -1, 0));
                 meshAuto.move(new Vector3(0, meshAuto.Position.Y * -1, 0));
                 
-                
+
                 saltando = false;
                 return true;
             }
@@ -210,6 +211,7 @@ namespace AlumnoEjemplos.MiGrupo
                         if (FastMath.Abs(gradoDeProyeccionAlLateral) < 0.4)
                         {
                             velocidadHorizontal = -velocidadHorizontal * 0.5f;
+                            velocidadHorizontal = velocidadHorizontal - 1 * Math.Sign(velocidadHorInicial); ;
                             choqueFuerteConParedOLateral();
                         }
                         else
@@ -228,6 +230,7 @@ namespace AlumnoEjemplos.MiGrupo
                         if (FastMath.Abs(gradoDeProyeccionALaPared) < 0.4)
                         {
                             velocidadHorizontal = -velocidadHorizontal * 0.5f;
+                            velocidadHorizontal = velocidadHorizontal - 1 * Math.Sign(velocidadHorInicial);
                             choqueFuerteConParedOLateral();
                         }
                         else
