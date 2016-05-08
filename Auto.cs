@@ -295,7 +295,7 @@ namespace AlumnoEjemplos.MiGrupo
         public void Retroceder()
         {
             if (velocidadHorizontal > 0) Frenar();
-            if (velocidadHorizontal < 0) MarchaAtras();
+            if (velocidadHorizontal <= 0) MarchaAtras();
         }
 
         public void Rotar(float unaDireccion)
