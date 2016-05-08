@@ -15,7 +15,7 @@ namespace AlumnoEjemplos.MiGrupo
     {
         #region Constantes
 
-        float aceleracion = 600f;
+        protected float aceleracion = 600f;
         const float CONSTANTEFRENAR = 800f;
         const float CONSTANTEMARCHAATRAS = 400f;
         const float ROZAMIENTOCOEF = 200f;
@@ -32,16 +32,17 @@ namespace AlumnoEjemplos.MiGrupo
         public float velocidadHorizontal;
         public float velocidadVertical;
 
-        float velocidadMaxima = -1500f;
-        float velocidadMinima = 2000f;
+        protected float velocidadMaxima = -1500f;
+        protected float velocidadMinima = 2000f;
         public float rotacion;
         public float elapsedTime;
-        List<TgcViewer.Utils.TgcSceneLoader.TgcMesh> ruedas;
+        protected List<TgcViewer.Utils.TgcSceneLoader.TgcMesh> ruedas;
         public TgcMesh meshAuto;
-        float direccion;
+        protected float direccion;
         public TgcObb obb;
-        EjemploAlumno parent;
-        bool saltando = false;
+        protected EjemploAlumno parent;
+        protected bool saltando = false;
+        public Vector3 direccionMovimiento = new Vector3(0,0,0);
 
         public bool subiendo
         {
@@ -83,19 +84,28 @@ namespace AlumnoEjemplos.MiGrupo
         public void Mover(float et)
         {
             this.elapsedTime = et;
+            CalcularMovimiento();
+
+            chequearColisiones();
+            Saltar();
+            MoverMesh();
+        }
+
+        protected virtual void CalcularMovimiento()
+        {
             ///////////////INPUT//////////////////
             //conviene deshabilitar ambas camaras para que no haya interferencia
             TgcD3dInput input = GuiController.Instance.D3dInput;
-            if (input.keyDown(Key.Left) || input.keyDown(Key.A))
+            if (input.keyDown(Key.A))
             {
                 Rotar(-1);
             }
-            else if (input.keyDown(Key.Right) || input.keyDown(Key.D))
+            else if (input.keyDown(Key.D))
             {
                 Rotar(1);
             }
 
-            if (input.keyDown(Key.Up) || input.keyDown(Key.W))
+            if (input.keyDown(Key.W))
             {
                 if (!saltando)
                 {
@@ -103,7 +113,7 @@ namespace AlumnoEjemplos.MiGrupo
                 }
 
             }
-            else if (input.keyDown(Key.Down) || input.keyDown(Key.S))
+            else if (input.keyDown(Key.S))
             {
                 if (!saltando)
                 {
@@ -115,6 +125,15 @@ namespace AlumnoEjemplos.MiGrupo
                 Acelerar(0);
             }
 
+            if (!saltando && input.keyDown(Key.LeftControl))
+            {
+                if (velocidadHorizontal != 0)
+                {
+                    FrenoDeMano();
+                }
+                
+            }
+
             if (input.keyDown(Key.Space))
             {
                 if (!saltando)
@@ -123,11 +142,6 @@ namespace AlumnoEjemplos.MiGrupo
                     velocidadVertical = 100;
                 }
             }
-
-
-            chequearColisiones();
-            Saltar();
-            MoverMesh();
         }
 
         public void Saltar()
@@ -173,7 +187,6 @@ namespace AlumnoEjemplos.MiGrupo
 
         }
 
-
         public void choqueFuerteConParedOLateral()
         {
         }
@@ -196,7 +209,7 @@ namespace AlumnoEjemplos.MiGrupo
                 Vector3 lastPos = meshAuto.Position;
                 this.meshAuto.Rotation = new Vector3(0f, this.rotacion, 0f);
                 meshAuto.moveOrientedY(-this.velocidadHorizontal * dt);
-                Vector3 direccionMovimiento = Vector3.Normalize(lastPos - meshAuto.Position);
+                direccionMovimiento = Vector3.Normalize(lastPos - meshAuto.Position);
 
 
                 obb.move(direccionMovimiento * velocidadHorizontal * dt);
@@ -246,6 +259,27 @@ namespace AlumnoEjemplos.MiGrupo
                     }
                 }
 
+                foreach (var auto in parent.autitus)
+                {
+                    if (auto.Equals(this))
+                    {
+                        continue;
+                    }
+
+                    if (TgcCollisionUtils.testObbObb(obb, auto.obb))
+                    {
+                        var anguloChoque = Vector3.Dot(direccionMovimiento, auto.direccionMovimiento);
+                        if (FastMath.Abs(anguloChoque) < 0.4)
+                        {
+                           
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                }
+
                 if (TgcCollisionUtils.testSphereOBB(parent.pelota.ownSphere.BoundingSphere, obb))
                 {
 
@@ -291,7 +325,6 @@ namespace AlumnoEjemplos.MiGrupo
 
         }
 
-
         public void Retroceder()
         {
             if (velocidadHorizontal > 0) Frenar();
@@ -322,7 +355,7 @@ namespace AlumnoEjemplos.MiGrupo
         //Metodos Internos
         //De Velocidad
 
-        private void Acelerar(float aumento)
+        protected void Acelerar(float aumento)
         {
             velocidadHorizontal += (aumento - Rozamiento()) * elapsedTime;
             AjustarVelocidad();
@@ -351,7 +384,8 @@ namespace AlumnoEjemplos.MiGrupo
 
         public void FrenoDeMano()
         {
-            Acelerar(-CONSTANTEFRENAR * 2.5f);
+            var k = velocidadHorizontal > 0 ? -1 : 1;
+            Acelerar(k*CONSTANTEFRENAR * 2.5f);
         }
 
         public void MarchaAtras()

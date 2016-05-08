@@ -12,6 +12,7 @@ using TgcViewer.Utils.TgcSceneLoader;
 using TgcViewer.Utils._2D;
 using TgcViewer.Utils.Input;
 using Microsoft.DirectX.DirectInput;
+using System.Windows.Forms;
 
 namespace AlumnoEjemplos.MiGrupo
 {
@@ -20,14 +21,22 @@ namespace AlumnoEjemplos.MiGrupo
     {
 
         TgcScene scene;
-        TgcMesh mainCarMesh;
+        TgcMesh mainCarMesh,secondCarMesh;
         Auto mainCar;
-        TwoTargetsCamera camaraPelota = new TwoTargetsCamera();
-        TgcThirdPersonCamera camaraAuto = GuiController.Instance.ThirdPersonCamera;
+        Auto2 secondCar;
+        TgcCamera camaraActiva1, camaraActiva2;
+
+        TwoTargetsCamera camaraPelota1 = new TwoTargetsCamera();
+        TgcThirdPersonCamera camaraAuto1 = new TgcThirdPersonCamera();
+
+        TwoTargetsCamera camaraPelota2 = new TwoTargetsCamera();
+        TgcThirdPersonCamera camaraAuto2 = new TgcThirdPersonCamera();
+
         public Pelota pelota;
         TgcText2d txtScoreLocal = new TgcText2d();
         TgcText2d txtScoreVisitante = new TgcText2d();
-
+        Viewport View1, View2, ViewF;
+        bool splitScreen = false;
 
         public int scoreLocal = 0;
         public int scoreVisitante = 0;
@@ -77,7 +86,7 @@ namespace AlumnoEjemplos.MiGrupo
 
         public override void init()
         {
-            
+
             txtScoreLocal.Text = scoreLocal.ToString();
             txtScoreLocal.Position = new Point(300, 100);
             txtScoreLocal.Size = new Size(300, 100);
@@ -86,12 +95,11 @@ namespace AlumnoEjemplos.MiGrupo
             txtScoreVisitante.Position = new Point(600, 100);
             txtScoreVisitante.Size = new Size(300, 100);
 
-            
-
             TgcSceneLoader loader = new TgcSceneLoader();
             scene = loader.loadSceneFromFile(sceneFolder + "ss2\\IndoorSoccerField--TgcScene.xml");
             
             mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
+            secondCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Hummer\\Hummer-TgcScene.xml").Meshes[0];
 
             GuiController.Instance.UserVars.addVar("Velocidad");
 
@@ -115,17 +123,46 @@ namespace AlumnoEjemplos.MiGrupo
 
             autitus = new List<Auto>();
 
+            SetCarPositions();
+            CreateViewports();
+            initCarCameras();
+        }
+
+        private void SetCarPositions()
+        {
+            var direccion = arcoNegativo.Position - arcoPositivo.Position;
+            var pos1=Vector3.Add(arcoPositivo.calculateBoxCenter(), Vector3.Multiply(direccion,0.1f));
+            var pos2 = Vector3.Add(arcoNegativo.calculateBoxCenter(), Vector3.Multiply(direccion, -0.1f));
+
+            mainCarMesh.Position = new Vector3(pos1.X, 0, pos1.Z);
             mainCar = new Auto(mainCarMesh, this);
             autitus.Add(mainCar);
 
+            secondCar = new Auto2(secondCarMesh, this);
+            secondCarMesh.Position = new Vector3(pos2.X, 0, pos2.Z);
+            secondCarMesh.rotateY(FastMath.PI);
+            autitus.Add(secondCar);
+        }
+        
+        private void CreateViewports()
+        {
+            Control panel3d = GuiController.Instance.Panel3d;
+            View1 = new Viewport();
+            View1.X = 0;
+            View1.Y = 0;
+            View1.Width = panel3d.Width;
+            View1.Height = panel3d.Height / 2;
+            View1.MinZ = 0;
+            View1.MaxZ = 1;
+            View2 = new Viewport();
+            View2.X = 0;
+            View2.Y = View1.Height;
+            View2.Width = panel3d.Width;
+            View2.Height = panel3d.Height / 2;
+            View2.MinZ = 0;
+            View2.MaxZ = 1;
 
-            //GuiController.Instance: acceso principal a todas las herramientas del Framework
-
-            //Device de DirectX para crear primitivas
-            var d3dDevice = GuiController.Instance.D3dDevice;
-            GuiController.Instance.RotCamera.CameraDistance = 100;
-            initCarCamera();
-
+            ViewF = GuiController.Instance.D3dDevice.Viewport;
         }
 
 
@@ -133,97 +170,125 @@ namespace AlumnoEjemplos.MiGrupo
         /// <param name="elapsedTime">Tiempo en segundos transcurridos desde el último frame</param>
         public override void render(float elapsedTime)
         {
-
-            //Device de DirectX para renderizar
-            var d3dDevice = GuiController.Instance.D3dDevice;
-
-
-            //conviene deshabilitar ambas camaras para que no haya interferencia
-
-            //Capturar Input teclado 
-            if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.F))
-            {
-
-                //Tecla F apretada
-            }
-
-            if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.Space))
-            {
-
-            }
-
-            //Capturar Input Mouse
-            if (GuiController.Instance.D3dInput.buttonPressed(TgcViewer.Utils.Input.TgcD3dInput.MouseButtons.BUTTON_LEFT))
-            {
-                //Boton izq apretado
-            }
-
-
-
+            
             //Mover Auto
             mainCar.elapsedTime = elapsedTime;
             mainCar.Mover(elapsedTime);
-            //
-
-            //scene.renderAll();
-
+            secondCar.elapsedTime = elapsedTime;
+            secondCar.Mover(elapsedTime);
 
             pelota.mover(elapsedTime);
             pelota.updateValues();
-            pelota.render();
 
-            foreach(TgcBoundingBox p in paredes)
+            SetCarCamera();
+            SetViewport();
+            RenderAll();
+        }
+
+        private void RenderAll()
+        {
+            if (splitScreen)
+            {
+                
+                GuiController.Instance.D3dDevice.Viewport = View1;
+                camaraActiva1.Enable=true;
+                RenderAllObjects();
+
+                GuiController.Instance.D3dDevice.Viewport = View2;
+                camaraActiva2.Enable = true;
+                RenderAllObjects();
+
+            }
+            else
+            {
+                camaraActiva1.updateCamera();
+                GuiController.Instance.D3dDevice.Viewport = ViewF;
+                camaraActiva1.Enable = true;
+                RenderAllObjects();
+            }
+        }
+
+        private void RenderAllObjects()
+        {
+            pelota.render();
+            foreach (TgcBoundingBox p in paredes)
             {
                 p.render();
             }
-
             foreach (TgcBoundingBox l in laterales)
             {
                 l.render();
             }
-
             arcoPositivo.render();
             arcoNegativo.render();
             scene.renderAll();
             piso.render();
             mainCar.render();
             mainCar.obb.render();
+            secondCar.render();
+            secondCar.obb.render();
             txtScoreLocal.render();
             txtScoreVisitante.render();
-            SetCarCamera();
+        }
+
+        private void SetViewport()
+        {
+            if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.V))
+            {
+                if (splitScreen)
+                    splitScreen = false;
+                else
+                    splitScreen = true;
+            }
+            
         }
 
         private void SetCarCamera()
         {
             var pelotaPos = pelota.ownSphere.Position;
             var autoPos = mainCarMesh.Position;
+            var auto2Pos = secondCarMesh.Position;
              ///////////////INPUT//////////////////
             //conviene deshabilitar ambas camaras para que no haya interferencia
             TgcD3dInput input = GuiController.Instance.D3dInput;
             if (input.keyDown(Key.LeftShift))
             {
-                camaraPelota.FirstTarget = autoPos;
-                camaraPelota.SecondTarget = pelotaPos;
-                camaraPelota.Enable=true;;
-                camaraPelota.updateCamera();
+                camaraPelota1.FirstTarget = autoPos;
+                camaraPelota1.SecondTarget = pelotaPos;
+                camaraActiva1 = camaraPelota1;
             }
             else
             {
-                camaraAuto.Enable = true;
-                camaraAuto.RotationY = mainCar.rotacion;
-                camaraAuto.Target = mainCar.meshAuto.Position;
-                camaraAuto.updateCamera();
+                camaraAuto1.RotationY = mainCar.rotacion;
+                camaraAuto1.Target = mainCar.meshAuto.Position;
+                camaraActiva1 = camaraAuto1;
             }
+            /////////////////INPUT//////////////////
+            //conviene deshabilitar ambas camaras para que no haya interferencia
+            if (input.keyDown(Key.RightShift))
+            {
+                camaraPelota2.FirstTarget = auto2Pos;
+                camaraPelota2.SecondTarget = pelotaPos;
+                camaraActiva2 = camaraPelota2;
+            }
+            else
+            {
+                camaraAuto2.RotationY = secondCar.rotacion;
+                camaraAuto2.Target = secondCar.meshAuto.Position;
+                camaraActiva2 = camaraAuto2;
+            }
+            
             
         }
 
-        private void initCarCamera()
+        private void initCarCameras()
         {
-            camaraAuto.setCamera(mainCarMesh.Position, 40, 250);
-            camaraAuto.Enable = true;
+            camaraAuto1.setCamera(mainCarMesh.Position, 40, 250);
+            camaraPelota1.setCamera(mainCarMesh.Position, 0, 0);
+            camaraAuto1.Enable = true;
 
-            camaraPelota.setCamera(mainCar.meshAuto.Position, 0, 0);
-            camaraPelota.TargetDisplacement = new Vector3(0, 40, 0);
+            camaraAuto2.setCamera(secondCarMesh.Position, 40, 250);
+            camaraPelota2.setCamera(secondCarMesh.Position, 0, 0);
         }
 
 

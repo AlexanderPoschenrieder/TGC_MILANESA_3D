@@ -46,17 +46,6 @@ namespace AlumnoEjemplos.MiGrupo
             set { offsetForward = value; }
         }
 
-        Vector3 targetDisplacement;
-        /// <summary>
-        /// Desplazamiento final que se le hace al target para acomodar la camara en un cierto
-        /// rincon de la pantalla
-        /// </summary>
-        public Vector3 TargetDisplacement
-        {
-            get { return targetDisplacement; }
-            set { targetDisplacement = value; }
-        }
-
         float rotationY;
         /// <summary>
         /// Rotacion absoluta en Y de la camara
@@ -144,7 +133,6 @@ namespace AlumnoEjemplos.MiGrupo
             offsetHeight = 20;
             offsetForward = -120;
             rotationY = 0;
-            targetDisplacement = Vector3.Empty;
             secondTarget = Vector3.Empty;
             position = Vector3.Empty;
             viewMatrix = Matrix.Identity;
@@ -171,12 +159,12 @@ namespace AlumnoEjemplos.MiGrupo
         /// <returns>Futura matriz de view generada</returns>
         public Matrix generateViewMatrix(out Vector3 pos, out Vector3 targetCenter)
         {
-
+            var desplazamiento = new Vector3(0, 80, 0);
             //alejarse, luego rotar y lueg ubicar camara en el centro deseado
-            targetCenter = Vector3.Add(firstTarget, targetDisplacement);
+            targetCenter = Vector3.Add(firstTarget, desplazamiento);
             var diff = (secondTarget - targetCenter);
             diff.Normalize();
-            Matrix m = Matrix.Translation(diff*140) * Matrix.LookAtLH(targetCenter,secondTarget,UP_VECTOR);
+            Matrix m = Matrix.Translation(diff*200) * Matrix.LookAtLH(targetCenter,secondTarget,UP_VECTOR);
             
             //Extraer la posicion final de la matriz de transformacion
             pos.X = m.M41;
