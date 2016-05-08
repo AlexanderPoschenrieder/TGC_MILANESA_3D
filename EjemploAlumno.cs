@@ -266,6 +266,30 @@ namespace AlumnoEjemplos.MiGrupo
         }
 
 
+        public void golLocal()
+        {
+            scoreLocal++;
+            gol();
+        }
+
+        public void golVisitante()
+        {
+            scoreVisitante++;
+            gol();
+        }
+
+        public void gol()
+        {
+            txtScoreLocal.Text = scoreLocal.ToString();
+            txtScoreVisitante.Text = scoreVisitante.ToString();
+
+            mainCar.meshAuto.Position = new Vector3(0,0,0);
+            mainCar.obb = TgcObb.computeFromAABB(mainCar.meshAuto.BoundingBox);
+            pelota.ownSphere.dispose();
+            pelota = new Pelota(this);
+
+        }
+
         public override void close()
         {
             mainCar.meshAuto.dispose();
