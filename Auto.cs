@@ -158,7 +158,7 @@ namespace AlumnoEjemplos.MiGrupo
 
         private bool chocaPiso()
         {
-            if (TgcCollisionUtils.testObbAABB(obb, parent.piso))
+            if (TgcCollisionUtils.testObbAABB(obb, parent.piso.BoundingBox))
             {
 
                 obb.move(new Vector3(0, meshAuto.Position.Y * -1, 0));

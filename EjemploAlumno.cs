@@ -35,22 +35,23 @@ namespace AlumnoEjemplos.MiGrupo
 
         public List<Auto> autitus;
         public List<TgcBoundingBox> paredes; 
-        public List<TgcBoundingBox> laterales; 
+        public List<TgcBoundingBox> laterales;
 
-        public TgcBoundingBox piso = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-4000, -100, -11000), new Vector3(0, 0, 0), new Vector3(4000, 0, 11000) });
-        public TgcBoundingBox arcoPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 0, 11000), new Vector3(500, 400, 12000) });
-        public TgcBoundingBox arcoNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 0, -11000), new Vector3(500, 400, -12000) });
 
-        public TgcBoundingBox paredArcoNegativo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-4000, 0, -11000), new Vector3(-500, 2000, -11050) });
-        public TgcBoundingBox paredArcoNegativo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(4000, 0, -11000), new Vector3(500, 2000, -11050) });
-        public TgcBoundingBox paredArcoNegativo3 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 400, -11000), new Vector3(500, 2000, -11050) });
+        public TgcBox piso;
+        public TgcBox arcoPositivo;
+        public TgcBox arcoNegativo;
 
-        public TgcBoundingBox paredArcoPositivo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-4000, 0, 11000), new Vector3(-500, 2000, 11050) });
-        public TgcBoundingBox paredArcoPositivo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(4000, 0, 11000), new Vector3(500, 2000, 11050) });
-        public TgcBoundingBox paredArcoPositivo3 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 400, 11000), new Vector3(500, 2000, 11050) });
+        public TgcBox paredArcoNegativo1;
+        public TgcBox paredArcoNegativo2;
+        public TgcBox paredArcoNegativo3;
 
-        public TgcBoundingBox lateralPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-4000, 0, -11000), new Vector3(-5050, 2000, 11000)});
-        public TgcBoundingBox lateralNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(4000, 0, -11000), new Vector3(5050, 2000, 11000) });
+        public TgcBox paredArcoPositivo1;
+        public TgcBox paredArcoPositivo2;
+        public TgcBox paredArcoPositivo3;
+
+        public TgcBox lateralPositivo;
+        public TgcBox lateralNegativo;
 
         
 
@@ -75,10 +76,31 @@ namespace AlumnoEjemplos.MiGrupo
             return "Rocket League - Futbol de autos";
         }
 
+        public void crearEscenario()
+        {
+            piso = TgcBox.fromExtremes(new Vector3(-4000, -100, -11000), new Vector3(4000, 0, 11000));
+            arcoPositivo = TgcBox.fromExtremes(new Vector3(-500, 0, 11000), new Vector3(500, 400, 12000));
+            arcoNegativo = TgcBox.fromExtremes(new Vector3(-500, 0, -12000), new Vector3(500, 400, -11000));
+            
+            paredArcoNegativo1 = TgcBox.fromExtremes(new Vector3(-4000, 0, -11000), new Vector3(-500, 2000, -11050));
+            paredArcoNegativo2 = TgcBox.fromExtremes(new Vector3(4000, 0, -11000), new Vector3(500, 2000, -11050));
+            paredArcoNegativo3 = TgcBox.fromExtremes(new Vector3(-500, 400, -11000), new Vector3(500, 2000, -11050));
+
+            paredArcoPositivo1 = TgcBox.fromExtremes(new Vector3(-4000, 0, 11000), new Vector3(-500, 2000, 11050));
+            paredArcoPositivo2 = TgcBox.fromExtremes(new Vector3(4000, 0, 11000), new Vector3(500, 2000, 11050));
+            paredArcoPositivo3 = TgcBox.fromExtremes(new Vector3(-500, 400, 11000), new Vector3(500, 2000, 11050));
+
+            lateralPositivo = TgcBox.fromExtremes(new Vector3(-4000, 0, -11000), new Vector3(-4050, 2000, 11000));
+            lateralNegativo = TgcBox.fromExtremes(new Vector3(4000, 0, -11000), new Vector3(4050, 2000, 11000));
+        }
 
         public override void init()
         {
+            var d3dDevice = GuiController.Instance.D3dDevice;
+            crearEscenario();
+
             
+
             txtScoreLocal.Text = scoreLocal.ToString();
             txtScoreLocal.Position = new Point(300, 100);
             txtScoreLocal.Size = new Size(300, 100);
@@ -88,7 +110,7 @@ namespace AlumnoEjemplos.MiGrupo
             txtScoreVisitante.Size = new Size(300, 100);
 
             skyBox = new TgcSkyBox();
-            skyBox.Center = new Vector3(0, 0, 0);
+            skyBox.Center = new Vector3(0, 200, 0);
             skyBox.Size = new Vector3(10000, 10000, 10000);
             string texturesPath = mediaFolder + "textures\\SkyBox3\\";
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, texturesPath + "Up.jpg");
@@ -99,9 +121,13 @@ namespace AlumnoEjemplos.MiGrupo
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, texturesPath + "Front.jpg");
             skyBox.updateValues();
 
+            TgcTexture pasto = TgcTexture.createTexture(d3dDevice, mediaFolder + "textures\\pasto.jpg");
+            piso.setTexture(pasto);
+            piso.UVTiling = new Vector2(150, 150);
+            piso.updateValues();
 
             TgcSceneLoader loader = new TgcSceneLoader();
-            scene = loader.loadSceneFromFile(sceneFolder + "ss2\\IndoorSoccerField--TgcScene.xml");
+            //scene = loader.loadSceneFromFile(sceneFolder + "ss2\\IndoorSoccerField--TgcScene.xml");
             
             mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
 
@@ -114,14 +140,14 @@ namespace AlumnoEjemplos.MiGrupo
             paredes = new List<TgcBoundingBox>();
             laterales = new List<TgcBoundingBox>();
 
-            paredes.Add(paredArcoNegativo3);
-            paredes.Add(paredArcoNegativo2);
-            paredes.Add(paredArcoNegativo1);
-            paredes.Add(paredArcoPositivo3);
-            paredes.Add(paredArcoPositivo2);
-            paredes.Add(paredArcoPositivo1);
-            laterales.Add(lateralNegativo);
-            laterales.Add(lateralPositivo);
+            paredes.Add(paredArcoNegativo3.BoundingBox);
+            paredes.Add(paredArcoNegativo2.BoundingBox);
+            paredes.Add(paredArcoNegativo1.BoundingBox);
+            paredes.Add(paredArcoPositivo3.BoundingBox);
+            paredes.Add(paredArcoPositivo2.BoundingBox);
+            paredes.Add(paredArcoPositivo1.BoundingBox);
+            laterales.Add(lateralNegativo.BoundingBox);
+            laterales.Add(lateralPositivo.BoundingBox);
 
             pelota = new Pelota(this);
 
@@ -134,7 +160,7 @@ namespace AlumnoEjemplos.MiGrupo
             //GuiController.Instance: acceso principal a todas las herramientas del Framework
 
             //Device de DirectX para crear primitivas
-            var d3dDevice = GuiController.Instance.D3dDevice;
+            
             GuiController.Instance.RotCamera.CameraDistance = 100;
             initCarCamera();
 
@@ -178,9 +204,7 @@ namespace AlumnoEjemplos.MiGrupo
             skyBox.Center = mainCar.meshAuto.Position;
             skyBox.updateValues();
             //
-
-            //scene.renderAll();
-
+            
 
             pelota.mover(elapsedTime);
             pelota.updateValues();
@@ -196,9 +220,9 @@ namespace AlumnoEjemplos.MiGrupo
                 l.render();
             }
 
-            arcoPositivo.render();
-            arcoNegativo.render();
-            scene.renderAll();
+            arcoPositivo.BoundingBox.render();
+            arcoNegativo.BoundingBox.render();
+           // scene.renderAll();
             piso.render();
             mainCar.render();
             mainCar.obb.render();
@@ -246,7 +270,7 @@ namespace AlumnoEjemplos.MiGrupo
         {
             mainCar.meshAuto.dispose();
             pelota.ownSphere.dispose();
-            scene.disposeAll();
+          //  scene.disposeAll();
             skyBox.dispose();
         }
 
