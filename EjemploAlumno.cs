@@ -82,15 +82,15 @@ namespace AlumnoEjemplos.MiGrupo
             arcoPositivo = TgcBox.fromExtremes(new Vector3(-500, 0, 11000), new Vector3(500, 400, 12000));
             arcoNegativo = TgcBox.fromExtremes(new Vector3(-500, 0, -12000), new Vector3(500, 400, -11000));
             
-            paredArcoNegativo1 = TgcBox.fromExtremes(new Vector3(-4000, 0, -11000), new Vector3(-500, 2000, -11050));
-            paredArcoNegativo2 = TgcBox.fromExtremes(new Vector3(4000, 0, -11000), new Vector3(500, 2000, -11050));
-            paredArcoNegativo3 = TgcBox.fromExtremes(new Vector3(-500, 400, -11000), new Vector3(500, 2000, -11050));
+            paredArcoNegativo1 = TgcBox.fromExtremes(new Vector3(-4000, 0, -11050), new Vector3(-500, 2000, -11000));
+            paredArcoNegativo2 = TgcBox.fromExtremes(new Vector3(500, 0, -11050), new Vector3(4000, 2000, -11000));
+            paredArcoNegativo3 = TgcBox.fromExtremes(new Vector3(-500, 400, -11050), new Vector3(500, 2000, -11000));
 
             paredArcoPositivo1 = TgcBox.fromExtremes(new Vector3(-4000, 0, 11000), new Vector3(-500, 2000, 11050));
-            paredArcoPositivo2 = TgcBox.fromExtremes(new Vector3(4000, 0, 11000), new Vector3(500, 2000, 11050));
+            paredArcoPositivo2 = TgcBox.fromExtremes(new Vector3(500, 0, 11000), new Vector3(4000, 2000, 11050));
             paredArcoPositivo3 = TgcBox.fromExtremes(new Vector3(-500, 400, 11000), new Vector3(500, 2000, 11050));
 
-            lateralPositivo = TgcBox.fromExtremes(new Vector3(-4000, 0, -11000), new Vector3(-4050, 2000, 11000));
+            lateralPositivo = TgcBox.fromExtremes(new Vector3(-4050, 0, -11000), new Vector3(-4000, 2000, 11000));
             lateralNegativo = TgcBox.fromExtremes(new Vector3(4000, 0, -11000), new Vector3(4050, 2000, 11000));
         }
 
