@@ -12,13 +12,14 @@ using TgcViewer.Utils.TgcSceneLoader;
 using TgcViewer.Utils._2D;
 using TgcViewer.Utils.Input;
 using Microsoft.DirectX.DirectInput;
+using TgcViewer.Utils.Terrain;
 
 namespace AlumnoEjemplos.MiGrupo
 {
 
     public class EjemploAlumno : TgcExample
     {
-
+        TgcSkyBox skyBox;
         TgcScene scene;
         TgcMesh mainCarMesh;
         Auto mainCar;
@@ -86,7 +87,18 @@ namespace AlumnoEjemplos.MiGrupo
             txtScoreVisitante.Position = new Point(600, 100);
             txtScoreVisitante.Size = new Size(300, 100);
 
-            
+            skyBox = new TgcSkyBox();
+            skyBox.Center = new Vector3(0, 0, 0);
+            skyBox.Size = new Vector3(10000, 10000, 10000);
+            string texturesPath = mediaFolder + "textures\\SkyBox3\\";
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, texturesPath + "Up.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Down, texturesPath + "Down.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Left, texturesPath + "Left.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Right, texturesPath + "Right.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, texturesPath + "Back.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, texturesPath + "Front.jpg");
+            skyBox.updateValues();
+
 
             TgcSceneLoader loader = new TgcSceneLoader();
             scene = loader.loadSceneFromFile(sceneFolder + "ss2\\IndoorSoccerField--TgcScene.xml");
@@ -163,6 +175,8 @@ namespace AlumnoEjemplos.MiGrupo
             //Mover Auto
             mainCar.elapsedTime = elapsedTime;
             mainCar.Mover(elapsedTime);
+            skyBox.Center = mainCar.meshAuto.Position;
+            skyBox.updateValues();
             //
 
             //scene.renderAll();
@@ -188,6 +202,7 @@ namespace AlumnoEjemplos.MiGrupo
             piso.render();
             mainCar.render();
             mainCar.obb.render();
+            skyBox.render();
             txtScoreLocal.render();
             txtScoreVisitante.render();
             SetCarCamera();
@@ -232,6 +247,7 @@ namespace AlumnoEjemplos.MiGrupo
             mainCar.meshAuto.dispose();
             pelota.ownSphere.dispose();
             scene.disposeAll();
+            skyBox.dispose();
         }
 
     }
