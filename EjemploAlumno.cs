@@ -13,13 +13,14 @@ using TgcViewer.Utils._2D;
 using TgcViewer.Utils.Input;
 using Microsoft.DirectX.DirectInput;
 using System.Windows.Forms;
+using TgcViewer.Utils.Terrain;
 
 namespace AlumnoEjemplos.MiGrupo
 {
 
     public class EjemploAlumno : TgcExample
     {
-
+        TgcSkyBox skyBox;
         TgcScene scene;
         TgcMesh mainCarMesh,secondCarMesh;
         Auto mainCar;
@@ -43,22 +44,23 @@ namespace AlumnoEjemplos.MiGrupo
 
         public List<Auto> autitus;
         public List<TgcBoundingBox> paredes; 
-        public List<TgcBoundingBox> laterales; 
+        public List<TgcBoundingBox> laterales;
 
-        public TgcBoundingBox piso = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-4000, -100, -11000), new Vector3(0, 0, 0), new Vector3(4000, 0, 11000) });
-        public TgcBoundingBox arcoPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 0, 11000), new Vector3(500, 400, 12000) });
-        public TgcBoundingBox arcoNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 0, -11000), new Vector3(500, 400, -12000) });
 
-        public TgcBoundingBox paredArcoNegativo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-4000, 0, -11000), new Vector3(-500, 2000, -11050) });
-        public TgcBoundingBox paredArcoNegativo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(4000, 0, -11000), new Vector3(500, 2000, -11050) });
-        public TgcBoundingBox paredArcoNegativo3 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 400, -11000), new Vector3(500, 2000, -11050) });
+        public TgcBox piso;
+        public TgcBox arcoPositivo;
+        public TgcBox arcoNegativo;
 
-        public TgcBoundingBox paredArcoPositivo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-4000, 0, 11000), new Vector3(-500, 2000, 11050) });
-        public TgcBoundingBox paredArcoPositivo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(4000, 0, 11000), new Vector3(500, 2000, 11050) });
-        public TgcBoundingBox paredArcoPositivo3 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 400, 11000), new Vector3(500, 2000, 11050) });
+        public TgcBox paredArcoNegativo1;
+        public TgcBox paredArcoNegativo2;
+        public TgcBox paredArcoNegativo3;
 
-        public TgcBoundingBox lateralPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-4000, 0, -11000), new Vector3(-5050, 2000, 11000)});
-        public TgcBoundingBox lateralNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(4000, 0, -11000), new Vector3(5050, 2000, 11000) });
+        public TgcBox paredArcoPositivo1;
+        public TgcBox paredArcoPositivo2;
+        public TgcBox paredArcoPositivo3;
+
+        public TgcBox lateralPositivo;
+        public TgcBox lateralNegativo;
 
         
 
@@ -83,9 +85,30 @@ namespace AlumnoEjemplos.MiGrupo
             return "Rocket League - Futbol de autos";
         }
 
+        public void crearEscenario()
+        {
+            piso = TgcBox.fromExtremes(new Vector3(-4000, -100, -11000), new Vector3(4000, 0, 11000));
+            arcoPositivo = TgcBox.fromExtremes(new Vector3(-500, 0, 11000), new Vector3(500, 400, 12000));
+            arcoNegativo = TgcBox.fromExtremes(new Vector3(-500, 0, -12000), new Vector3(500, 400, -11000));
+            
+            paredArcoNegativo1 = TgcBox.fromExtremes(new Vector3(-4000, 0, -11050), new Vector3(-500, 2000, -11000));
+            paredArcoNegativo2 = TgcBox.fromExtremes(new Vector3(500, 0, -11050), new Vector3(4000, 2000, -11000));
+            paredArcoNegativo3 = TgcBox.fromExtremes(new Vector3(-500, 400, -11050), new Vector3(500, 2000, -11000));
+
+            paredArcoPositivo1 = TgcBox.fromExtremes(new Vector3(-4000, 0, 11000), new Vector3(-500, 2000, 11050));
+            paredArcoPositivo2 = TgcBox.fromExtremes(new Vector3(500, 0, 11000), new Vector3(4000, 2000, 11050));
+            paredArcoPositivo3 = TgcBox.fromExtremes(new Vector3(-500, 400, 11000), new Vector3(500, 2000, 11050));
+
+            lateralPositivo = TgcBox.fromExtremes(new Vector3(-4050, 0, -11000), new Vector3(-4000, 2000, 11000));
+            lateralNegativo = TgcBox.fromExtremes(new Vector3(4000, 0, -11000), new Vector3(4050, 2000, 11000));
+        }
 
         public override void init()
         {
+            var d3dDevice = GuiController.Instance.D3dDevice;
+            crearEscenario();
+
+            
 
             txtScoreLocal.Text = scoreLocal.ToString();
             txtScoreLocal.Position = new Point(300, 100);
@@ -95,8 +118,25 @@ namespace AlumnoEjemplos.MiGrupo
             txtScoreVisitante.Position = new Point(600, 100);
             txtScoreVisitante.Size = new Size(300, 100);
 
+            skyBox = new TgcSkyBox();
+            skyBox.Center = new Vector3(0, 200, 0);
+            skyBox.Size = new Vector3(10000, 10000, 10000);
+            string texturesPath = mediaFolder + "textures\\SkyBox3\\";
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, texturesPath + "Up.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Down, texturesPath + "Down.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Left, texturesPath + "Left.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Right, texturesPath + "Right.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, texturesPath + "Back.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, texturesPath + "Front.jpg");
+            skyBox.updateValues();
+
+            TgcTexture pasto = TgcTexture.createTexture(d3dDevice, mediaFolder + "textures\\pasto.jpg");
+            piso.setTexture(pasto);
+            piso.UVTiling = new Vector2(150, 150);
+            piso.updateValues();
+
             TgcSceneLoader loader = new TgcSceneLoader();
-            scene = loader.loadSceneFromFile(sceneFolder + "ss2\\IndoorSoccerField--TgcScene.xml");
+            //scene = loader.loadSceneFromFile(sceneFolder + "ss2\\IndoorSoccerField--TgcScene.xml");
             
             mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
             secondCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Hummer\\Hummer-TgcScene.xml").Meshes[0];
@@ -110,14 +150,14 @@ namespace AlumnoEjemplos.MiGrupo
             paredes = new List<TgcBoundingBox>();
             laterales = new List<TgcBoundingBox>();
 
-            paredes.Add(paredArcoNegativo3);
-            paredes.Add(paredArcoNegativo2);
-            paredes.Add(paredArcoNegativo1);
-            paredes.Add(paredArcoPositivo3);
-            paredes.Add(paredArcoPositivo2);
-            paredes.Add(paredArcoPositivo1);
-            laterales.Add(lateralNegativo);
-            laterales.Add(lateralPositivo);
+            paredes.Add(paredArcoNegativo3.BoundingBox);
+            paredes.Add(paredArcoNegativo2.BoundingBox);
+            paredes.Add(paredArcoNegativo1.BoundingBox);
+            paredes.Add(paredArcoPositivo3.BoundingBox);
+            paredes.Add(paredArcoPositivo2.BoundingBox);
+            paredes.Add(paredArcoPositivo1.BoundingBox);
+            laterales.Add(lateralNegativo.BoundingBox);
+            laterales.Add(lateralPositivo.BoundingBox);
 
             pelota = new Pelota(this);
 
@@ -131,16 +171,15 @@ namespace AlumnoEjemplos.MiGrupo
         private void SetCarPositions()
         {
             var direccion = arcoNegativo.Position - arcoPositivo.Position;
-            var pos1=Vector3.Add(arcoPositivo.calculateBoxCenter(), Vector3.Multiply(direccion,0.1f));
-            var pos2 = Vector3.Add(arcoNegativo.calculateBoxCenter(), Vector3.Multiply(direccion, -0.1f));
+            var pos1=Vector3.Add(arcoPositivo.Position, Vector3.Multiply(direccion,0.1f));
+            var pos2 = Vector3.Add(arcoNegativo.Position, Vector3.Multiply(direccion, -0.1f));
 
             mainCarMesh.Position = new Vector3(pos1.X, 0, pos1.Z);
             mainCar = new Auto(mainCarMesh, this);
             autitus.Add(mainCar);
 
-            secondCar = new Auto2(secondCarMesh, this);
             secondCarMesh.Position = new Vector3(pos2.X, 0, pos2.Z);
-            secondCarMesh.rotateY(FastMath.PI);
+            secondCar = new Auto2(secondCarMesh, this);
             autitus.Add(secondCar);
         }
         
@@ -179,7 +218,8 @@ namespace AlumnoEjemplos.MiGrupo
 
             pelota.mover(elapsedTime);
             pelota.updateValues();
-
+ 			skyBox.Center = mainCar.meshAuto.Position;
+            skyBox.updateValues();
             SetCarCamera();
             SetViewport();
             RenderAll();
@@ -219,14 +259,15 @@ namespace AlumnoEjemplos.MiGrupo
             {
                 l.render();
             }
-            arcoPositivo.render();
-            arcoNegativo.render();
-            scene.renderAll();
+            arcoPositivo.BoundingBox.render();
+            arcoNegativo.BoundingBox.render();
+           // scene.renderAll();
             piso.render();
             mainCar.render();
             mainCar.obb.render();
             secondCar.render();
             secondCar.obb.render();
+            skyBox.render();
             txtScoreLocal.render();
             txtScoreVisitante.render();
         }
@@ -292,11 +333,36 @@ namespace AlumnoEjemplos.MiGrupo
         }
 
 
+        public void golLocal()
+        {
+            scoreLocal++;
+            gol();
+        }
+
+        public void golVisitante()
+        {
+            scoreVisitante++;
+            gol();
+        }
+
+        public void gol()
+        {
+            txtScoreLocal.Text = scoreLocal.ToString();
+            txtScoreVisitante.Text = scoreVisitante.ToString();
+
+            mainCar.meshAuto.Position = new Vector3(0,0,0);
+            mainCar.obb = TgcObb.computeFromAABB(mainCar.meshAuto.BoundingBox);
+            pelota.ownSphere.dispose();
+            pelota = new Pelota(this);
+
+        }
+
         public override void close()
         {
             mainCar.meshAuto.dispose();
             pelota.ownSphere.dispose();
-            scene.disposeAll();
+          //  scene.disposeAll();
+            skyBox.dispose();
         }
 
     }

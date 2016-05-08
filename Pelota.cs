@@ -92,7 +92,7 @@ namespace AlumnoEjemplos.MiGrupo
 
             }
 
-            if (TgcCollisionUtils.testSphereAABB(ownSphere.BoundingSphere, parent.piso))
+            if (TgcCollisionUtils.testSphereAABB(ownSphere.BoundingSphere, parent.piso.BoundingBox))
             {
                 velocity.Y = -(velocity.Y);
                 velocity = velocity * 0.75f; //rozamiento con el piso
@@ -119,18 +119,15 @@ namespace AlumnoEjemplos.MiGrupo
                 }
             }
 
-            if (TgcCollisionUtils.testSphereAABB(ownSphere.BoundingSphere, parent.arcoNegativo))
+            if (TgcCollisionUtils.testSphereAABB(ownSphere.BoundingSphere, parent.arcoNegativo.BoundingBox))
             {
-                parent.scoreVisitante++;
-                parent.close();
-                parent.init();
+                parent.golLocal();
             }
 
-            if (TgcCollisionUtils.testSphereAABB(ownSphere.BoundingSphere, parent.arcoPositivo))
+            if (TgcCollisionUtils.testSphereAABB(ownSphere.BoundingSphere, parent.arcoPositivo.BoundingBox))
             {
-                parent.scoreLocal++;
-                parent.close();
-                parent.init();
+                parent.golVisitante();
+                
             }
 
         }
