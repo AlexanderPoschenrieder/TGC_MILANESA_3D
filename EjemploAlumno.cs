@@ -36,20 +36,20 @@ namespace AlumnoEjemplos.MiGrupo
         public List<TgcBoundingBox> paredes; 
         public List<TgcBoundingBox> laterales; 
 
-        public TgcBoundingBox piso = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-7000, -100, -11000), new Vector3(0, 0, 0), new Vector3(7000, 0, 11000) });
+        public TgcBoundingBox piso = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-4000, -100, -11000), new Vector3(0, 0, 0), new Vector3(4000, 0, 11000) });
         public TgcBoundingBox arcoPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 0, 11000), new Vector3(500, 400, 12000) });
         public TgcBoundingBox arcoNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 0, -11000), new Vector3(500, 400, -12000) });
 
-        public TgcBoundingBox paredArcoNegativo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-7000, 0, -11000), new Vector3(-500, 2000, -11050) });
-        public TgcBoundingBox paredArcoNegativo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(7000, 0, -11000), new Vector3(500, 2000, -11050) });
+        public TgcBoundingBox paredArcoNegativo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-4000, 0, -11000), new Vector3(-500, 2000, -11050) });
+        public TgcBoundingBox paredArcoNegativo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(4000, 0, -11000), new Vector3(500, 2000, -11050) });
         public TgcBoundingBox paredArcoNegativo3 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 400, -11000), new Vector3(500, 2000, -11050) });
 
-        public TgcBoundingBox paredArcoPositivo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-7000, 0, 11000), new Vector3(-500, 2000, 11050) });
-        public TgcBoundingBox paredArcoPositivo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(7000, 0, 11000), new Vector3(500, 2000, 11050) });
+        public TgcBoundingBox paredArcoPositivo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-4000, 0, 11000), new Vector3(-500, 2000, 11050) });
+        public TgcBoundingBox paredArcoPositivo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(4000, 0, 11000), new Vector3(500, 2000, 11050) });
         public TgcBoundingBox paredArcoPositivo3 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 400, 11000), new Vector3(500, 2000, 11050) });
 
-        public TgcBoundingBox lateralPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-7000, 0, -11000), new Vector3(-7050, 2000, 11000)});
-        public TgcBoundingBox lateralNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(7000, 0, -11000), new Vector3(7050, 2000, 11000) });
+        public TgcBoundingBox lateralPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-4000, 0, -11000), new Vector3(-5050, 2000, 11000)});
+        public TgcBoundingBox lateralNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(4000, 0, -11000), new Vector3(5050, 2000, 11000) });
 
         
 
@@ -89,7 +89,8 @@ namespace AlumnoEjemplos.MiGrupo
             
 
             TgcSceneLoader loader = new TgcSceneLoader();
-            scene = loader.loadSceneFromFile(sceneFolder + "Futbol\\indoor+fieldx150-TgcScene.xml");
+            scene = loader.loadSceneFromFile(sceneFolder + "ss2\\IndoorSoccerField--TgcScene.xml");
+            
             mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
 
             GuiController.Instance.UserVars.addVar("Velocidad");
@@ -180,6 +181,7 @@ namespace AlumnoEjemplos.MiGrupo
 
             arcoPositivo.render();
             arcoNegativo.render();
+            scene.renderAll();
             piso.render();
             mainCar.render();
             mainCar.obb.render();
