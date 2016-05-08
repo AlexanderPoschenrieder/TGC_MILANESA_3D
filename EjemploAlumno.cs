@@ -95,6 +95,9 @@ namespace AlumnoEjemplos.MiGrupo
 
             GuiController.Instance.UserVars.addVar("Velocidad");
 
+            GuiController.Instance.Modifiers.addFloat("Gravedad", -50, 0, -9.81f);
+            GuiController.Instance.Modifiers.addFloat("Aceleracion", 200f, 1000f, 600f);
+            GuiController.Instance.Modifiers.addFloat("VelocidadRotacion", 0f, 5f, 1f);
 
             paredes = new List<TgcBoundingBox>();
             laterales = new List<TgcBoundingBox>();

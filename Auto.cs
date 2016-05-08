@@ -15,14 +15,15 @@ namespace AlumnoEjemplos.MiGrupo
     {
         #region Constantes
 
-        const float CONSTANTEAVANZAR = 600f;
+        float aceleracion = 600f;
         const float CONSTANTEFRENAR = 800f;
         const float CONSTANTEMARCHAATRAS = 400f;
         const float ROZAMIENTOCOEF = 200f;
         const float DELTA_T = 0.000000001f;
         const float CONST_SALTO = 0.1f;
         const float ALTURA_MAXIMA = 100;
-        const float GRAVEDAD = -9.81f;
+        float gravedad = -9.81f;
+        float handling = 1f;
 
         #endregion
 
@@ -98,7 +99,7 @@ namespace AlumnoEjemplos.MiGrupo
             {
                 if (!saltando)
                 {
-                    Acelerar(CONSTANTEAVANZAR);
+                    Acelerar(aceleracion);
                 }
 
             }
@@ -152,7 +153,7 @@ namespace AlumnoEjemplos.MiGrupo
 
         public void aplicarGravedad(float elapsedTime)
         {
-            velocidadVertical += GRAVEDAD * 20f * elapsedTime;
+            velocidadVertical += gravedad * 20f * elapsedTime;
         }
 
         private bool chocaPiso()
@@ -305,7 +306,7 @@ namespace AlumnoEjemplos.MiGrupo
             }
 
             direccion = unaDireccion;
-            rotacion += (elapsedTime * direccion * (velocidadHorizontal / 1000)); //direccion puede ser 1 o -1, 1 es derecha y -1 izquierda
+            rotacion += (elapsedTime * direccion * ( handling * velocidadHorizontal / 1000)); //direccion puede ser 1 o -1, 1 es derecha y -1 izquierda
             AjustarRotacion();
 
         }
@@ -383,6 +384,10 @@ namespace AlumnoEjemplos.MiGrupo
 
         public void render()
         {
+            aceleracion = (float) GuiController.Instance.Modifiers["Aceleracion"];
+            gravedad = (float)GuiController.Instance.Modifiers["Gravedad"];
+            handling =  (float)GuiController.Instance.Modifiers["VelocidadRotacion"];
+
             meshAuto.render();
         }
 
