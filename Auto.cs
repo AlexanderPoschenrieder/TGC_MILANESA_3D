@@ -32,8 +32,8 @@ namespace AlumnoEjemplos.MiGrupo
         public float velocidadHorizontal;
         public float velocidadVertical;
 
-        protected float velocidadMaxima = -1500f;
-        protected float velocidadMinima = 2000f;
+        protected float velocidadMaxima = -7500f;
+        protected float velocidadMinima = 1000f;
         public float rotacion;
         public float elapsedTime;
         protected List<TgcViewer.Utils.TgcSceneLoader.TgcMesh> ruedas;

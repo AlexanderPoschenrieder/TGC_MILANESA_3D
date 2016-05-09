@@ -93,16 +93,16 @@ namespace AlumnoEjemplos.MiGrupo
             arcoNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 0, -9000), new Vector3(500, 400, -8000) });
             
 
-            limiteArcoNegativo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2600, 0, -8050), new Vector3(-500, 2000, -8000) });
-            limiteArcoNegativo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(500, 0, -8050), new Vector3(2600, 2000, -8000) });
-            limiteArcoNegativo3 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 400, -8050), new Vector3(500, 2000, -8000) });
+            limiteArcoNegativo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2600, 0, -8050), new Vector3(-500, 1000, -8000) });
+            limiteArcoNegativo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(500, 0, -8050), new Vector3(2600, 1000, -8000) });
+            limiteArcoNegativo3 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 400, -8050), new Vector3(500, 1000, -8000) });
 
-            limiteArcoPositivo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2600, 0, 8000), new Vector3(-500, 2000, 8050) });
-            limiteArcoPositivo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(500, 0, 8000), new Vector3(2600, 2000, 8050) });
-            limiteArcoPositivo3 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 400, 8000), new Vector3(500, 2000, 8050) });
+            limiteArcoPositivo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2600, 0, 8000), new Vector3(-500, 1000, 8050) });
+            limiteArcoPositivo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(500, 0, 8000), new Vector3(2600, 1000, 8050) });
+            limiteArcoPositivo3 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 400, 8000), new Vector3(500, 1000, 8050) });
 
-            limiteLateralPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2650, 0, -8000), new Vector3(-2600, 2000, 8000) });
-            limiteLateralNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(2600, 0, -8000), new Vector3(2650, 2000, 8000) });
+            limiteLateralPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2650, 0, -8000), new Vector3(-2600, 1000, 8000) });
+            limiteLateralNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(2600, 0, -8000), new Vector3(2650, 1000, 8000) });
             
         }
 
@@ -150,8 +150,8 @@ namespace AlumnoEjemplos.MiGrupo
             GuiController.Instance.UserVars.addVar("Velocidad");
 
             GuiController.Instance.Modifiers.addFloat("Gravedad", -50, 0, -9.81f);
-            GuiController.Instance.Modifiers.addFloat("Aceleracion", 200f, 1000f, 600f);
-            GuiController.Instance.Modifiers.addFloat("VelocidadRotacion", 0f, 5f, 1f);
+            GuiController.Instance.Modifiers.addFloat("Aceleracion", 100f, 1000f, 500f);
+            GuiController.Instance.Modifiers.addFloat("VelocidadRotacion", 0f, 5f, 1.5f);
 
             paredes = new List<TgcBoundingBox>();
             laterales = new List<TgcBoundingBox>();
