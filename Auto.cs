@@ -194,7 +194,7 @@ namespace AlumnoEjemplos.MiGrupo
         public void chequearColisiones()
         {
             int i = 0;
-            float dt = DELTA_T * 2 * elapsedTime * 0.01f;
+            float dt = DELTA_T * 2 * elapsedTime * 0.1f;
 
             Vector3 originalPos = meshAuto.Position;
             Vector3 originalObbPos = obb.Position;
