@@ -238,7 +238,7 @@ namespace AlumnoEjemplos.MiGrupo
                     }
                 }
 
-                foreach (TgcBoundingBox pared in parent.paredes)
+                foreach (TgcBoundingBox pared in parent.limitesArcos)
                 {
                     if (TgcCollisionUtils.testObbAABB(obb, pared))
                     {

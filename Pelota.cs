@@ -99,7 +99,7 @@ namespace AlumnoEjemplos.MiGrupo
                 ownSphere.Position = oldpos;
             }
 
-            foreach (TgcBoundingBox pared in parent.paredes)
+            foreach (TgcBoundingBox pared in parent.limitesArcos)
             {
                 if (TgcCollisionUtils.testSphereAABB(ownSphere.BoundingSphere, pared))
                 {
