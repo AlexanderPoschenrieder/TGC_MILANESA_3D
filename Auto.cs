@@ -290,8 +290,9 @@ namespace AlumnoEjemplos.MiGrupo
                     TgcRay ray = new TgcRay(lastPos, spherePosition - lastPos);
                     TgcCollisionUtils.intersectRayObb(ray, obb, out collisionPos);
 
+                    Vector3 velocidadATransmitir = 0.005f * (spherePosition - collisionPos) * this.velocidadHorizontal;
 
-                    parent.pelota.velocity = parent.pelota.velocity + (0.005f * (spherePosition - collisionPos) * this.velocidadHorizontal);
+                    parent.pelota.velocity = parent.pelota.velocity + velocidadATransmitir;
                     this.velocidadHorizontal = this.velocidadHorizontal * (i / 3);
 
                 }

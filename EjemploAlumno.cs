@@ -366,9 +366,15 @@ namespace AlumnoEjemplos.MiGrupo
 
         public override void close()
         {
+
+            //todo creo que falta disposear algunas cosas!
             mainCar.meshAuto.dispose();
+            secondCar.meshAuto.dispose();
             pelota.ownSphere.dispose();
-          //  scene.disposeAll();
+
+            piso.dispose();
+
+
             skyBox.dispose();
         }
 
