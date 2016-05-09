@@ -119,12 +119,12 @@ namespace AlumnoEjemplos.MiGrupo
                 }
             }
 
-            if (TgcCollisionUtils.testSphereAABB(ownSphere.BoundingSphere, parent.arcoNegativo.BoundingBox))
+            if (TgcCollisionUtils.testSphereAABB(ownSphere.BoundingSphere, parent.arcoNegativo))
             {
                 parent.golLocal();
             }
 
-            if (TgcCollisionUtils.testSphereAABB(ownSphere.BoundingSphere, parent.arcoPositivo.BoundingBox))
+            if (TgcCollisionUtils.testSphereAABB(ownSphere.BoundingSphere, parent.arcoPositivo))
             {
                 parent.golVisitante();
                 

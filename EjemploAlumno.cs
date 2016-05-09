@@ -48,19 +48,19 @@ namespace AlumnoEjemplos.MiGrupo
 
 
         public TgcBox piso;
-        public TgcBox arcoPositivo;
-        public TgcBox arcoNegativo;
+        public TgcBoundingBox arcoPositivo;
+        public TgcBoundingBox arcoNegativo;
 
-        public TgcBox paredArcoNegativo1;
-        public TgcBox paredArcoNegativo2;
-        public TgcBox paredArcoNegativo3;
+        public TgcBoundingBox limiteArcoNegativo1;
+        public TgcBoundingBox limiteArcoNegativo2;
+        public TgcBoundingBox limiteArcoNegativo3;
 
-        public TgcBox paredArcoPositivo1;
-        public TgcBox paredArcoPositivo2;
-        public TgcBox paredArcoPositivo3;
+        public TgcBoundingBox limiteArcoPositivo1;
+        public TgcBoundingBox limiteArcoPositivo2;
+        public TgcBoundingBox limiteArcoPositivo3;
 
-        public TgcBox lateralPositivo;
-        public TgcBox lateralNegativo;
+        public TgcBoundingBox limiteLateralPositivo;
+        public TgcBoundingBox limiteLateralNegativo;
 
         
 
@@ -87,20 +87,23 @@ namespace AlumnoEjemplos.MiGrupo
 
         public void crearEscenario()
         {
-            piso = TgcBox.fromExtremes(new Vector3(-2600, -100, -11000), new Vector3(2600, 0, 11000));
-            arcoPositivo = TgcBox.fromExtremes(new Vector3(-500, 0, 11000), new Vector3(500, 400, 12000));
-            arcoNegativo = TgcBox.fromExtremes(new Vector3(-500, 0, -12000), new Vector3(500, 400, -11000));
+            piso = TgcBox.fromExtremes(new Vector3(-2600, -100, -8000), new Vector3(2600, 0, 8000));
+
+            arcoPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 0, 8000), new Vector3(500, 400, 9000) });
+            arcoNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 0, -9000), new Vector3(500, 400, -8000) });
             
-            paredArcoNegativo1 = TgcBox.fromExtremes(new Vector3(-2600, 0, -11050), new Vector3(-500, 2000, -11000));
-            paredArcoNegativo2 = TgcBox.fromExtremes(new Vector3(500, 0, -11050), new Vector3(2600, 2000, -11000));
-            paredArcoNegativo3 = TgcBox.fromExtremes(new Vector3(-500, 400, -11050), new Vector3(500, 2000, -11000));
 
-            paredArcoPositivo1 = TgcBox.fromExtremes(new Vector3(-2600, 0, 11000), new Vector3(-500, 2000, 11050));
-            paredArcoPositivo2 = TgcBox.fromExtremes(new Vector3(500, 0, 11000), new Vector3(2600, 2000, 11050));
-            paredArcoPositivo3 = TgcBox.fromExtremes(new Vector3(-500, 400, 11000), new Vector3(500, 2000, 11050));
+            limiteArcoNegativo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2600, 0, -8050), new Vector3(-500, 2000, -8000) });
+            limiteArcoNegativo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(500, 0, -8050), new Vector3(2600, 2000, -8000) });
+            limiteArcoNegativo3 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 400, -8050), new Vector3(500, 2000, -8000) });
 
-            lateralPositivo = TgcBox.fromExtremes(new Vector3(-2650, 0, -11000), new Vector3(-2600, 2000, 11000));
-            lateralNegativo = TgcBox.fromExtremes(new Vector3(2600, 0, -11000), new Vector3(2650, 2000, 11000));
+            limiteArcoPositivo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2600, 0, 8000), new Vector3(-500, 2000, 8050) });
+            limiteArcoPositivo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(500, 0, 8000), new Vector3(2600, 2000, 8050) });
+            limiteArcoPositivo3 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 400, 8000), new Vector3(500, 2000, 8050) });
+
+            limiteLateralPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2650, 0, -8000), new Vector3(-2600, 2000, 8000) });
+            limiteLateralNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(2600, 0, -8000), new Vector3(2650, 2000, 8000) });
+            
         }
 
         public override void init()
@@ -136,13 +139,7 @@ namespace AlumnoEjemplos.MiGrupo
             piso.updateValues();
 
             TgcTexture cemento = TgcTexture.createTexture(d3dDevice, mediaFolder + "textures\\paredRugosa.jpg");
-            lateralNegativo.setTexture(cemento);
-            lateralPositivo.setTexture(cemento);
-            lateralNegativo.UVTiling = new Vector2(100, 10);
-            lateralPositivo.UVTiling = new Vector2(100, 10);
-
-            lateralNegativo.updateValues();
-            lateralPositivo.updateValues();
+         
 
             TgcSceneLoader loader = new TgcSceneLoader();
             //scene = loader.loadSceneFromFile(sceneFolder + "ss2\\IndoorSoccerField--TgcScene.xml");
@@ -159,14 +156,14 @@ namespace AlumnoEjemplos.MiGrupo
             paredes = new List<TgcBoundingBox>();
             laterales = new List<TgcBoundingBox>();
 
-            paredes.Add(paredArcoNegativo3.BoundingBox);
-            paredes.Add(paredArcoNegativo2.BoundingBox);
-            paredes.Add(paredArcoNegativo1.BoundingBox);
-            paredes.Add(paredArcoPositivo3.BoundingBox);
-            paredes.Add(paredArcoPositivo2.BoundingBox);
-            paredes.Add(paredArcoPositivo1.BoundingBox);
-            laterales.Add(lateralNegativo.BoundingBox);
-            laterales.Add(lateralPositivo.BoundingBox);
+            paredes.Add(limiteArcoNegativo3);
+            paredes.Add(limiteArcoNegativo2);
+            paredes.Add(limiteArcoNegativo1);
+            paredes.Add(limiteArcoPositivo3);
+            paredes.Add(limiteArcoPositivo2);
+            paredes.Add(limiteArcoPositivo1);
+            laterales.Add(limiteLateralNegativo);
+            laterales.Add(limiteLateralPositivo);
 
             pelota = new Pelota(this);
 
@@ -266,12 +263,12 @@ namespace AlumnoEjemplos.MiGrupo
             }
            
 
-            arcoPositivo.BoundingBox.render();
-            arcoNegativo.BoundingBox.render();
+            arcoPositivo.render();
+            arcoNegativo.render();
            // scene.renderAll();
             piso.render();
-            lateralPositivo.render();
-            lateralNegativo.render();
+            limiteLateralPositivo.render();
+            limiteLateralNegativo.render();
 
             mainCar.render();
             mainCar.obb.render();
