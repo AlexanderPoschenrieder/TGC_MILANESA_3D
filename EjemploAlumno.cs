@@ -135,6 +135,15 @@ namespace AlumnoEjemplos.MiGrupo
             piso.UVTiling = new Vector2(150, 150);
             piso.updateValues();
 
+            TgcTexture cemento = TgcTexture.createTexture(d3dDevice, mediaFolder + "textures\\paredRugosa.jpg");
+            lateralNegativo.setTexture(cemento);
+            lateralPositivo.setTexture(cemento);
+            lateralNegativo.UVTiling = new Vector2(100, 10);
+            lateralPositivo.UVTiling = new Vector2(100, 10);
+
+            lateralNegativo.updateValues();
+            lateralPositivo.updateValues();
+
             TgcSceneLoader loader = new TgcSceneLoader();
             //scene = loader.loadSceneFromFile(sceneFolder + "ss2\\IndoorSoccerField--TgcScene.xml");
             
@@ -255,14 +264,15 @@ namespace AlumnoEjemplos.MiGrupo
             {
                 p.render();
             }
-            foreach (TgcBoundingBox l in laterales)
-            {
-                l.render();
-            }
+           
+
             arcoPositivo.BoundingBox.render();
             arcoNegativo.BoundingBox.render();
            // scene.renderAll();
             piso.render();
+            lateralPositivo.render();
+            lateralNegativo.render();
+
             mainCar.render();
             mainCar.obb.render();
             secondCar.render();
