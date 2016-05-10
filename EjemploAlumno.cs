@@ -123,8 +123,11 @@ namespace AlumnoEjemplos.MiGrupo
             limiteLateralPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2650, 0, -8000), new Vector3(-2600, 1000, 8000) });
             limiteLateralNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(2600, 0, -8000), new Vector3(2650, 1000, 8000) });
 
-            paredLateralNegativa = TgcBox.fromExtremes(new Vector3(-2650, 0, -8000), new Vector3(-2600, 100, 8000));
-            paredLateralPositiva = TgcBox.fromExtremes(new Vector3(2600, 0, -8000), new Vector3(2650, 100, 8000));
+            paredLateralNegativa = TgcBox.fromExtremes(new Vector3(-2600, 0, -8000), new Vector3(-2600, 100, 8000));
+            paredLateralPositiva = TgcBox.fromExtremes(new Vector3(2600, 0, -8000), new Vector3(2600, 100, 8000));
+
+            rejaLateralNegativa = TgcBox.fromExtremes(new Vector3(-2600, 100, -8000), new Vector3(-2600, 1000, 8000));
+            rejaLateralPositiva = TgcBox.fromExtremes(new Vector3(2600, 100, -8000), new Vector3(2600, 1000, 8000));
 
 
             TgcTexture pasto = TgcTexture.createTexture(d3dDevice, mediaFolder + "textures\\pasto.jpg");
@@ -153,6 +156,17 @@ namespace AlumnoEjemplos.MiGrupo
             paredArcoPositivo2.UVTiling = new Vector2(20, 1);
             paredArcoPositivo1.updateValues();
             paredArcoPositivo2.updateValues();
+
+            TgcTexture reja = TgcTexture.createTexture(d3dDevice, mediaFolder + "textures\\fence.png");
+            rejaLateralNegativa.AlphaBlendEnable = true;
+            rejaLateralPositiva.AlphaBlendEnable = true;
+            rejaLateralPositiva.setTexture(reja);
+            rejaLateralNegativa.setTexture(reja);
+            rejaLateralNegativa.UVTiling = new Vector2(150, 9);
+            rejaLateralPositiva.UVTiling = new Vector2(150, 9);
+            rejaLateralNegativa.updateValues();
+            rejaLateralPositiva.updateValues();
+
         }
 
         public override void init()
@@ -328,6 +342,13 @@ namespace AlumnoEjemplos.MiGrupo
             paredArcoPositivo1.render();
             paredArcoPositivo2.render();
 
+            // d3dDevice.SetRenderState(RenderStates.AlphaBlendEnable, true);
+            // d3dDevice.SetRenderState(RenderStates.SourceBlend, (float) RenderStates.SourceBlendAlpha);
+            //   d3dDevice.SetRenderState(RenderStates.DestinationBlend, (float) RenderStates.DestinationBlendAlpha);
+            
+            rejaLateralPositiva.render();
+            rejaLateralNegativa.render();
+
             txtScoreLocal.render();
             txtScoreVisitante.render();
         }
@@ -436,6 +457,8 @@ namespace AlumnoEjemplos.MiGrupo
             paredArcoPositivo1.dispose();
             paredArcoPositivo2.dispose();
 
+            rejaLateralPositiva.dispose();
+            rejaLateralNegativa.dispose();
 
             skyBox.dispose();
         }
