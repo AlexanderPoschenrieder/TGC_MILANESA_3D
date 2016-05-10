@@ -48,6 +48,8 @@ namespace AlumnoEjemplos.MiGrupo
         public List<TgcBoundingBox> limitesArcos; 
         public List<TgcBoundingBox> laterales;
 
+        public List<TgcBox> cajasVisiblesEscenario;
+
 
         public TgcBox piso;
         public TgcBoundingBox arcoPositivo;
@@ -81,7 +83,9 @@ namespace AlumnoEjemplos.MiGrupo
         static string rootDir = GuiController.Instance.AlumnoEjemplosDir;
         static string mediaFolder = rootDir + "MiGrupo\\media\\";
         static string sceneFolder = mediaFolder + "meshes\\scenes\\";
-
+        private TgcBox rejaArcoPositivo1;
+        private TgcBox rejaArcoPositivo2;
+        private TgcBox rejaSuperiorArcoPositivo;
 
         public override string getCategory()
         {
@@ -120,6 +124,10 @@ namespace AlumnoEjemplos.MiGrupo
             paredArcoPositivo1 = TgcBox.fromExtremes(new Vector3(-2600, 0, 8000), new Vector3(-500, 100, 8050));
             paredArcoPositivo2 = TgcBox.fromExtremes(new Vector3(500, 0, 8000), new Vector3(2600, 100, 8050));
 
+            rejaArcoPositivo1 = TgcBox.fromExtremes(new Vector3(-2600, 100, 8000), new Vector3(-500, 400, 8000));
+            rejaArcoPositivo2 = TgcBox.fromExtremes(new Vector3(500, 100, 8000), new Vector3(2600, 400, 8000));
+            rejaSuperiorArcoPositivo = TgcBox.fromExtremes(new Vector3(-2600, 400, 8000), new Vector3(2600, 1000, 8000));
+
             limiteLateralPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2650, 0, -8000), new Vector3(-2600, 1000, 8000) });
             limiteLateralNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(2600, 0, -8000), new Vector3(2650, 1000, 8000) });
 
@@ -133,45 +141,70 @@ namespace AlumnoEjemplos.MiGrupo
             TgcTexture pasto = TgcTexture.createTexture(d3dDevice, mediaFolder + "textures\\pasto.jpg");
             piso.setTexture(pasto);
             piso.UVTiling = new Vector2(150, 150);
-            piso.updateValues();
+
+            cajasVisiblesEscenario.Add(piso);
+
+
 
             TgcTexture cemento = TgcTexture.createTexture(d3dDevice, mediaFolder + "textures\\paredRugosa.jpg");
             paredLateralNegativa.setTexture(cemento);
             paredLateralPositiva.setTexture(cemento);
             paredLateralNegativa.UVTiling = new Vector2(150, 1);
             paredLateralPositiva.UVTiling = new Vector2(150, 1);
-            paredLateralNegativa.updateValues();
-            paredLateralPositiva.updateValues();
+
+            cajasVisiblesEscenario.Add(paredLateralNegativa);
+            cajasVisiblesEscenario.Add(paredLateralPositiva);
 
             paredArcoNegativo1.setTexture(cemento);
             paredArcoNegativo2.setTexture(cemento);
             paredArcoNegativo1.UVTiling = new Vector2(20, 1);
             paredArcoNegativo2.UVTiling = new Vector2(20, 1);
-            paredArcoNegativo1.updateValues();
-            paredArcoNegativo2.updateValues();
+
+            cajasVisiblesEscenario.Add(paredArcoNegativo1);
+            cajasVisiblesEscenario.Add(paredArcoNegativo2);
 
             paredArcoPositivo1.setTexture(cemento);
             paredArcoPositivo2.setTexture(cemento);
             paredArcoPositivo1.UVTiling = new Vector2(20, 1);
             paredArcoPositivo2.UVTiling = new Vector2(20, 1);
-            paredArcoPositivo1.updateValues();
-            paredArcoPositivo2.updateValues();
 
-            TgcTexture reja = TgcTexture.createTexture(d3dDevice, mediaFolder + "textures\\fence.png");
-            rejaLateralNegativa.AlphaBlendEnable = true;
-            rejaLateralPositiva.AlphaBlendEnable = true;
-            rejaLateralPositiva.setTexture(reja);
-            rejaLateralNegativa.setTexture(reja);
+            cajasVisiblesEscenario.Add(paredArcoPositivo1);
+            cajasVisiblesEscenario.Add(paredArcoPositivo2);
+
+            List<TgcBox> rejas = new List<TgcBox>();
+
+            TgcTexture textura_reja = TgcTexture.createTexture(d3dDevice, mediaFolder + "textures\\fence.png");
+            rejas.Add(rejaLateralNegativa);
+            rejas.Add(rejaLateralPositiva);
+            rejas.Add(rejaArcoPositivo1);
+            rejas.Add(rejaArcoPositivo2);
+            rejas.Add(rejaSuperiorArcoPositivo);
+
+
+            foreach(TgcBox r in rejas)
+            {
+                r.AlphaBlendEnable = true;
+                r.setTexture(textura_reja);
+                cajasVisiblesEscenario.Add(r);
+            }
+            
             rejaLateralNegativa.UVTiling = new Vector2(150, 9);
             rejaLateralPositiva.UVTiling = new Vector2(150, 9);
-            rejaLateralNegativa.updateValues();
-            rejaLateralPositiva.updateValues();
+            rejaArcoPositivo1.UVTiling = new Vector2(20, 3);
+            rejaArcoPositivo2.UVTiling = new Vector2(20, 3);
+            rejaSuperiorArcoPositivo.UVTiling = new Vector2(50, 6);
+
+
+            foreach (TgcBox box in cajasVisiblesEscenario)
+            {
+                box.updateValues();
+            }
 
         }
 
         public override void init()
         {
-            
+            cajasVisiblesEscenario = new List<TgcBox>();
             crearEscenario();
 
             
@@ -332,22 +365,10 @@ namespace AlumnoEjemplos.MiGrupo
 
             skyBox.render();
 
-            piso.render();
-            paredLateralNegativa.render();
-            paredLateralPositiva.render();
-
-            paredArcoNegativo1.render();
-            paredArcoNegativo2.render();
-
-            paredArcoPositivo1.render();
-            paredArcoPositivo2.render();
-
-            // d3dDevice.SetRenderState(RenderStates.AlphaBlendEnable, true);
-            // d3dDevice.SetRenderState(RenderStates.SourceBlend, (float) RenderStates.SourceBlendAlpha);
-            //   d3dDevice.SetRenderState(RenderStates.DestinationBlend, (float) RenderStates.DestinationBlendAlpha);
-            
-            rejaLateralPositiva.render();
-            rejaLateralNegativa.render();
+            foreach (TgcBox box in cajasVisiblesEscenario)
+            {
+                box.render();
+            }
 
             txtScoreLocal.render();
             txtScoreVisitante.render();
@@ -448,17 +469,10 @@ namespace AlumnoEjemplos.MiGrupo
 
             piso.dispose();
 
-            paredLateralNegativa.dispose();
-            paredLateralPositiva.dispose();
-
-            paredArcoNegativo1.dispose();
-            paredArcoNegativo2.dispose();
-
-            paredArcoPositivo1.dispose();
-            paredArcoPositivo2.dispose();
-
-            rejaLateralPositiva.dispose();
-            rejaLateralNegativa.dispose();
+            foreach (TgcBox box in cajasVisiblesEscenario)
+            {
+                box.dispose();
+            }
 
             skyBox.dispose();
         }
