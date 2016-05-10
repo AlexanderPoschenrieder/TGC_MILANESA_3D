@@ -248,7 +248,9 @@ namespace AlumnoEjemplos.MiGrupo
          
 
             TgcSceneLoader loader = new TgcSceneLoader();
-            //scene = loader.loadSceneFromFile(sceneFolder + "ss2\\IndoorSoccerField--TgcScene.xml");
+            scene = loader.loadSceneFromFile(sceneFolder + "predio\\predio-TgcScene.xml");
+            
+            
             
             mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
             secondCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Hummer\\Hummer-TgcScene.xml").Meshes[0];
@@ -330,7 +332,7 @@ namespace AlumnoEjemplos.MiGrupo
 
             pelota.mover(elapsedTime);
             pelota.updateValues();
- 			skyBox.Center = mainCar.meshAuto.Position;
+            skyBox.Center = mainCar.meshAuto.Position;
             skyBox.updateValues();
             SetCarCamera();
             SetViewport();
@@ -363,15 +365,12 @@ namespace AlumnoEjemplos.MiGrupo
         private void RenderAllObjects()
         {
             pelota.render();
-            foreach (TgcBoundingBox p in limitesArcos)
-            {
-                p.render();
-            }
+           
            
 
             arcoPositivo.render();
             arcoNegativo.render();
-           // scene.renderAll();
+            scene.renderAll();
 
             mainCar.render();
             mainCar.obb.render();
@@ -482,6 +481,7 @@ namespace AlumnoEjemplos.MiGrupo
             secondCar.meshAuto.dispose();
             pelota.ownSphere.dispose();
 
+            scene.disposeAll();
             piso.dispose();
 
             foreach (TgcBox box in cajasVisiblesEscenario)
