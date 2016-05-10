@@ -86,6 +86,9 @@ namespace AlumnoEjemplos.MiGrupo
         private TgcBox rejaArcoPositivo1;
         private TgcBox rejaArcoPositivo2;
         private TgcBox rejaSuperiorArcoPositivo;
+        private TgcBox rejaArcoNegativo1;
+        private TgcBox rejaArcoNegativo2;
+        private TgcBox rejaSuperiorArcoNegativo;
 
         public override string getCategory()
         {
@@ -116,6 +119,10 @@ namespace AlumnoEjemplos.MiGrupo
 
             paredArcoNegativo1 = TgcBox.fromExtremes(new Vector3(-2600, 0, -8050), new Vector3(-500, 100, -8000));
             paredArcoNegativo2 = TgcBox.fromExtremes(new Vector3(500, 0, -8050), new Vector3(2600, 100, -8000));
+
+            rejaArcoNegativo1 = TgcBox.fromExtremes(new Vector3(-2600, 100, -8000), new Vector3(-500, 400, -8000));
+            rejaArcoNegativo2 = TgcBox.fromExtremes(new Vector3(500, 100, -8000), new Vector3(2600, 400, -8000));
+            rejaSuperiorArcoNegativo = TgcBox.fromExtremes(new Vector3(-2600, 400, -8000), new Vector3(2600, 1000, -8000));
 
             limiteArcoPositivo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2600, 0, 8000), new Vector3(-500, 1000, 8050) });
             limiteArcoPositivo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(500, 0, 8000), new Vector3(2600, 1000, 8050) });
@@ -179,9 +186,12 @@ namespace AlumnoEjemplos.MiGrupo
             rejas.Add(rejaArcoPositivo1);
             rejas.Add(rejaArcoPositivo2);
             rejas.Add(rejaSuperiorArcoPositivo);
+            rejas.Add(rejaArcoNegativo1);
+            rejas.Add(rejaArcoNegativo2);
+            rejas.Add(rejaSuperiorArcoNegativo);
 
 
-            foreach(TgcBox r in rejas)
+            foreach (TgcBox r in rejas)
             {
                 r.AlphaBlendEnable = true;
                 r.setTexture(textura_reja);
@@ -190,9 +200,14 @@ namespace AlumnoEjemplos.MiGrupo
             
             rejaLateralNegativa.UVTiling = new Vector2(150, 9);
             rejaLateralPositiva.UVTiling = new Vector2(150, 9);
+
             rejaArcoPositivo1.UVTiling = new Vector2(20, 3);
             rejaArcoPositivo2.UVTiling = new Vector2(20, 3);
             rejaSuperiorArcoPositivo.UVTiling = new Vector2(50, 6);
+
+            rejaArcoNegativo1.UVTiling = new Vector2(20, 3);
+            rejaArcoNegativo2.UVTiling = new Vector2(20, 3);
+            rejaSuperiorArcoNegativo.UVTiling = new Vector2(50, 6);
 
 
             foreach (TgcBox box in cajasVisiblesEscenario)
