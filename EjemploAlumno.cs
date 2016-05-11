@@ -23,9 +23,10 @@ namespace AlumnoEjemplos.MiGrupo
     {
         TgcSkyBox skyBox;
         TgcScene scene;
-        TgcMesh mainCarMesh,secondCarMesh;
+        TgcMesh mainCarMesh,secondCarMesh,iaCarMesh;
         Auto mainCar;
         Auto2 secondCar;
+        AutoIA iaCar;
         TgcCamera camaraActiva1, camaraActiva2;
         float farPlane = 100.0f;
 
@@ -258,6 +259,8 @@ namespace AlumnoEjemplos.MiGrupo
             mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
             secondCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
             secondCarMesh.setColor(Color.Red);
+            iaCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
+            iaCarMesh.setColor(Color.Green);
 
             GuiController.Instance.UserVars.addVar("Velocidad");
             GuiController.Instance.UserVars.addVar("Pos Auto 1");
@@ -297,6 +300,7 @@ namespace AlumnoEjemplos.MiGrupo
             var direccion = arcoNegativo.Position - arcoPositivo.Position;
             var pos1=Vector3.Add(arcoPositivo.Position, Vector3.Multiply(direccion,0.1f));
             var pos2 = Vector3.Add(arcoNegativo.Position, Vector3.Multiply(direccion, -0.1f));
+            var pos3 = Vector3.Add(pos1, new Vector3(300,0,0));
 
             mainCarMesh.Position = new Vector3(pos1.X, 0, pos1.Z);
             mainCar = new Auto(mainCarMesh, this);
@@ -304,7 +308,15 @@ namespace AlumnoEjemplos.MiGrupo
 
             secondCarMesh.Position = new Vector3(pos2.X, 0, pos2.Z);
             secondCar = new Auto2(secondCarMesh, this);
-            //autitus.Add(secondCar);
+
+            secondCarMesh.Position = new Vector3(pos2.X, 0, pos2.Z);
+            secondCar = new Auto2(secondCarMesh, this);
+
+            iaCarMesh.Position = new Vector3(pos3.X, 0, pos3.Z);
+            iaCar = new AutoIA(iaCarMesh, this);
+
+            autitus.Add(secondCar);
+            //autitus.Add(iaCar);
         }
         
         private void CreateViewports()
@@ -335,10 +347,11 @@ namespace AlumnoEjemplos.MiGrupo
         {
 
             //Mover Auto
-            mainCar.elapsedTime = elapsedTime;
-            mainCar.Mover(elapsedTime);
-            secondCar.elapsedTime = elapsedTime;
-            secondCar.Mover(elapsedTime);
+            foreach (var auto in autitus)
+            {
+                auto.elapsedTime = elapsedTime;
+                auto.Mover(elapsedTime);
+            }
 
             pelota.mover(elapsedTime);
             pelota.updateValues();
@@ -382,10 +395,10 @@ namespace AlumnoEjemplos.MiGrupo
             arcoNegativo.render();
             scene.renderAll();
 
-            mainCar.render();
-            mainCar.obb.render();
-            secondCar.render();
-            secondCar.obb.render();
+            foreach (var auto in autitus)
+            {
+                auto.render();
+            }
 
             skyBox.render();
 

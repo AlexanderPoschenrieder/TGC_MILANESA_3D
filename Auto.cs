@@ -269,14 +269,15 @@ namespace AlumnoEjemplos.MiGrupo
                     if (TgcCollisionUtils.testObbObb(obb, auto.obb))
                     {
                         var anguloChoque = Vector3.Dot(direccionMovimiento, auto.direccionMovimiento);
-                        if (FastMath.Abs(anguloChoque) < 0.4)
-                        {
-                           
-                        }
-                        else
-                        {
 
-                        }
+                        //if (FastMath.Abs(anguloChoque) < 0.4)
+                        //{
+                            velocidadHorizontal = -velocidadHorizontal * 0.5f;
+                        //}
+                        //else
+                        //{
+                            //velocidadHorizontal = -velocidadHorizontal * 0.5f;
+                        //}
                     }
                 }
 
@@ -332,6 +333,8 @@ namespace AlumnoEjemplos.MiGrupo
                 GuiController.Instance.UserVars.setValue("Pos Auto 2", TgcParserUtils.printVector3(meshAuto.Position));
                 GuiController.Instance.UserVars.setValue("Pos Obb 2", TgcParserUtils.printVector3(obb.Position));
             }
+
+            direccionMovimiento = Vector3.Normalize(newPos - lastPos);
 
         }
 
@@ -433,6 +436,12 @@ namespace AlumnoEjemplos.MiGrupo
             handling =  (float)GuiController.Instance.Modifiers["VelocidadRotacion"];
 
             meshAuto.render();
+            obb.render();
+        }
+
+        public bool isLeft(Vector3 a, Vector3 b, Vector3 c)
+        {
+            return ((b.X - a.X) * (c.Y - a.Y) - (b.Y - a.Y) * (c.X - a.X)) > 0;
         }
 
         #endregion

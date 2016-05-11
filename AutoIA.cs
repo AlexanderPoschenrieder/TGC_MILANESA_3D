@@ -62,10 +62,7 @@ namespace AlumnoEjemplos.MiGrupo
 
         }
 
-        public bool isLeft(Vector3 a, Vector3 b, Vector3 c)
-        {
-            return ((b.X - a.X) * (c.Y - a.Y) - (b.Y - a.Y) * (c.X - a.X)) > 0;
-        }
+        
 
     }
 }
