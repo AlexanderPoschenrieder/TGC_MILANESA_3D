@@ -136,7 +136,7 @@ namespace AlumnoEjemplos.MiGrupo
         {
             
             ownSphere.updateValues();
-            
+            GuiController.Instance.UserVars.setValue("Pos Pelota", TgcParserUtils.printVector3(ownSphere.Position));
         }
 
         public void mover(float elapsedTime)

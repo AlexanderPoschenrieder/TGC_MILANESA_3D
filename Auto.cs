@@ -296,7 +296,6 @@ namespace AlumnoEjemplos.MiGrupo
                     this.velocidadHorizontal = this.velocidadHorizontal * (i / 3);
 
                 }
-
                 else
                 {
                     obb.move(-direccionMovimiento * velocidadHorInicial * dt);
@@ -323,6 +322,16 @@ namespace AlumnoEjemplos.MiGrupo
             obb.setRotation(new Vector3(0f, this.rotacion, 0f));
 
             obb.move(newPos - lastPos);
+            if (this.GetType().Name == "Auto")
+            {
+                GuiController.Instance.UserVars.setValue("Pos Auto 1", TgcParserUtils.printVector3(meshAuto.Position));
+                GuiController.Instance.UserVars.setValue("Pos Obb 1", TgcParserUtils.printVector3(obb.Position));
+            }
+            else
+            {
+                GuiController.Instance.UserVars.setValue("Pos Auto 2", TgcParserUtils.printVector3(meshAuto.Position));
+                GuiController.Instance.UserVars.setValue("Pos Obb 2", TgcParserUtils.printVector3(obb.Position));
+            }
 
         }
 

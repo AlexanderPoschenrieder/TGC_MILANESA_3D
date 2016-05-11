@@ -14,10 +14,11 @@ using TgcViewer.Utils.Input;
 using Microsoft.DirectX.DirectInput;
 using System.Windows.Forms;
 using TgcViewer.Utils.Terrain;
+using TgcViewer.Utils;
 
 namespace AlumnoEjemplos.MiGrupo
 {
-
+    
     public class EjemploAlumno : TgcExample
     {
         TgcSkyBox skyBox;
@@ -26,6 +27,7 @@ namespace AlumnoEjemplos.MiGrupo
         Auto mainCar;
         Auto2 secondCar;
         TgcCamera camaraActiva1, camaraActiva2;
+        float farPlane = 100.0f;
 
         Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
 
@@ -219,6 +221,7 @@ namespace AlumnoEjemplos.MiGrupo
 
         public override void init()
         {
+
             cajasVisiblesEscenario = new List<TgcBox>();
             crearEscenario();
 
@@ -253,9 +256,15 @@ namespace AlumnoEjemplos.MiGrupo
             
             
             mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
-            secondCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Hummer\\Hummer-TgcScene.xml").Meshes[0];
+            secondCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
+            secondCarMesh.setColor(Color.Red);
 
             GuiController.Instance.UserVars.addVar("Velocidad");
+            GuiController.Instance.UserVars.addVar("Pos Auto 1");
+            GuiController.Instance.UserVars.addVar("Pos Obb 1");
+            GuiController.Instance.UserVars.addVar("Pos Auto 2");
+            GuiController.Instance.UserVars.addVar("Pos Obb 2");
+            GuiController.Instance.UserVars.addVar("Pos Pelota");
 
             GuiController.Instance.Modifiers.addFloat("Gravedad", -50, 0, -9.81f);
             GuiController.Instance.Modifiers.addFloat("Aceleracion", 100f, 1000f, 500f);
@@ -280,6 +289,7 @@ namespace AlumnoEjemplos.MiGrupo
             SetCarPositions();
             CreateViewports();
             initCarCameras();
+            //ResizeFrustum();
         }
 
         private void SetCarPositions()
@@ -294,7 +304,7 @@ namespace AlumnoEjemplos.MiGrupo
 
             secondCarMesh.Position = new Vector3(pos2.X, 0, pos2.Z);
             secondCar = new Auto2(secondCarMesh, this);
-            autitus.Add(secondCar);
+            //autitus.Add(secondCar);
         }
         
         private void CreateViewports()
@@ -323,7 +333,7 @@ namespace AlumnoEjemplos.MiGrupo
         /// <param name="elapsedTime">Tiempo en segundos transcurridos desde el último frame</param>
         public override void render(float elapsedTime)
         {
-            
+
             //Mover Auto
             mainCar.elapsedTime = elapsedTime;
             mainCar.Mover(elapsedTime);
@@ -343,11 +353,13 @@ namespace AlumnoEjemplos.MiGrupo
         {
             if (splitScreen)
             {
-                
                 GuiController.Instance.D3dDevice.Viewport = View1;
                 camaraActiva1.Enable=true;
                 RenderAllObjects();
 
+
+                skyBox.Center = secondCar.meshAuto.Position;
+                skyBox.updateValues();
                 GuiController.Instance.D3dDevice.Viewport = View2;
                 camaraActiva2.Enable = true;
                 RenderAllObjects();
@@ -366,8 +378,6 @@ namespace AlumnoEjemplos.MiGrupo
         {
             pelota.render();
            
-           
-
             arcoPositivo.render();
             arcoNegativo.render();
             scene.renderAll();
@@ -386,6 +396,12 @@ namespace AlumnoEjemplos.MiGrupo
 
             txtScoreLocal.render();
             txtScoreVisitante.render();
+        }
+
+        private void ResizeFrustum(float aspectRatio)
+        {
+            GuiController.Instance.D3dDevice.Transform.Projection = Matrix.PerspectiveFovLH(
+                FastMath.ToRad(45.0f), (float)GuiController.Instance.Panel3d.Width / GuiController.Instance.Panel3d.Height, 1.0f, float.MaxValue);
         }
 
         private void SetViewport()
