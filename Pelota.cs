@@ -57,7 +57,7 @@ namespace AlumnoEjemplos.MiGrupo
             sentidoMovimiento = new Vector3(sentidoMovimiento.X, 0, sentidoMovimiento.Z);
 
             
-            ownSphere.Rotation = ownSphere.Rotation + Vector3.Cross(sentidoMovimiento, new Vector3(0, -1, 0)) * elapsedTime * 0.01f;
+            ownSphere.Rotation = ownSphere.Rotation + Vector3.Cross(sentidoMovimiento, new Vector3(0, -1, 0)) * elapsedTime * 0.005f;
 
        
           

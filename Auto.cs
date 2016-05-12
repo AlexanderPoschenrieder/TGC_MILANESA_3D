@@ -194,7 +194,7 @@ namespace AlumnoEjemplos.MiGrupo
         public void chequearColisiones()
         {
             int i = 0;
-            float dt = DELTA_T * 2 * elapsedTime * 0.1f;
+            float dt = 0.001f * elapsedTime;
 
             Vector3 originalPos = meshAuto.Position;
             Vector3 originalObbPos = obb.Position;
@@ -202,7 +202,7 @@ namespace AlumnoEjemplos.MiGrupo
             while (i < 5)
             {
                 i++;
-                dt = dt / 2;
+                //dt = dt / 2;
 
                 float velocidadHorInicial = velocidadHorizontal;
 
@@ -291,8 +291,10 @@ namespace AlumnoEjemplos.MiGrupo
                     TgcRay ray = new TgcRay(lastPos, spherePosition - lastPos);
                     TgcCollisionUtils.intersectRayObb(ray, obb, out collisionPos);
 
-                    Vector3 velocidadATransmitir = 0.005f * (spherePosition - collisionPos) * this.velocidadHorizontal;
+                    Vector3 velocidadATransmitir = 0.02f * (spherePosition - collisionPos) * this.velocidadHorizontal;
+                    velocidadATransmitir = new Vector3(velocidadATransmitir.X, velocidadATransmitir.Y * 0.3f, velocidadATransmitir.Z);
 
+                    meshAuto.Position = lastPos;
                     parent.pelota.velocity = parent.pelota.velocity + velocidadATransmitir;
                     this.velocidadHorizontal = this.velocidadHorizontal * (i / 3);
 

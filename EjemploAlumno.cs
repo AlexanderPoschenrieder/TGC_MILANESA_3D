@@ -103,9 +103,13 @@ namespace AlumnoEjemplos.MiGrupo
             return "Grupo 99";
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
         public override string getDescription()
         {
-            return "Rocket League - Futbol de autos";
+            return "Rocket League - Futbol de autos. Auto principal: movimiento con W, A, S, D, Ctrl izq, Espacio. Auto secundario: movimiento con flechas, Ctrl der y Alt der. Shift izq apunta la cámara hacia la pelota.";
         }
 
         public void crearEscenario()
