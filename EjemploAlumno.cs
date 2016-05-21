@@ -258,8 +258,6 @@ namespace AlumnoEjemplos.MiGrupo
             TgcSceneLoader loader = new TgcSceneLoader();
             scene = loader.loadSceneFromFile(sceneFolder + "predio\\predio-TgcScene.xml");
             
-            
-            
             mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
             secondCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
             secondCarMesh.setColor(Color.Red);
@@ -306,20 +304,21 @@ namespace AlumnoEjemplos.MiGrupo
             var pos2 = Vector3.Add(arcoNegativo.Position, Vector3.Multiply(direccion, -0.1f));
             var pos3 = Vector3.Add(pos1, new Vector3(300,0,0));
 
-            mainCarMesh.Position = new Vector3(pos1.X, 0, pos1.Z);
+
             mainCar = new Auto(mainCarMesh, this);
+            mainCar.translate(pos1.X, 0, pos1.Z);
             autitus.Add(mainCar);
 
-            secondCarMesh.Position = new Vector3(pos2.X, 0, pos2.Z);
+            
             secondCar = new Auto2(secondCarMesh, this);
+            secondCar.translate(pos2.X, 0, pos2.Z);
 
             secondCarMesh.Position = new Vector3(pos2.X, 0, pos2.Z);
             secondCar = new Auto2(secondCarMesh, this);
 
-            iaCarMesh.Position = new Vector3(pos3.X, 0, pos3.Z);
             iaCar = new AutoIA(iaCarMesh, this);
-
-            autitus.Add(secondCar);
+            iaCar.translate(pos3.X, 0, pos3.Z);
+            //autitus.Add(secondCar);
             //autitus.Add(iaCar);
         }
         
