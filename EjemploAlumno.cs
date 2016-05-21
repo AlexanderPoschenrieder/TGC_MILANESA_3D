@@ -394,6 +394,7 @@ namespace AlumnoEjemplos.MiGrupo
         private void RenderAllObjects()
         {
             pelota.render();
+            pelota.ownSphere.BoundingSphere.render();
            
             arcoPositivo.render();
             arcoNegativo.render();
@@ -435,7 +436,7 @@ namespace AlumnoEjemplos.MiGrupo
 
         private void SetCarCamera()
         {
-            var pelotaPos = pelota.ownSphere.Position;
+            var pelotaPos = pelota.pos;
             var autoPos = mainCarMesh.Position;
             var auto2Pos = secondCarMesh.Position;
              ///////////////INPUT//////////////////
@@ -443,15 +444,15 @@ namespace AlumnoEjemplos.MiGrupo
             TgcD3dInput input = GuiController.Instance.D3dInput;
             if (input.keyDown(Key.LeftShift))
             {
-                camaraPelota1.FirstTarget = autoPos;
-                camaraPelota1.SecondTarget = pelotaPos;
-                camaraActiva1 = camaraPelota1;
-            }
-            else
-            {
                 camaraAuto1.RotationY = mainCar.rotacion;
                 camaraAuto1.Target = mainCar.meshAuto.Position;
                 camaraActiva1 = camaraAuto1;
+            }
+            else
+            {
+                camaraPelota1.FirstTarget = autoPos;
+                camaraPelota1.SecondTarget = pelotaPos;
+                camaraActiva1 = camaraPelota1;
             }
             /////////////////INPUT//////////////////
             //conviene deshabilitar ambas camaras para que no haya interferencia

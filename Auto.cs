@@ -286,7 +286,7 @@ namespace AlumnoEjemplos.MiGrupo
 
                     Vector3 collisionPos = new Vector3();
                     Vector3 spherePosition = new Vector3();
-                    spherePosition = parent.pelota.ownSphere.Position;
+                    spherePosition = parent.pelota.pos;
 
                     TgcRay ray = new TgcRay(lastPos, spherePosition - lastPos);
                     TgcCollisionUtils.intersectRayObb(ray, obb, out collisionPos);
