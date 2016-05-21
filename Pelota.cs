@@ -45,8 +45,8 @@ namespace AlumnoEjemplos.MiGrupo
             String ballTexture = GuiController.Instance.AlumnoEjemplosDir  + "MiGrupo\\media\\textures\\football.png";
 
             scale(50);
-            translate(-400, 200, 6300);
-            ownSphere.BoundingSphere.setValues(new Vector3(-400, 200, 6300), 50);
+            translate(-400, 200, 2300);
+            ownSphere.BoundingSphere.setValues(new Vector3(-400, 200, 2300), 50);
             ownSphere.setColor(Color.Red);
             ownSphere.setTexture(TgcTexture.createTexture(d3dDevice, ballTexture));
 
