@@ -264,14 +264,19 @@ namespace AlumnoEjemplos.MiGrupo
         #region GUI
         public void createHud()
         {
-            txtScoreLocal.Text = scoreLocal.ToString();
-            txtScoreLocal.Position = new Point(300, 100);
-            txtScoreLocal.Size = new Size(300, 100);
             
-            txtScoreVisitante.Text = scoreVisitante.ToString();
-            txtScoreVisitante.Position = new Point(600, 100);
-            txtScoreVisitante.Size = new Size(300, 100);
+            txtScoreLocal.Text = "Equipo Rojo: " + scoreLocal.ToString();
+            txtScoreLocal.Position = new Point(0, 10);
+            txtScoreLocal.Size = new Size(300, 100);
+            txtScoreLocal.changeFont(new System.Drawing.Font("Calibri", 18, FontStyle.Bold | FontStyle.Italic));
+            txtScoreLocal.Color = (Color) GuiController.Instance.Modifiers.getValue("ColorHUD");
 
+
+            txtScoreVisitante.Text = "Equipo Azul: " + scoreVisitante.ToString();
+            txtScoreVisitante.Position = new Point(0, 30);
+            txtScoreVisitante.Size = new Size(300, 100);
+            txtScoreVisitante.changeFont(new System.Drawing.Font("Calibri", 18, FontStyle.Bold | FontStyle.Italic));
+            txtScoreVisitante.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
         }
 
         public void createVars()
@@ -291,6 +296,7 @@ namespace AlumnoEjemplos.MiGrupo
             GuiController.Instance.Modifiers.addFloat("Gravedad", -50, 0, -9.81f);
             GuiController.Instance.Modifiers.addFloat("Aceleracion", 100f, 1000f, 500f);
             GuiController.Instance.Modifiers.addFloat("VelocidadRotacion", 0f, 5f, 1.5f);
+            GuiController.Instance.Modifiers.addColor("ColorHUD", Color.Gold);
 
         }
         #endregion
@@ -300,9 +306,9 @@ namespace AlumnoEjemplos.MiGrupo
             cajasVisiblesEscenario = new List<TgcBox>();
 
             crearEscenario();
-            createHud();
             createVars();
             createModifiers();
+            createHud();
 
             TgcSceneLoader loader = new TgcSceneLoader();
             scene = loader.loadSceneFromFile(sceneFolder + "predio\\predio-TgcScene.xml");
@@ -349,10 +355,7 @@ namespace AlumnoEjemplos.MiGrupo
             autitus.Add(secondCar);
             //autitus.Add(iaCar);
         }
-        
       
-
-
 
         /// <param name="elapsedTime">Tiempo en segundos transcurridos desde el último frame</param>
         public override void render(float elapsedTime)
@@ -370,6 +373,9 @@ namespace AlumnoEjemplos.MiGrupo
             //skyBox.Center = mainCar.meshAuto.Position;
             //skyBox.updateValues(); //en esta línea hay un memory leak durísimo
             //tal vez ni sea necesario mover el skybox
+
+            txtScoreVisitante.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
+            txtScoreLocal.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
 
             SetCarCamera();
             SetViewport();
@@ -532,9 +538,9 @@ namespace AlumnoEjemplos.MiGrupo
 
         public void gol()
         {
-            txtScoreLocal.Text = scoreLocal.ToString();
-            txtScoreVisitante.Text = scoreVisitante.ToString();
-            
+            txtScoreLocal.Text = "Equipo Rojo: " + scoreLocal.ToString();
+            txtScoreVisitante.Text = "Equipo Azul: " + scoreVisitante.ToString();
+
             mainCar.meshAuto.Position = new Vector3(0,0,0);
             mainCar.obb = TgcObb.computeFromAABB(mainCar.meshAuto.BoundingBox);
             pelota.ownSphere.dispose();
