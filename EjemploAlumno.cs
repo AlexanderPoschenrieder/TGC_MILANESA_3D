@@ -357,7 +357,6 @@ namespace AlumnoEjemplos.MiGrupo
         /// <param name="elapsedTime">Tiempo en segundos transcurridos desde el último frame</param>
         public override void render(float elapsedTime)
         {
-
             //Mover Auto
             foreach (var auto in autitus)
             {
@@ -367,8 +366,11 @@ namespace AlumnoEjemplos.MiGrupo
 
             pelota.mover(elapsedTime);
             pelota.updateValues();
-            skyBox.Center = mainCar.meshAuto.Position;
-            skyBox.updateValues();
+
+            //skyBox.Center = mainCar.meshAuto.Position;
+            //skyBox.updateValues(); //en esta línea hay un memory leak durísimo
+            //tal vez ni sea necesario mover el skybox
+
             SetCarCamera();
             SetViewport();
             RenderAll();
@@ -385,8 +387,9 @@ namespace AlumnoEjemplos.MiGrupo
                 d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
                 RenderAllObjects();
 
-                skyBox.Center = secondCar.meshAuto.Position;
-                skyBox.updateValues();
+                //skyBox.Center = secondCar.meshAuto.Position;
+                //skyBox.updateValues(); //en esta línea hay un memory leak durísimo
+                //tal vez ni sea necesario mover el skybox
 
                 d3dDevice.Viewport = View2;
                 d3dDevice.Transform.View = camaraActiva2.GetUpdatedViewMatrix();
