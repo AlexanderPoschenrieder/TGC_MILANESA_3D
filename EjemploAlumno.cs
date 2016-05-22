@@ -21,6 +21,8 @@ namespace AlumnoEjemplos.MiGrupo
     
     public class EjemploAlumno : TgcExample
     {
+
+        #region DECLARACIONES
         TgcSkyBox skyBox;
         TgcScene scene;
         TgcMesh mainCarMesh,secondCarMesh,iaCarMesh;
@@ -93,6 +95,10 @@ namespace AlumnoEjemplos.MiGrupo
         private TgcBox rejaArcoNegativo2;
         private TgcBox rejaSuperiorArcoNegativo;
 
+        #endregion DECLARACIONES
+
+        #region BUROCRACIA
+
         public override string getCategory()
         {
             return "AlumnoEjemplos";
@@ -109,8 +115,12 @@ namespace AlumnoEjemplos.MiGrupo
         /// <returns></returns>
         public override string getDescription()
         {
-            return "Rocket League - Futbol de autos. Auto principal: movimiento con W, A, S, D, Ctrl izq, Espacio. Auto secundario: movimiento con flechas, Ctrl der y Alt der. Shift izq apunta la cámara hacia la pelota.";
+            return "Rocket League - Futbol de autos. Auto principal: movimiento con W, A, S, D, Ctrl izq, Espacio. Auto secundario: movimiento con flechas, Ctrl der y Alt der. Con v se habilita o deshabilita el split screen. Con shift izquierdo y shift derecho se accede a la camara detrás de cada auto.";
         }
+
+        #endregion
+
+        #region ESCENARIO
 
         public void crearEscenario()
         {
@@ -222,21 +232,6 @@ namespace AlumnoEjemplos.MiGrupo
                 box.updateValues();
             }
 
-        }
-
-        public override void init()
-        {
-            cajasVisiblesEscenario = new List<TgcBox>();
-            crearEscenario();
-            
-            txtScoreLocal.Text = scoreLocal.ToString();
-            txtScoreLocal.Position = new Point(300, 100);
-            txtScoreLocal.Size = new Size(300, 100);
-            
-            txtScoreVisitante.Text = scoreVisitante.ToString();
-            txtScoreVisitante.Position = new Point(600, 100);
-            txtScoreVisitante.Size = new Size(300, 100);
-
             skyBox = new TgcSkyBox();
             skyBox.Center = new Vector3(0, 100, 0);
             skyBox.Size = new Vector3(16000, 16000, 16000);
@@ -249,26 +244,6 @@ namespace AlumnoEjemplos.MiGrupo
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, texturesPath + "Front.jpg");
             skyBox.updateValues();
 
-            TgcSceneLoader loader = new TgcSceneLoader();
-            scene = loader.loadSceneFromFile(sceneFolder + "predio\\predio-TgcScene.xml");
-            
-            mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
-            secondCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
-            secondCarMesh.setColor(Color.Red);
-            iaCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
-            iaCarMesh.setColor(Color.Green);
-
-            GuiController.Instance.UserVars.addVar("Velocidad");
-            GuiController.Instance.UserVars.addVar("Pos Auto 1");
-            GuiController.Instance.UserVars.addVar("Pos Obb 1");
-            GuiController.Instance.UserVars.addVar("Pos Auto 2");
-            GuiController.Instance.UserVars.addVar("Pos Obb 2");
-            GuiController.Instance.UserVars.addVar("Pos Pelota");
-
-            GuiController.Instance.Modifiers.addFloat("Gravedad", -50, 0, -9.81f);
-            GuiController.Instance.Modifiers.addFloat("Aceleracion", 100f, 1000f, 500f);
-            GuiController.Instance.Modifiers.addFloat("VelocidadRotacion", 0f, 5f, 1.5f);
-
             limitesArcos = new List<TgcBoundingBox>();
             laterales = new List<TgcBoundingBox>();
 
@@ -280,6 +255,66 @@ namespace AlumnoEjemplos.MiGrupo
             limitesArcos.Add(limiteArcoPositivo1);
             laterales.Add(limiteLateralNegativo);
             laterales.Add(limiteLateralPositivo);
+
+        }
+
+        #endregion
+
+
+        #region GUI
+        public void createHud()
+        {
+            txtScoreLocal.Text = scoreLocal.ToString();
+            txtScoreLocal.Position = new Point(300, 100);
+            txtScoreLocal.Size = new Size(300, 100);
+            
+            txtScoreVisitante.Text = scoreVisitante.ToString();
+            txtScoreVisitante.Position = new Point(600, 100);
+            txtScoreVisitante.Size = new Size(300, 100);
+
+        }
+
+        public void createVars()
+        {
+
+            GuiController.Instance.UserVars.addVar("Velocidad");
+            GuiController.Instance.UserVars.addVar("Pos Auto 1");
+            GuiController.Instance.UserVars.addVar("Pos Obb 1");
+            GuiController.Instance.UserVars.addVar("Pos Auto 2");
+            GuiController.Instance.UserVars.addVar("Pos Obb 2");
+            GuiController.Instance.UserVars.addVar("Pos Pelota");
+
+        }
+
+        public void createModifiers()
+        {
+            GuiController.Instance.Modifiers.addFloat("Gravedad", -50, 0, -9.81f);
+            GuiController.Instance.Modifiers.addFloat("Aceleracion", 100f, 1000f, 500f);
+            GuiController.Instance.Modifiers.addFloat("VelocidadRotacion", 0f, 5f, 1.5f);
+
+        }
+        #endregion
+
+        public override void init()
+        {
+            cajasVisiblesEscenario = new List<TgcBox>();
+
+            crearEscenario();
+            createHud();
+            createVars();
+            createModifiers();
+
+            TgcSceneLoader loader = new TgcSceneLoader();
+            scene = loader.loadSceneFromFile(sceneFolder + "predio\\predio-TgcScene.xml");
+            
+            mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
+            secondCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
+            secondCarMesh.setColor(Color.Red);
+            iaCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
+            iaCarMesh.setColor(Color.Green);
+
+
+            
 
             pelota = new Pelota(this);
 
@@ -315,26 +350,7 @@ namespace AlumnoEjemplos.MiGrupo
             //autitus.Add(iaCar);
         }
         
-        private void CreateViewports()
-        {
-            Control panel3d = GuiController.Instance.Panel3d;
-            View1 = new Viewport();
-            View1.X = 0;
-            View1.Y = 0;
-            View1.Width = panel3d.Width;
-            View1.Height = panel3d.Height / 2;
-            View1.MinZ = 0;
-            View1.MaxZ = 1;
-            View2 = new Viewport();
-            View2.X = 0;
-            View2.Y = View1.Height;
-            View2.Width = panel3d.Width;
-            View2.Height = panel3d.Height / 2;
-            View2.MinZ = 0;
-            View2.MaxZ = 1;
-
-            ViewF = GuiController.Instance.D3dDevice.Viewport;
-        }
+      
 
 
 
@@ -411,6 +427,7 @@ namespace AlumnoEjemplos.MiGrupo
             txtScoreVisitante.render();
         }
 
+        #region CAMERAS
         private void ResizeFrustum(float aspectRatio)
         {
             GuiController.Instance.D3dDevice.Transform.Projection = Matrix.PerspectiveFovLH(
@@ -427,6 +444,27 @@ namespace AlumnoEjemplos.MiGrupo
                     splitScreen = true;
             }
             
+        }
+
+        private void CreateViewports()
+        {
+            Control panel3d = GuiController.Instance.Panel3d;
+            View1 = new Viewport();
+            View1.X = 0;
+            View1.Y = 0;
+            View1.Width = panel3d.Width;
+            View1.Height = panel3d.Height / 2;
+            View1.MinZ = 0;
+            View1.MaxZ = 1;
+            View2 = new Viewport();
+            View2.X = 0;
+            View2.Y = View1.Height;
+            View2.Width = panel3d.Width;
+            View2.Height = panel3d.Height / 2;
+            View2.MinZ = 0;
+            View2.MaxZ = 1;
+
+            ViewF = GuiController.Instance.D3dDevice.Viewport;
         }
 
         private void SetCarCamera()
@@ -475,8 +513,9 @@ namespace AlumnoEjemplos.MiGrupo
             camaraAuto2.setCamera(secondCarMesh.Position, 40, 250);
             camaraPelota2.setCamera(secondCarMesh.Position, 0, 0);
         }
+        #endregion CAMERAS
 
-
+        #region GOLES
         public void golLocal()
         {
             scoreLocal++;
@@ -500,6 +539,7 @@ namespace AlumnoEjemplos.MiGrupo
             pelota = new Pelota(this);
 
         }
+        #endregion GOLES
 
         public override void close()
         {
