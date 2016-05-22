@@ -165,7 +165,7 @@ namespace AlumnoEjemplos.MiGrupo
             TgcTexture pasto = TgcTexture.createTexture(d3dDevice, mediaFolder + "textures\\pasto.jpg");
             piso.setTexture(pasto);
             piso.UVTiling = new Vector2(150, 150);
-
+            
             cajasVisiblesEscenario.Add(piso);
 
 
@@ -405,7 +405,6 @@ namespace AlumnoEjemplos.MiGrupo
         private void RenderAllObjects()
         {
             pelota.render();
-            pelota.ownSphere.BoundingSphere.render();
            
             arcoPositivo.render();
             arcoNegativo.render();
@@ -556,6 +555,16 @@ namespace AlumnoEjemplos.MiGrupo
             {
                 box.dispose();
             }
+            foreach(TgcBoundingBox bb in limitesArcos)
+            {
+                bb.dispose();
+            }
+            foreach(TgcBoundingBox bb in laterales)
+            {
+                bb.dispose();
+            }
+            arcoNegativo.dispose();
+            arcoPositivo.dispose();
 
             skyBox.dispose();
         }
