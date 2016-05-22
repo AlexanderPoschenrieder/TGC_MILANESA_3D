@@ -27,16 +27,16 @@ namespace AlumnoEjemplos.MiGrupo
         Auto mainCar;
         Auto2 secondCar;
         AutoIA iaCar;
-        TgcCamera camaraActiva1, camaraActiva2;
+        IMilanesaCamera camaraActiva1, camaraActiva2;
         float farPlane = 100.0f;
 
         Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
 
         TwoTargetsCamera camaraPelota1 = new TwoTargetsCamera();
-        TgcThirdPersonCamera camaraAuto1 = new TgcThirdPersonCamera();
+        MilanesaThirdPersonCamera camaraAuto1 = new MilanesaThirdPersonCamera();
 
         TwoTargetsCamera camaraPelota2 = new TwoTargetsCamera();
-        TgcThirdPersonCamera camaraAuto2 = new TgcThirdPersonCamera();
+        MilanesaThirdPersonCamera camaraAuto2 = new MilanesaThirdPersonCamera();
 
         public Pelota pelota;
         TgcText2d txtScoreLocal = new TgcText2d();
@@ -114,42 +114,42 @@ namespace AlumnoEjemplos.MiGrupo
 
         public void crearEscenario()
         {
-            piso = TgcBox.fromExtremes(new Vector3(-2600, -100, -8000), new Vector3(2600, 0, 8000));
+            piso = TgcBox.fromExtremes(new Vector3(-2600, -100, -4000), new Vector3(2600, 0, 4000));
 
-            arcoPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 0, 8000), new Vector3(500, 400, 9000) });
-            arcoNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 0, -9000), new Vector3(500, 400, -8000) });
+            arcoPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 0, 4000), new Vector3(500, 400, 4500) });
+            arcoNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 0, -4000), new Vector3(500, 400, -4500) });
             
 
-            limiteArcoNegativo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2600, 0, -8050), new Vector3(-500, 1000, -8000) });
-            limiteArcoNegativo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(500, 0, -8050), new Vector3(2600, 1000, -8000) });
-            limiteArcoNegativo3 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 400, -8050), new Vector3(500, 1000, -8000) });
+            limiteArcoNegativo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2600, 0, -4050), new Vector3(-500, 1000, -4000) });
+            limiteArcoNegativo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(500, 0, -4050), new Vector3(2600, 1000, -4000) });
+            limiteArcoNegativo3 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 400, -4050), new Vector3(500, 1000, -4000) });
 
-            paredArcoNegativo1 = TgcBox.fromExtremes(new Vector3(-2600, 0, -8050), new Vector3(-500, 100, -8000));
-            paredArcoNegativo2 = TgcBox.fromExtremes(new Vector3(500, 0, -8050), new Vector3(2600, 100, -8000));
+            paredArcoNegativo1 = TgcBox.fromExtremes(new Vector3(-2600, 0, -4050), new Vector3(-500, 100, -4000));
+            paredArcoNegativo2 = TgcBox.fromExtremes(new Vector3(500, 0, -4050), new Vector3(2600, 100, -4000));
 
-            rejaArcoNegativo1 = TgcBox.fromExtremes(new Vector3(-2600, 100, -8000), new Vector3(-500, 400, -8000));
-            rejaArcoNegativo2 = TgcBox.fromExtremes(new Vector3(500, 100, -8000), new Vector3(2600, 400, -8000));
-            rejaSuperiorArcoNegativo = TgcBox.fromExtremes(new Vector3(-2600, 400, -8000), new Vector3(2600, 1000, -8000));
+            rejaArcoNegativo1 = TgcBox.fromExtremes(new Vector3(-2600, 100, -4000), new Vector3(-500, 400, -4000));
+            rejaArcoNegativo2 = TgcBox.fromExtremes(new Vector3(500, 100, -4000), new Vector3(2600, 400, -4000));
+            rejaSuperiorArcoNegativo = TgcBox.fromExtremes(new Vector3(-2600, 400, -4000), new Vector3(2600, 1000, -4000));
 
-            limiteArcoPositivo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2600, 0, 8000), new Vector3(-500, 1000, 8050) });
-            limiteArcoPositivo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(500, 0, 8000), new Vector3(2600, 1000, 8050) });
-            limiteArcoPositivo3 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 400, 8000), new Vector3(500, 1000, 8050) });
+            limiteArcoPositivo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2600, 0, 4000), new Vector3(-500, 1000, 4050) });
+            limiteArcoPositivo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(500, 0, 4000), new Vector3(2600, 1000, 4050) });
+            limiteArcoPositivo3 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 400, 4000), new Vector3(500, 1000, 4050) });
 
-            paredArcoPositivo1 = TgcBox.fromExtremes(new Vector3(-2600, 0, 8000), new Vector3(-500, 100, 8050));
-            paredArcoPositivo2 = TgcBox.fromExtremes(new Vector3(500, 0, 8000), new Vector3(2600, 100, 8050));
+            paredArcoPositivo1 = TgcBox.fromExtremes(new Vector3(-2600, 0, 4000), new Vector3(-500, 100, 4050));
+            paredArcoPositivo2 = TgcBox.fromExtremes(new Vector3(500, 0, 4000), new Vector3(2600, 100, 4050));
 
-            rejaArcoPositivo1 = TgcBox.fromExtremes(new Vector3(-2600, 100, 8000), new Vector3(-500, 400, 8000));
-            rejaArcoPositivo2 = TgcBox.fromExtremes(new Vector3(500, 100, 8000), new Vector3(2600, 400, 8000));
-            rejaSuperiorArcoPositivo = TgcBox.fromExtremes(new Vector3(-2600, 400, 8000), new Vector3(2600, 1000, 8000));
+            rejaArcoPositivo1 = TgcBox.fromExtremes(new Vector3(-2600, 100, 4000), new Vector3(-500, 400, 4000));
+            rejaArcoPositivo2 = TgcBox.fromExtremes(new Vector3(500, 100, 4000), new Vector3(2600, 400, 4000));
+            rejaSuperiorArcoPositivo = TgcBox.fromExtremes(new Vector3(-2600, 400, 4000), new Vector3(2600, 1000, 4000));
 
-            limiteLateralPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2650, 0, -8000), new Vector3(-2600, 1000, 8000) });
-            limiteLateralNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(2600, 0, -8000), new Vector3(2650, 1000, 8000) });
+            limiteLateralPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2650, 0, -4000), new Vector3(-2600, 1000, 4000) });
+            limiteLateralNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(2600, 0, -4000), new Vector3(2650, 1000, 4000) });
 
-            paredLateralNegativa = TgcBox.fromExtremes(new Vector3(-2600, 0, -8000), new Vector3(-2600, 100, 8000));
-            paredLateralPositiva = TgcBox.fromExtremes(new Vector3(2600, 0, -8000), new Vector3(2600, 100, 8000));
+            paredLateralNegativa = TgcBox.fromExtremes(new Vector3(-2600, 0, -4000), new Vector3(-2600, 100, 4000));
+            paredLateralPositiva = TgcBox.fromExtremes(new Vector3(2600, 0, -4000), new Vector3(2600, 100, 4000));
 
-            rejaLateralNegativa = TgcBox.fromExtremes(new Vector3(-2600, 100, -8000), new Vector3(-2600, 1000, 8000));
-            rejaLateralPositiva = TgcBox.fromExtremes(new Vector3(2600, 100, -8000), new Vector3(2600, 1000, 8000));
+            rejaLateralNegativa = TgcBox.fromExtremes(new Vector3(-2600, 100, -4000), new Vector3(-2600, 1000, 4000));
+            rejaLateralPositiva = TgcBox.fromExtremes(new Vector3(2600, 100, -4000), new Vector3(2600, 1000, 4000));
 
 
             TgcTexture pasto = TgcTexture.createTexture(d3dDevice, mediaFolder + "textures\\pasto.jpg");
@@ -226,12 +226,9 @@ namespace AlumnoEjemplos.MiGrupo
 
         public override void init()
         {
-
             cajasVisiblesEscenario = new List<TgcBox>();
             crearEscenario();
-
             
-
             txtScoreLocal.Text = scoreLocal.ToString();
             txtScoreLocal.Position = new Point(300, 100);
             txtScoreLocal.Size = new Size(300, 100);
@@ -241,8 +238,8 @@ namespace AlumnoEjemplos.MiGrupo
             txtScoreVisitante.Size = new Size(300, 100);
 
             skyBox = new TgcSkyBox();
-            skyBox.Center = new Vector3(0, 200, 0);
-            skyBox.Size = new Vector3(10000, 10000, 10000);
+            skyBox.Center = new Vector3(0, 100, 0);
+            skyBox.Size = new Vector3(16000, 16000, 16000);
             string texturesPath = mediaFolder + "textures\\SkyBox3\\";
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, texturesPath + "Up.jpg");
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Down, texturesPath + "Down.jpg");
@@ -251,9 +248,6 @@ namespace AlumnoEjemplos.MiGrupo
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, texturesPath + "Back.jpg");
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, texturesPath + "Front.jpg");
             skyBox.updateValues();
-
-           
-         
 
             TgcSceneLoader loader = new TgcSceneLoader();
             scene = loader.loadSceneFromFile(sceneFolder + "predio\\predio-TgcScene.xml");
@@ -369,23 +363,26 @@ namespace AlumnoEjemplos.MiGrupo
         {
             if (splitScreen)
             {
-                GuiController.Instance.D3dDevice.Viewport = View1;
-                camaraActiva1.Enable=true;
-                RenderAllObjects();
 
+
+                d3dDevice.Viewport = View1;
+                d3dDevice.Transform.View = camaraActiva1.GetUpdatedViewMatrix();
+                d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+                RenderAllObjects();
 
                 skyBox.Center = secondCar.meshAuto.Position;
                 skyBox.updateValues();
-                GuiController.Instance.D3dDevice.Viewport = View2;
-                camaraActiva2.Enable = true;
+
+                d3dDevice.Viewport = View2;
+                d3dDevice.Transform.View = camaraActiva2.GetUpdatedViewMatrix();
+                d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
                 RenderAllObjects();
 
             }
             else
             {
-                camaraActiva1.updateCamera();
-                GuiController.Instance.D3dDevice.Viewport = ViewF;
-                camaraActiva1.Enable = true;
+                d3dDevice.Transform.View = camaraActiva1.GetUpdatedViewMatrix();
+                d3dDevice.Viewport = ViewF;
                 RenderAllObjects();
             }
         }
@@ -457,15 +454,15 @@ namespace AlumnoEjemplos.MiGrupo
             //conviene deshabilitar ambas camaras para que no haya interferencia
             if (input.keyDown(Key.RightShift))
             {
-                camaraPelota2.FirstTarget = auto2Pos;
-                camaraPelota2.SecondTarget = pelotaPos;
-                camaraActiva2 = camaraPelota2;
-            }
-            else
-            {
                 camaraAuto2.RotationY = secondCar.rotacion;
                 camaraAuto2.Target = secondCar.meshAuto.Position;
                 camaraActiva2 = camaraAuto2;
+            }
+            else
+            {
+                camaraPelota2.FirstTarget = auto2Pos;
+                camaraPelota2.SecondTarget = pelotaPos;
+                camaraActiva2 = camaraPelota2;                
             }
             
             
@@ -475,8 +472,7 @@ namespace AlumnoEjemplos.MiGrupo
         {
             camaraAuto1.setCamera(mainCarMesh.Position, 40, 250);
             camaraPelota1.setCamera(mainCarMesh.Position, 0, 0);
-            camaraAuto1.Enable = true;
-
+            
             camaraAuto2.setCamera(secondCarMesh.Position, 40, 250);
             camaraPelota2.setCamera(secondCarMesh.Position, 0, 0);
         }
@@ -498,7 +494,7 @@ namespace AlumnoEjemplos.MiGrupo
         {
             txtScoreLocal.Text = scoreLocal.ToString();
             txtScoreVisitante.Text = scoreVisitante.ToString();
-
+            
             mainCar.meshAuto.Position = new Vector3(0,0,0);
             mainCar.obb = TgcObb.computeFromAABB(mainCar.meshAuto.BoundingBox);
             pelota.ownSphere.dispose();
