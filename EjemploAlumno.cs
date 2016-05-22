@@ -31,6 +31,7 @@ namespace AlumnoEjemplos.MiGrupo
         AutoIA iaCar;
         IMilanesaCamera camaraActiva1, camaraActiva2;
         float farPlane = 100.0f;
+        float time;
 
         Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
 
@@ -43,6 +44,7 @@ namespace AlumnoEjemplos.MiGrupo
         public Pelota pelota;
         TgcText2d txtScoreLocal = new TgcText2d();
         TgcText2d txtScoreVisitante = new TgcText2d();
+        TgcText2d txtTimer = new TgcText2d();
         Viewport View1, View2, ViewF;
         bool splitScreen = false;
 
@@ -277,6 +279,13 @@ namespace AlumnoEjemplos.MiGrupo
             txtScoreVisitante.Size = new Size(300, 100);
             txtScoreVisitante.changeFont(new System.Drawing.Font("Calibri", 18, FontStyle.Bold | FontStyle.Italic));
             txtScoreVisitante.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
+
+            txtTimer.Text = "00:00";
+            txtTimer.Position = new Point(0, 50);
+            txtTimer.Size = new Size(300, 100);
+            txtTimer.changeFont(new System.Drawing.Font("Calibri", 18, FontStyle.Bold | FontStyle.Italic));
+            txtTimer.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
+
         }
 
         public void createVars()
@@ -303,6 +312,7 @@ namespace AlumnoEjemplos.MiGrupo
 
         public override void init()
         {
+            time = 0f;
             cajasVisiblesEscenario = new List<TgcBox>();
 
             crearEscenario();
@@ -374,8 +384,9 @@ namespace AlumnoEjemplos.MiGrupo
             //skyBox.updateValues(); //en esta línea hay un memory leak durísimo
             //tal vez ni sea necesario mover el skybox
 
-            txtScoreVisitante.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
-            txtScoreLocal.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
+            
+            time = time + elapsedTime;
+            
 
             SetCarCamera();
             SetViewport();
@@ -431,8 +442,29 @@ namespace AlumnoEjemplos.MiGrupo
                 box.render();
             }
 
+            txtScoreVisitante.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
+            txtScoreLocal.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
+            txtTimer.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
+            txtTimer.Text = formatAsTime(time);
             txtScoreLocal.render();
             txtScoreVisitante.render();
+            txtTimer.render();
+        }
+
+        public String formatAsTime(float f)
+        {
+            int totalSecs = (int) f;
+
+            int secs = totalSecs % 60;
+            int mins = totalSecs / 60;
+            String secsString = secs.ToString();
+            String minsString = mins.ToString();
+
+            if (secs < 10) secsString = "0" + secsString;
+            if (mins < 10) minsString = "0" + minsString;
+
+            return minsString + ":" + secsString;
+
         }
 
         #region CAMERAS
