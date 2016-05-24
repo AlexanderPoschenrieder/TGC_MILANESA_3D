@@ -508,7 +508,8 @@ namespace AlumnoEjemplos.MiGrupo
                 }
 
                 //Obtener ViewMatrix haciendo un LookAt desde la posicion final anterior al centro de la camara
-                Vector3 Pos = mainCarMesh.Position;
+                Vector3 Pos = mainCarMesh.Position + new Vector3(0,1,0); //levanto un poquito el centro del cubo porque sino me queda al ras del piso
+                //Vector3 Pos = mainCarMesh.Position;
                 d3dDevice.Transform.View = Matrix.LookAtLH(Pos, Pos + Dir, VUP);
 
                 d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, color, 1.0f, 0);
@@ -521,7 +522,8 @@ namespace AlumnoEjemplos.MiGrupo
                 RenderAllObjects(true);
 
                 d3dDevice.EndScene();
-                //string fname = string.Format("face{0:D}.bmp", nFace);
+
+                //string fname = string.Format("D:\\UTN\\face{0:D}.bmp", nFace);
                 //SurfaceLoader.Save(fname, ImageFileFormat.Bmp, pFace);
 
 
@@ -567,6 +569,7 @@ namespace AlumnoEjemplos.MiGrupo
                 mainCar.render();
             }
 
+                secondCar.render();
 
             skyBox.render();
 
@@ -575,13 +578,17 @@ namespace AlumnoEjemplos.MiGrupo
                 box.render();
             }
 
-            txtScoreVisitante.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
-            txtScoreLocal.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
-            txtTimer.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
-            txtTimer.Text = formatAsTime(time);
-            txtScoreLocal.render();
-            txtScoreVisitante.render();
-            txtTimer.render();
+            if (!cubemap) { //ningún hud debería aparecer en el cubemap
+
+                txtScoreVisitante.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
+                txtScoreLocal.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
+                txtTimer.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
+                txtTimer.Text = formatAsTime(time);
+                txtScoreLocal.render();
+                txtScoreVisitante.render();
+                txtTimer.render();
+
+            }
         }
 
         public String formatAsTime(float f)
