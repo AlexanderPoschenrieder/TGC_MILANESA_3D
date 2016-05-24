@@ -15,6 +15,7 @@ using Microsoft.DirectX.DirectInput;
 using System.Windows.Forms;
 using TgcViewer.Utils.Terrain;
 using TgcViewer.Utils;
+using TgcViewer.Utils.Shaders;
 
 namespace AlumnoEjemplos.MiGrupo
 {
@@ -26,12 +27,14 @@ namespace AlumnoEjemplos.MiGrupo
         TgcSkyBox skyBox;
         TgcScene scene;
         TgcMesh mainCarMesh,secondCarMesh,iaCarMesh;
+        Microsoft.DirectX.Direct3D.Effect mainEffect, secondEffect;
         Auto mainCar;
         Auto2 secondCar;
         AutoIA iaCar;
         IMilanesaCamera camaraActiva1, camaraActiva2;
         float farPlane = 100.0f;
         float time;
+        float kx, kc;
 
         Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
 
@@ -323,14 +326,23 @@ namespace AlumnoEjemplos.MiGrupo
             TgcSceneLoader loader = new TgcSceneLoader();
             scene = loader.loadSceneFromFile(sceneFolder + "predio\\predio-TgcScene.xml");
             
-            mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
+           // mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
+            mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Sphere\\Sphere-TgcScene.xml").Meshes[0];
             secondCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
             secondCarMesh.setColor(Color.Red);
             iaCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
             iaCarMesh.setColor(Color.Green);
 
 
-            
+
+            mainEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\EnvMap.fx");
+
+            int[] adj = new int[mainCarMesh.D3dMesh.NumberFaces * 3];
+            mainCarMesh.D3dMesh.GenerateAdjacency(0, adj);
+            mainCarMesh.D3dMesh.ComputeNormals(adj);
+            mainCarMesh.Effect = mainEffect;
+
+
 
             pelota = new Pelota(this);
 
@@ -358,6 +370,7 @@ namespace AlumnoEjemplos.MiGrupo
 
             secondCarMesh.Position = new Vector3(pos2.X, 0, pos2.Z);
             secondCar = new Auto2(secondCarMesh, this);
+            
 
             iaCarMesh.Position = new Vector3(pos3.X, 0, pos3.Z);
             iaCar = new AutoIA(iaCarMesh, this);
@@ -365,16 +378,19 @@ namespace AlumnoEjemplos.MiGrupo
             autitus.Add(secondCar);
             //autitus.Add(iaCar);
         }
-      
+
 
         /// <param name="elapsedTime">Tiempo en segundos transcurridos desde el último frame</param>
+
+        #region RENDERING
+
         public override void render(float elapsedTime)
         {
-            //Mover Auto
             foreach (var auto in autitus)
             {
                 auto.elapsedTime = elapsedTime;
                 auto.Mover(elapsedTime);
+
             }
 
             pelota.mover(elapsedTime);
@@ -384,17 +400,19 @@ namespace AlumnoEjemplos.MiGrupo
             //skyBox.updateValues(); //en esta línea hay un memory leak durísimo
             //tal vez ni sea necesario mover el skybox
 
-            
+
             time = time + elapsedTime;
-            
+
 
             SetCarCamera();
             SetViewport();
             RenderAll();
         }
 
-        private void RenderAll()
+        private void DoRenderAll()
         {
+
+
             if (splitScreen)
             {
 
@@ -402,7 +420,8 @@ namespace AlumnoEjemplos.MiGrupo
                 d3dDevice.Viewport = View1;
                 d3dDevice.Transform.View = camaraActiva1.GetUpdatedViewMatrix();
                 d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
-                RenderAllObjects();
+                mainEffect.SetValue("fvEyePosition", TgcParserUtils.vector3ToFloat3Array(camaraPelota1.Position));
+                RenderAllObjects(false);
 
                 //skyBox.Center = secondCar.meshAuto.Position;
                 //skyBox.updateValues(); //en esta línea hay un memory leak durísimo
@@ -411,18 +430,123 @@ namespace AlumnoEjemplos.MiGrupo
                 d3dDevice.Viewport = View2;
                 d3dDevice.Transform.View = camaraActiva2.GetUpdatedViewMatrix();
                 d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
-                RenderAllObjects();
+                RenderAllObjects(false);
 
             }
             else
             {
                 d3dDevice.Transform.View = camaraActiva1.GetUpdatedViewMatrix();
                 d3dDevice.Viewport = ViewF;
-                RenderAllObjects();
+                // mainEffect.SetValue("fvEyePosition", TgcParserUtils.vector3ToFloat3Array(GuiController.Instance.CurrentCamera.getPosition()));
+                mainEffect.SetValue("fvEyePosition", TgcParserUtils.vector3ToFloat3Array(camaraPelota1.Position));
+                RenderAllObjects(false);
             }
         }
 
-        private void RenderAllObjects()
+
+        private void RenderAll()
+        {
+            Control panel3d = GuiController.Instance.Panel3d;
+            float aspectRatio = (float)panel3d.Width / (float)panel3d.Height;
+
+            d3dDevice.EndScene();
+            CubeTexture g_pCubeMap = new CubeTexture(d3dDevice, 256, 1, Usage.RenderTarget,
+                Format.A16B16G16R16F, Pool.Default);
+            Surface pOldRT = d3dDevice.GetRenderTarget(0);
+            // ojo: es fundamental que el fov sea de 90 grados.
+            // asi que re-genero la matriz de proyeccion
+            d3dDevice.Transform.Projection =
+                Matrix.PerspectiveFovLH(Geometry.DegreeToRadian(90.0f),
+                    1f, 1f, 10000f);
+
+            // Genero las caras del enviroment map
+            for (CubeMapFace nFace = CubeMapFace.PositiveX; nFace <= CubeMapFace.NegativeZ; ++nFace)
+            {
+                Surface pFace = g_pCubeMap.GetCubeMapSurface(nFace, 0);
+                d3dDevice.SetRenderTarget(0, pFace);
+                Vector3 Dir, VUP;
+                Color color;
+                switch (nFace)
+                {
+                    default:
+                    case CubeMapFace.PositiveX:
+                        // Left
+                        Dir = new Vector3(1, 0, 0);
+                        VUP = new Vector3(0, 1, 0);
+                        color = Color.Black;
+                        break;
+                    case CubeMapFace.NegativeX:
+                        // Right
+                        Dir = new Vector3(-1, 0, 0);
+                        VUP = new Vector3(0, 1, 0);
+                        color = Color.Red;
+                        break;
+                    case CubeMapFace.PositiveY:
+                        // Up
+                        Dir = new Vector3(0, 1, 0);
+                        VUP = new Vector3(0, 0, -1);
+                        color = Color.Gray;
+                        break;
+                    case CubeMapFace.NegativeY:
+                        // Down
+                        Dir = new Vector3(0, -1, 0);
+                        VUP = new Vector3(0, 0, 1);
+                        color = Color.Yellow;
+                        break;
+                    case CubeMapFace.PositiveZ:
+                        // Front
+                        Dir = new Vector3(0, 0, 1);
+                        VUP = new Vector3(0, 1, 0);
+                        color = Color.Green;
+                        break;
+                    case CubeMapFace.NegativeZ:
+                        // Back
+                        Dir = new Vector3(0, 0, -1);
+                        VUP = new Vector3(0, 1, 0);
+                        color = Color.Blue;
+                        break;
+                }
+
+                //Obtener ViewMatrix haciendo un LookAt desde la posicion final anterior al centro de la camara
+                Vector3 Pos = mainCarMesh.Position;
+                d3dDevice.Transform.View = Matrix.LookAtLH(Pos, Pos + Dir, VUP);
+
+                d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, color, 1.0f, 0);
+
+
+
+                d3dDevice.BeginScene();
+
+                //Renderizar 
+                RenderAllObjects(true);
+
+                d3dDevice.EndScene();
+                //string fname = string.Format("face{0:D}.bmp", nFace);
+                //SurfaceLoader.Save(fname, ImageFileFormat.Bmp, pFace);
+
+
+            }
+            // restuaro el render target
+            d3dDevice.SetRenderTarget(0, pOldRT);
+            //TextureLoader.Save("test.bmp", ImageFileFormat.Bmp, g_pCubeMap);
+
+            // Restauro el estado de las transformaciones
+            GuiController.Instance.CurrentCamera.updateViewMatrix(d3dDevice);
+            d3dDevice.Transform.Projection =
+                Matrix.PerspectiveFovLH(Geometry.DegreeToRadian(45.0f),
+                    aspectRatio, 1f, 10000f);
+
+            // dibujo pp dicho
+            d3dDevice.BeginScene();
+            d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+            mainEffect.SetValue("g_txCubeMap", g_pCubeMap);
+            DoRenderAll();
+            g_pCubeMap.Dispose();
+
+
+        }
+
+        private void RenderAllObjects(Boolean cubemap)
         {
             pelota.render();
            
@@ -430,10 +554,19 @@ namespace AlumnoEjemplos.MiGrupo
             arcoNegativo.render();
             scene.renderAll();
 
-            foreach (var auto in autitus)
+            //foreach (var auto in autitus)
+            // {
+            //   auto.render();
+            //}
+
+            if (!cubemap)
             {
-                auto.render();
+                // dibujo el mesh
+                mainCarMesh.Technique = "RenderCubeMap";
+                
+                mainCar.render();
             }
+
 
             skyBox.render();
 
@@ -466,6 +599,7 @@ namespace AlumnoEjemplos.MiGrupo
             return minsString + ":" + secsString;
 
         }
+        #endregion
 
         #region CAMERAS
         private void ResizeFrustum(float aspectRatio)
