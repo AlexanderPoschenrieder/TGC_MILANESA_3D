@@ -300,18 +300,18 @@ namespace AlumnoEjemplos.MiGrupo
 
 
             mainCar = new Auto(mainCarMesh, this);
-            mainCar.translate(pos1.X, 0, pos1.Z);
+            mainCar.setPosition(pos1.X, 0, pos1.Z);
             autitus.Add(mainCar);
 
             
             secondCar = new Auto2(secondCarMesh, this);
-            secondCar.translate(pos2.X, 0, pos2.Z);
+            secondCar.setPosition(pos2.X, 0, pos2.Z);
 
             secondCarMesh.Position = new Vector3(pos2.X, 0, pos2.Z);
             secondCar = new Auto2(secondCarMesh, this);
 
             iaCar = new AutoIA(iaCarMesh, this);
-            iaCar.translate(pos3.X, 0, pos3.Z);
+            iaCar.setPosition(pos3.X, 0, pos3.Z);
             //autitus.Add(secondCar);
             //autitus.Add(iaCar);
         }
@@ -363,14 +363,12 @@ namespace AlumnoEjemplos.MiGrupo
         {
             if (splitScreen)
             {
-
-
                 d3dDevice.Viewport = View1;
                 d3dDevice.Transform.View = camaraActiva1.GetUpdatedViewMatrix();
                 d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
                 RenderAllObjects();
 
-                skyBox.Center = secondCar.meshAuto.Position;
+                skyBox.Center = secondCar.pos;
                 skyBox.updateValues();
 
                 d3dDevice.Viewport = View2;
@@ -433,8 +431,8 @@ namespace AlumnoEjemplos.MiGrupo
         private void SetCarCamera()
         {
             var pelotaPos = pelota.pos;
-            var autoPos = mainCarMesh.Position;
-            var auto2Pos = secondCarMesh.Position;
+            var autoPos = mainCar.pos;
+            var auto2Pos = secondCar.pos;
              ///////////////INPUT//////////////////
             //conviene deshabilitar ambas camaras para que no haya interferencia
             TgcD3dInput input = GuiController.Instance.D3dInput;
@@ -470,11 +468,11 @@ namespace AlumnoEjemplos.MiGrupo
 
         private void initCarCameras()
         {
-            camaraAuto1.setCamera(mainCarMesh.Position, 40, 250);
-            camaraPelota1.setCamera(mainCarMesh.Position, 0, 0);
-            
-            camaraAuto2.setCamera(secondCarMesh.Position, 40, 250);
-            camaraPelota2.setCamera(secondCarMesh.Position, 0, 0);
+            camaraAuto1.setCamera(mainCar.pos, 40, 250);
+            camaraPelota1.setCamera(mainCar.pos, 0, 0);
+
+            camaraAuto2.setCamera(secondCar.pos, 40, 250);
+            camaraPelota2.setCamera(secondCar.pos, 0, 0);
         }
 
 

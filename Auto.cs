@@ -19,12 +19,13 @@ namespace AlumnoEjemplos.MiGrupo
         const float CONSTANTEFRENAR = 800f;
         const float CONSTANTEMARCHAATRAS = 400f;
         const float ROZAMIENTOCOEF = 200f;
-        const float DELTA_T = 0.000000001f;
         const float CONST_SALTO = 0.1f;
-        const float ALTURA_MAXIMA = 100;
+        //Luego de pasar a matrices esta constante simplifica todo
+        const float CONSTANTE_LOCA = 0.01f;
+        
 
         float gravedad = -9.81f;
-        float handling = 1f;
+        float handling = 5f;
 
         #endregion
 
@@ -35,18 +36,20 @@ namespace AlumnoEjemplos.MiGrupo
         public Vector3 pos;
         Matrix matWorld;
 
-        protected float velocidadMaxima = -7500f;
-        protected float velocidadMinima = 1000f;
+        protected float velocidadMaximaReversa = -7500f;
+        protected float velocidadMaxima = 1000f;
 
         public float rotacion;
         public float elapsedTime;
         protected List<TgcViewer.Utils.TgcSceneLoader.TgcMesh> ruedas;
         public TgcMesh meshAuto;
-        protected float direccion;
         public TgcObb obb;
         protected EjemploAlumno parent;
         protected bool saltando = false;
-        public Vector3 direccionMovimiento = new Vector3(0,0,-1);
+        public Vector3 direccion;
+        public Vector3 ejeRotacionSalto;
+        protected float alturaObb;
+        protected bool colisionando = false;
 
         #endregion
 
@@ -78,21 +81,33 @@ namespace AlumnoEjemplos.MiGrupo
             parent = p;
             meshAuto = mesh;
             obb = TgcObb.computeFromAABB(mesh.BoundingBox);
-            matWorld = meshAuto.Transform;            
+            alturaObb = obb.Position.Y;
+            matWorld = meshAuto.Transform;
+            iniciarDirMovimiento();
             meshAuto.AutoTransformEnable = false;
         }
 
-        //public Auto(float rot, TgcMesh auto, List<TgcViewer.Utils.TgcSceneLoader.TgcMesh> unasRuedas = null)
-        //{
-        //    this.rotacion = rot;
-        //    this.ruedas = unasRuedas;
-        //    meshAuto = auto;
-        //    obb = TgcObb.computeFromAABB(auto.BoundingBox);
-        //}
+        private void iniciarDirMovimiento()
+        {
+            var pos1 = meshAuto.Position;
+            meshAuto.moveOrientedY(0.1f);
+            var pos2 = meshAuto.Position;
+            direccion = Vector3.Normalize(pos1 - pos2);
+        }
 
         #endregion
 
         #region BASICMOVEMENT
+
+        public void setPosition(float x, float y, float z)
+        {
+            var vec = new Vector3(x, y, z);
+
+            matWorld = matWorld * Matrix.Translation(vec);
+            pos = pos + vec;
+            obb.Center = pos + new Vector3(0, alturaObb, 0);
+        }
+
 
         public void translate(float x, float y, float z)
         {
@@ -106,9 +121,8 @@ namespace AlumnoEjemplos.MiGrupo
                 return;
             }
             matWorld = matWorld * Matrix.Translation(vec);
-            direccionMovimiento = Vector3.Normalize(vec);
             pos = pos + vec;
-            obb.Center = pos;
+            obb.Center = pos + new Vector3(0, alturaObb, 0);
         }
 
         public void rotate(Vector3 axisRotation, float angle)
@@ -116,9 +130,7 @@ namespace AlumnoEjemplos.MiGrupo
             Matrix originalMatWorld = matWorld;
 
             Matrix gotoObjectSpace = Matrix.Invert(matWorld);
-            axisRotation.TransformCoordinate(gotoObjectSpace);
-
-            //GuiController.Instance.UserVars.setValue("Pos Pelota", TgcParserUtils.printVector3(axisRotation));
+            //axisRotation.TransformCoordinate(gotoObjectSpace);
 
             matWorld = Matrix.Identity * Matrix.RotationAxis(axisRotation, angle);
             matWorld = matWorld * originalMatWorld;
@@ -138,9 +150,8 @@ namespace AlumnoEjemplos.MiGrupo
         {
             matWorld = matWorld * Matrix.Scaling(vec);
 
-
         }
-        
+
         #endregion
 
         #region Métodos
@@ -149,7 +160,7 @@ namespace AlumnoEjemplos.MiGrupo
             this.elapsedTime = et;
             CalcularMovimiento();
 
-            //chequearColisiones();
+            chequearColisiones();
             Saltar();
             MoverMesh();
         }
@@ -192,7 +203,7 @@ namespace AlumnoEjemplos.MiGrupo
                 {
                     FrenoDeMano();
                 }
-                
+
             }
 
             if (input.keyDown(Key.Space))
@@ -200,6 +211,7 @@ namespace AlumnoEjemplos.MiGrupo
                 if (!saltando)
                 {
                     saltando = true;
+                    ejeRotacionSalto = Vector3.Cross(new Vector3(0, 1, 0), direccion);
                     velocidadVertical = 100;
                 }
             }
@@ -211,18 +223,31 @@ namespace AlumnoEjemplos.MiGrupo
             {
                 return;
             }
-            int i;
-            for (i = 0; i <= 5; i++)
-            {
-                if (bajando && chocaPiso())
-                {
-                    break;
-                }
 
-                translate(0, velocidadVertical * CONST_SALTO, 0);
-                aplicarGravedad(elapsedTime);
-                break;
+            if (bajando && chocaPiso())
+            {
+                return;
             }
+
+            translate(0, velocidadVertical * elapsedTime * CONST_SALTO, 0);
+            aplicarGravedad(elapsedTime);
+            
+            //rotacionSalto();
+
+        }
+
+        private void rotacionSalto()
+        {
+            float k = 1;
+            //if (FastMath.Abs(velocidadVertical) > 50)
+            //{
+                k = velocidadVertical*elapsedTime;
+            //}
+            //else
+            //{
+            //    k = -velocidadVertical * 0.01f;
+            //}
+                rotate(ejeRotacionSalto, elapsedTime * CONST_SALTO * k);
         }
 
         public void aplicarGravedad(float elapsedTime)
@@ -233,14 +258,15 @@ namespace AlumnoEjemplos.MiGrupo
         private void MoverMesh()
         {
             meshAuto.Transform = matWorld;
+
             if (this.GetType().Name == "Auto")
             {
-                GuiController.Instance.UserVars.setValue("Pos Auto 1", TgcParserUtils.printVector3(meshAuto.Position));
+                GuiController.Instance.UserVars.setValue("Pos Auto 1", TgcParserUtils.printVector3(pos));
                 GuiController.Instance.UserVars.setValue("Pos Obb 1", TgcParserUtils.printVector3(obb.Position));
             }
             else
             {
-                GuiController.Instance.UserVars.setValue("Pos Auto 2", TgcParserUtils.printVector3(meshAuto.Position));
+                GuiController.Instance.UserVars.setValue("Pos Auto 2", TgcParserUtils.printVector3(pos));
                 GuiController.Instance.UserVars.setValue("Pos Obb 2", TgcParserUtils.printVector3(obb.Position));
             }
 
@@ -259,26 +285,28 @@ namespace AlumnoEjemplos.MiGrupo
                 return;
             }
 
-            var rot = (elapsedTime * unaDireccion * (handling * velocidadHorizontal / 1000)); //direccion puede ser 1 o -1, 1 es derecha y -1 izquierda
+            var rot = (elapsedTime * unaDireccion * elapsedTime*(handling * velocidadHorizontal / 10)); //direccion puede ser 1 o -1, 1 es derecha y -1 izquierda
             rotate(new Vector3(0, 1, 0), rot);
+            direccion.TransformCoordinate(Matrix.RotationAxis(new Vector3(0, 1, 0), rot));
+            direccion.Normalize();
         }
-        
+
         protected void Acelerar(float aumento)
         {
             velocidadHorizontal += (aumento - Rozamiento()) * elapsedTime;
             AjustarVelocidad();
-            translate(direccionMovimiento*velocidadHorizontal);
+            translate(direccion * velocidadHorizontal*CONSTANTE_LOCA);
         }
 
         public void AjustarVelocidad()
         {
-            if (velocidadHorizontal > velocidadMinima) velocidadHorizontal = velocidadMinima;
-            if (velocidadHorizontal < velocidadMaxima) velocidadHorizontal = velocidadMaxima;
+            if (velocidadHorizontal > velocidadMaxima) velocidadHorizontal = velocidadMaxima;
+            if (velocidadHorizontal < velocidadMaximaReversa) velocidadHorizontal = velocidadMaximaReversa;
         }
 
         public void EstablecerVelocidadMáximaEn(float velMaxima)
         {
-            velocidadMinima = velMaxima;
+            velocidadMaxima = velMaxima;
         }
 
         public float Rozamiento()
@@ -294,7 +322,7 @@ namespace AlumnoEjemplos.MiGrupo
         public void FrenoDeMano()
         {
             var k = velocidadHorizontal > 0 ? -1 : 1;
-            Acelerar(k*CONSTANTEFRENAR * 2.5f);
+            Acelerar(k * CONSTANTEFRENAR * 2.5f);
         }
 
         public void MarchaAtras()
@@ -302,12 +330,12 @@ namespace AlumnoEjemplos.MiGrupo
             Acelerar(-CONSTANTEMARCHAATRAS);
         }
 
-        
+
         public void render()
         {
-            aceleracion = (float) GuiController.Instance.Modifiers["Aceleracion"];
+            aceleracion = (float)GuiController.Instance.Modifiers["Aceleracion"];
             gravedad = (float)GuiController.Instance.Modifiers["Gravedad"];
-            handling =  (float)GuiController.Instance.Modifiers["VelocidadRotacion"];
+            handling = (float)GuiController.Instance.Modifiers["VelocidadRotacion"];
 
             meshAuto.render();
             obb.render();
@@ -342,7 +370,7 @@ namespace AlumnoEjemplos.MiGrupo
             int i = 0;
             float dt = 0.001f * elapsedTime;
 
-            Vector3 originalPos = meshAuto.Position;
+            Vector3 originalPos = pos;
             Vector3 originalObbPos = obb.Position;
 
             while (i < 5)
@@ -351,10 +379,10 @@ namespace AlumnoEjemplos.MiGrupo
                 //dt = dt / 2;
                 Vector3 lastPos = pos;
                 float velocidadHorInicial = velocidadHorizontal;
-                translate(-this.velocidadHorizontal*direccionMovimiento* dt);
-                
-                float gradoDeProyeccionAlLateral = Vector3.Dot(direccionMovimiento, new Vector3(0, 0, 1));
-                float gradoDeProyeccionALaPared = Vector3.Dot(direccionMovimiento, new Vector3(1, 0, 0));
+                translate(-this.velocidadHorizontal * direccion * dt);
+
+                float gradoDeProyeccionAlLateral = Vector3.Dot(direccion, new Vector3(0, 0, 1));
+                float gradoDeProyeccionALaPared = Vector3.Dot(direccion, new Vector3(1, 0, 0));
 
 
                 foreach (TgcBoundingBox lateral in parent.laterales)
@@ -407,7 +435,7 @@ namespace AlumnoEjemplos.MiGrupo
 
                     if (TgcCollisionUtils.testObbObb(obb, auto.obb))
                     {
-                        var anguloChoque = Vector3.Dot(direccionMovimiento, auto.direccionMovimiento);
+                        var anguloChoque = Vector3.Dot(direccion, auto.direccion);
 
                         //if (FastMath.Abs(anguloChoque) < 0.4)
                         //{
@@ -433,20 +461,19 @@ namespace AlumnoEjemplos.MiGrupo
                     Vector3 velocidadATransmitir = 0.02f * (spherePosition - collisionPos) * this.velocidadHorizontal;
                     velocidadATransmitir = new Vector3(velocidadATransmitir.X, velocidadATransmitir.Y * 0.3f, velocidadATransmitir.Z);
 
-                    meshAuto.Position = lastPos;
+                    //translate(lastPos);
                     parent.pelota.velocity = parent.pelota.velocity + velocidadATransmitir;
                     this.velocidadHorizontal = this.velocidadHorizontal * (i / 3);
 
                 }
                 else
                 {
-                    obb.move(-direccionMovimiento * velocidadHorInicial * dt);
-                    meshAuto.Position = lastPos;
+                    //obb.move(-direccion * velocidadHorInicial * dt);
+                    //translate(lastPos);
                     break;
                 }
 
-                obb.move(-direccionMovimiento * velocidadHorInicial * dt);
-                meshAuto.Position = lastPos;
+                //translate(lastPos);
 
                 continue;
             }
@@ -458,7 +485,7 @@ namespace AlumnoEjemplos.MiGrupo
         #endregion
 
         #region Auxiliar
-        
+
         public bool isLeft(Vector3 a, Vector3 b, Vector3 c)
         {
             return ((b.X - a.X) * (c.Y - a.Y) - (b.Y - a.Y) * (c.X - a.X)) > 0;
