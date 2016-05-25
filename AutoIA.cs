@@ -27,7 +27,7 @@ namespace AlumnoEjemplos.MiGrupo
             var pelota = parent.pelota.ownSphere.Position;
             var posActual = this.meshAuto.Position;
             var direccionPelota = pelota - posActual;
-            var direccionMov = Vector3.Normalize(direccionMovimiento);
+            var direccionMov = Vector3.Normalize(direccion);
 
             if (Vector3.Cross(direccionPelota, direccionMov) == new Vector3(0, 0, 0))
             {

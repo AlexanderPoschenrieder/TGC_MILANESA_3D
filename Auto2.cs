@@ -18,6 +18,7 @@ namespace AlumnoEjemplos.MiGrupo
         public Auto2(TgcMesh mesh, EjemploAlumno p)
             : base(mesh, p)
         {
+            rotate(new Vector3(0, 1, 0), FastMath.PI_HALF);
         }
 
         #endregion
