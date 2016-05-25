@@ -132,41 +132,47 @@ namespace AlumnoEjemplos.MiGrupo
 
         public void chequearColisiones(float elapsedTime)
         {
+
+
             Vector3 oldpos = pos;
 
             Vector3 transVec = velocity * DELTA_T;
 
             translate(transVec);
-            
+        
+
             foreach (Auto a in parent.autitus)
             {
                 if (TgcCollisionUtils.testSphereOBB(ownSphere.BoundingSphere, a.obb))
+
                 {
                     Vector3 collisionPos = new Vector3();
-                    translate(-transVec);
+                    //translate(-transVec);
                     Vector3 autoPosition = new Vector3();
                     autoPosition = a.obb.Position;
 
                     TgcRay ray = new TgcRay(oldpos, autoPosition - oldpos);
                     TgcCollisionUtils.intersectRayObb(ray, a.obb, out collisionPos);
                     
-
-
                     velocity = velocity + (0.1f * (oldpos - collisionPos));
-                    
+
                 }
 
             }
-
+            
+            
+                
             if (TgcCollisionUtils.testSphereAABB(ownSphere.BoundingSphere, parent.piso.BoundingBox))
             {
                 velocity.Y = -(velocity.Y);
                 velocity = velocity * 0.75f; //rozamiento con el piso
                 translate(-transVec);
             }
+             
 
             foreach (TgcBoundingBox pared in parent.limitesArcos)
             {
+                
                 if (TgcCollisionUtils.testSphereAABB(ownSphere.BoundingSphere, pared))
                 {
                     velocity.Z = -(velocity.Z);

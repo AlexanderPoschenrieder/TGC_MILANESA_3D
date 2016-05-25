@@ -161,6 +161,7 @@ namespace AlumnoEjemplos.MiGrupo
             CalcularMovimiento();
 
             chequearColisiones();
+            parent.txtDebug.Text = colisionando.ToString();
             Saltar();
             MoverMesh();
         }
@@ -238,8 +239,9 @@ namespace AlumnoEjemplos.MiGrupo
                 return;
             }
 
-            translate(0, velocidadVertical * elapsedTime * CONST_SALTO, 0);
-            aplicarGravedad(elapsedTime);
+            if (!colisionando) translate(0, velocidadVertical * elapsedTime * CONST_SALTO, 0);
+
+            if (!colisionando) aplicarGravedad(elapsedTime);
             
             //rotacionSalto();
 
@@ -377,6 +379,8 @@ namespace AlumnoEjemplos.MiGrupo
 
         public void chequearColisiones()
         {
+            colisionando = false;
+
             int i = 0;
             float dt = 0.001f * elapsedTime;
 
@@ -474,8 +478,9 @@ namespace AlumnoEjemplos.MiGrupo
                     //translate(spherePosition - lastPos);
                     parent.pelota.velocity = parent.pelota.velocity + velocidadATransmitir;
                     parent.pelota.mover(elapsedTime);
-                    velocidadHorizontal = velocidadHorInicial * (1/i);
-                    parent.txtDebug.Text = i.ToString(); 
+                    velocidadHorizontal = velocidadHorInicial * (1/i*i);
+
+                    colisionando = true;
                     if (i == 5) velocidadHorizontal = -velocidadHorizontal;
                     
                 }
