@@ -34,6 +34,7 @@ namespace AlumnoEjemplos.MiGrupo
         public float velocidadHorizontal;
         public float velocidadVertical;
         public Vector3 pos;
+        public float rotacionY=0;
         Matrix matWorld;
 
         protected float velocidadMaximaReversa = -7500f;
@@ -128,7 +129,7 @@ namespace AlumnoEjemplos.MiGrupo
         public void rotate(Vector3 axisRotation, float angle)
         {
             Matrix originalMatWorld = matWorld;
-
+            rotacionY += angle;
             Matrix gotoObjectSpace = Matrix.Invert(matWorld);
             //axisRotation.TransformCoordinate(gotoObjectSpace);
 
@@ -291,6 +292,7 @@ namespace AlumnoEjemplos.MiGrupo
 
             var rot = (elapsedTime * unaDireccion * elapsedTime*(handling * velocidadHorizontal / 10)); //direccion puede ser 1 o -1, 1 es derecha y -1 izquierda
             rotate(new Vector3(0, 1, 0), rot);
+            obb.setRotation(new Vector3(0f, rotacionY, 0f));
             direccion.TransformCoordinate(Matrix.RotationAxis(new Vector3(0, 1, 0), rot));
             direccion.Normalize();
         }
