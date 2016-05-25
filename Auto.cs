@@ -40,7 +40,6 @@ namespace AlumnoEjemplos.MiGrupo
         protected float velocidadMaximaReversa = -7500f;
         protected float velocidadMaxima = 1000f;
 
-        public float rotacion;
         public float elapsedTime;
         protected List<TgcViewer.Utils.TgcSceneLoader.TgcMesh> ruedas;
         public TgcMesh meshAuto;
@@ -88,7 +87,7 @@ namespace AlumnoEjemplos.MiGrupo
             meshAuto.AutoTransformEnable = false;
         }
 
-        private void iniciarDirMovimiento()
+        protected void iniciarDirMovimiento()
         {
             var pos1 = meshAuto.Position;
             meshAuto.moveOrientedY(0.1f);

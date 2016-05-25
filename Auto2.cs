@@ -18,7 +18,8 @@ namespace AlumnoEjemplos.MiGrupo
         public Auto2(TgcMesh mesh, EjemploAlumno p)
             : base(mesh, p)
         {
-            rotate(new Vector3(0, 1, 0), FastMath.PI_HALF);
+            rotate(new Vector3(0, 1, 0), FastMath.PI);
+            direccion = -direccion;
         }
 
         #endregion
@@ -26,9 +27,7 @@ namespace AlumnoEjemplos.MiGrupo
 
         protected override void CalcularMovimiento()
         {
-            ///////////////INPUT//////////////////
-            //conviene deshabilitar ambas camaras para que no haya interferencia
-            TgcD3dInput input = GuiController.Instance.D3dInput;
+TgcD3dInput input = GuiController.Instance.D3dInput;
             if (input.keyDown(Key.Left))
             {
                 Rotar(-1);
@@ -43,6 +42,10 @@ namespace AlumnoEjemplos.MiGrupo
                 if (!saltando)
                 {
                     Acelerar(aceleracion);
+                }
+                else
+                {
+                    Acelerar(0);
                 }
 
             }
@@ -60,7 +63,11 @@ namespace AlumnoEjemplos.MiGrupo
 
             if (!saltando && input.keyDown(Key.RightControl))
             {
-                FrenoDeMano();
+                if (velocidadHorizontal != 0)
+                {
+                    FrenoDeMano();
+                }
+
             }
 
             if (input.keyDown(Key.RightAlt))
@@ -68,9 +75,11 @@ namespace AlumnoEjemplos.MiGrupo
                 if (!saltando)
                 {
                     saltando = true;
+                    ejeRotacionSalto = Vector3.Cross(new Vector3(0, 1, 0), direccion);
                     velocidadVertical = 100;
                 }
             }
+        
         }
 
         #endregion
