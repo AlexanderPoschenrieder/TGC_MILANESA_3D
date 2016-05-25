@@ -48,6 +48,7 @@ namespace AlumnoEjemplos.MiGrupo
         TgcText2d txtScoreLocal = new TgcText2d();
         TgcText2d txtScoreVisitante = new TgcText2d();
         TgcText2d txtTimer = new TgcText2d();
+        public TgcText2d txtDebug = new TgcText2d();
         Viewport View1, View2, ViewF;
         bool splitScreen = false;
 
@@ -269,7 +270,11 @@ namespace AlumnoEjemplos.MiGrupo
         #region GUI
         public void createHud()
         {
-            
+            txtDebug.Text = "";
+            txtDebug.Position = new Point(50, 10);
+            txtDebug.changeFont(new System.Drawing.Font("Calibri", 18, FontStyle.Bold | FontStyle.Italic));
+            txtDebug.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
+
             txtScoreLocal.Text = "Equipo Rojo: " + scoreLocal.ToString();
             txtScoreLocal.Position = new Point(0, 10);
             txtScoreLocal.Size = new Size(300, 100);
@@ -569,10 +574,12 @@ namespace AlumnoEjemplos.MiGrupo
                 txtScoreVisitante.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
                 txtScoreLocal.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
                 txtTimer.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
+                txtDebug.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
                 txtTimer.Text = formatAsTime(time);
                 txtScoreLocal.render();
                 txtScoreVisitante.render();
                 txtTimer.render();
+                txtDebug.render();
 
             }
         }
