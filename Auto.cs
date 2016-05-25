@@ -382,13 +382,13 @@ namespace AlumnoEjemplos.MiGrupo
 
             Vector3 originalPos = pos;
             Vector3 originalObbPos = obb.Position;
+            float velocidadHorInicial = velocidadHorizontal;
 
             while (i < 5)
             {
                 i++;
                 //dt = dt / 2;
                 Vector3 lastPos = pos;
-                float velocidadHorInicial = velocidadHorizontal;
                 translate(-this.velocidadHorizontal * direccion * dt);
 
                 float gradoDeProyeccionAlLateral = Vector3.Dot(direccion, new Vector3(0, 0, 1));
@@ -468,13 +468,16 @@ namespace AlumnoEjemplos.MiGrupo
                     TgcRay ray = new TgcRay(lastPos, spherePosition - lastPos);
                     TgcCollisionUtils.intersectRayObb(ray, obb, out collisionPos);
 
-                    Vector3 velocidadATransmitir = 0.02f * (spherePosition - collisionPos) * this.velocidadHorizontal;
+                    Vector3 velocidadATransmitir = 0.02f * (spherePosition - collisionPos) * velocidadHorInicial;
                     velocidadATransmitir = new Vector3(velocidadATransmitir.X, velocidadATransmitir.Y * 0.3f, velocidadATransmitir.Z);
 
-                    //translate(lastPos);
+                    //translate(spherePosition - lastPos);
                     parent.pelota.velocity = parent.pelota.velocity + velocidadATransmitir;
-                    this.velocidadHorizontal = this.velocidadHorizontal * (i / 3);
+                    parent.pelota.mover(elapsedTime);
+                    velocidadHorizontal = velocidadHorInicial * (1/i);
 
+                    if (i == 5) velocidadHorizontal = -velocidadHorizontal;
+                    
                 }
                 else
                 {

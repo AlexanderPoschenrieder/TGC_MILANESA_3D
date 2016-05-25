@@ -326,8 +326,8 @@ namespace AlumnoEjemplos.MiGrupo
             TgcSceneLoader loader = new TgcSceneLoader();
             scene = loader.loadSceneFromFile(sceneFolder + "predio\\predio-TgcScene.xml");
             
-           // mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
-            mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Sphere\\Sphere-TgcScene.xml").Meshes[0];
+            mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
+           // mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Sphere\\Sphere-TgcScene.xml").Meshes[0];
             secondCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
             secondCarMesh.setColor(Color.Red);
             iaCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
@@ -337,10 +337,10 @@ namespace AlumnoEjemplos.MiGrupo
 
             mainEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\EnvMap.fx");
 
-            int[] adj = new int[mainCarMesh.D3dMesh.NumberFaces * 3];
-            mainCarMesh.D3dMesh.GenerateAdjacency(0, adj);
-            mainCarMesh.D3dMesh.ComputeNormals(adj);
-            mainCarMesh.Effect = mainEffect;
+           // int[] adj = new int[mainCarMesh.D3dMesh.NumberFaces * 3];
+           // mainCarMesh.D3dMesh.GenerateAdjacency(0, adj);
+           // mainCarMesh.D3dMesh.ComputeNormals(adj);
+           // mainCarMesh.Effect = mainEffect;
 
 
 
@@ -396,9 +396,6 @@ namespace AlumnoEjemplos.MiGrupo
             pelota.mover(elapsedTime);
             pelota.updateValues();
 
-            //skyBox.Center = mainCar.meshAuto.Position;
-            //skyBox.updateValues(); //en esta línea hay un memory leak durísimo
-            //tal vez ni sea necesario mover el skybox
 
 
             time = time + elapsedTime;
@@ -406,7 +403,8 @@ namespace AlumnoEjemplos.MiGrupo
 
             SetCarCamera();
             SetViewport();
-            RenderAll();
+            DoRenderAll();
+            //RenderAll() //para envirnoment map
         }
 
         private void DoRenderAll()
@@ -418,12 +416,8 @@ namespace AlumnoEjemplos.MiGrupo
                 d3dDevice.Viewport = View1;
                 d3dDevice.Transform.View = camaraActiva1.GetUpdatedViewMatrix();
                 d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
-                mainEffect.SetValue("fvEyePosition", TgcParserUtils.vector3ToFloat3Array(camaraPelota1.Position));
                 RenderAllObjects(false);
 
-                //skyBox.Center = secondCar.meshAuto.Position;
-                //skyBox.updateValues(); //en esta línea hay un memory leak durísimo
-                //tal vez ni sea necesario mover el skybox
 
                 d3dDevice.Viewport = View2;
                 d3dDevice.Transform.View = camaraActiva2.GetUpdatedViewMatrix();
@@ -435,8 +429,6 @@ namespace AlumnoEjemplos.MiGrupo
             {
                 d3dDevice.Transform.View = camaraActiva1.GetUpdatedViewMatrix();
                 d3dDevice.Viewport = ViewF;
-                // mainEffect.SetValue("fvEyePosition", TgcParserUtils.vector3ToFloat3Array(GuiController.Instance.CurrentCamera.getPosition()));
-                mainEffect.SetValue("fvEyePosition", TgcParserUtils.vector3ToFloat3Array(camaraPelota1.Position));
                 RenderAllObjects(false);
             }
         }
@@ -544,7 +536,7 @@ namespace AlumnoEjemplos.MiGrupo
             g_pCubeMap.Dispose();
 
 
-        }
+        } //ESTE MÉTODO SÓLO PARA ENVIRONMENT MAP!
 
         private void RenderAllObjects(Boolean cubemap)
         {
@@ -553,21 +545,17 @@ namespace AlumnoEjemplos.MiGrupo
             arcoPositivo.render();
             arcoNegativo.render();
             scene.renderAll();
-
-            //foreach (var auto in autitus)
-            // {
-            //   auto.render();
-            //}
+            
 
             if (!cubemap)
             {
                 // dibujo el mesh
-                mainCarMesh.Technique = "RenderCubeMap";
+               // mainCarMesh.Technique = "RenderCubeMap";
                 
                 mainCar.render();
             }
 
-                secondCar.render();
+            secondCar.render();
 
             skyBox.render();
 
