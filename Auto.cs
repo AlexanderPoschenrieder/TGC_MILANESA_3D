@@ -158,10 +158,9 @@ namespace AlumnoEjemplos.MiGrupo
         public void Mover(float et)
         {
             this.elapsedTime = et;
+            chequearColisiones();
             CalcularMovimiento();
 
-            chequearColisiones();
-            parent.txtDebug.Text = colisionando.ToString();
             Saltar();
             MoverMesh();
         }
@@ -393,7 +392,8 @@ namespace AlumnoEjemplos.MiGrupo
                 i++;
                 //dt = dt / 2;
                 Vector3 lastPos = pos;
-                translate(-this.velocidadHorizontal * direccion * dt);
+                Vector3 transVec = (this.velocidadHorizontal * direccion * dt);
+                translate(transVec);
 
                 float gradoDeProyeccionAlLateral = Vector3.Dot(direccion, new Vector3(0, 0, 1));
                 float gradoDeProyeccionALaPared = Vector3.Dot(direccion, new Vector3(1, 0, 0));
@@ -405,8 +405,9 @@ namespace AlumnoEjemplos.MiGrupo
                     {
                         if (FastMath.Abs(gradoDeProyeccionAlLateral) < 0.4)
                         {
+                            
                             velocidadHorizontal = -velocidadHorizontal * 0.5f;
-
+                            
                             choqueFuerteConParedOLateral();
                         }
                         else
@@ -416,6 +417,7 @@ namespace AlumnoEjemplos.MiGrupo
                             velocidadHorizontal = velocidadHorizontal * FastMath.Abs(gradoDeProyeccionAlLateral);
                         }
                         velocidadHorizontal = velocidadHorizontal - 10 * Math.Sign(velocidadHorInicial);
+
                     }
                 }
 
@@ -425,18 +427,18 @@ namespace AlumnoEjemplos.MiGrupo
                     {
                         if (FastMath.Abs(gradoDeProyeccionALaPared) < 0.4)
                         {
-                            velocidadHorizontal = -velocidadHorizontal * 0.5f;
-
+                            velocidadHorizontal = -velocidadHorInicial * 0.5f;
                             choqueFuerteConParedOLateral();
                         }
                         else
                         {
 
-                            if (gradoDeProyeccionALaPared > 0) Rotar(FastMath.PI_HALF);
-                            else Rotar(3 * FastMath.PI_HALF);
+                            if (gradoDeProyeccionALaPared > 0) Rotar(-FastMath.PI_HALF);
+                            else Rotar(-3 * FastMath.PI_HALF);
                             velocidadHorizontal = velocidadHorizontal * FastMath.Abs(gradoDeProyeccionALaPared);
                         }
-                        velocidadHorizontal = velocidadHorizontal - 10 * Math.Sign(velocidadHorInicial);
+
+                        translate(-transVec * 500 - direccion * Math.Sign(velocidadHorInicial));
                     }
                 }
 
