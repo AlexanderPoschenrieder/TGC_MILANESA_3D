@@ -34,7 +34,7 @@ namespace AlumnoEjemplos.MiGrupo
         public float velocidadHorizontal;
         public float velocidadVertical;
         public Vector3 pos;
-        public float rotacion=0;
+        public float rotacion = 0;
         Matrix matWorld;
 
         protected float velocidadMaximaReversa = -7500f;
@@ -195,6 +195,11 @@ namespace AlumnoEjemplos.MiGrupo
                 {
                     Retroceder();
                 }
+                else
+                {
+                    Acelerar(0);
+                }
+
             }
             else
             {
@@ -402,8 +407,8 @@ namespace AlumnoEjemplos.MiGrupo
                         }
                         else
                         {
-                            if (gradoDeProyeccionAlLateral > 0) rotacion = 0;
-                            else rotacion = FastMath.PI;
+                            if (gradoDeProyeccionAlLateral > 0) Rotar(0);
+                            else Rotar(FastMath.PI);
                             velocidadHorizontal = velocidadHorizontal * FastMath.Abs(gradoDeProyeccionAlLateral);
                         }
                         velocidadHorizontal = velocidadHorizontal - 10 * Math.Sign(velocidadHorInicial);
@@ -423,8 +428,8 @@ namespace AlumnoEjemplos.MiGrupo
                         else
                         {
 
-                            if (gradoDeProyeccionALaPared > 0) rotacion = FastMath.PI_HALF;
-                            else rotacion = 3 * FastMath.PI_HALF;
+                            if (gradoDeProyeccionALaPared > 0) Rotar(FastMath.PI_HALF);
+                            else Rotar(3 * FastMath.PI_HALF);
                             velocidadHorizontal = velocidadHorizontal * FastMath.Abs(gradoDeProyeccionALaPared);
                         }
                         velocidadHorizontal = velocidadHorizontal - 10 * Math.Sign(velocidadHorInicial);

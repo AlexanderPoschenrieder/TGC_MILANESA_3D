@@ -55,6 +55,10 @@ TgcD3dInput input = GuiController.Instance.D3dInput;
                 {
                     Retroceder();
                 }
+                else
+                {
+                    Acelerar(0);
+                }
             }
             else
             {
