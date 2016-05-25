@@ -405,18 +405,18 @@ namespace AlumnoEjemplos.MiGrupo
                     {
                         if (FastMath.Abs(gradoDeProyeccionAlLateral) < 0.4)
                         {
-                            
-                            velocidadHorizontal = -velocidadHorizontal * 0.5f;
-                            
+
+                            velocidadHorizontal = -velocidadHorInicial * 0.5f;
+
                             choqueFuerteConParedOLateral();
                         }
                         else
                         {
                             if (gradoDeProyeccionAlLateral > 0) Rotar(0);
-                            else Rotar(FastMath.PI);
+                            else Rotar(-FastMath.PI);
                             velocidadHorizontal = velocidadHorizontal * FastMath.Abs(gradoDeProyeccionAlLateral);
                         }
-                        velocidadHorizontal = velocidadHorizontal - 10 * Math.Sign(velocidadHorInicial);
+                        translate(-transVec * 500 - direccion * Math.Sign(velocidadHorInicial));
 
                     }
                 }
