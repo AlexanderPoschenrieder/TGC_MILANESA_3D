@@ -88,7 +88,7 @@ namespace AlumnoEjemplos.MiGrupo
             meshAuto.AutoTransformEnable = false;
         }
 
-        private void iniciarDirMovimiento()
+        protected void iniciarDirMovimiento()
         {
             var pos1 = meshAuto.Position;
             meshAuto.moveOrientedY(0.1f);

@@ -309,10 +309,10 @@ namespace AlumnoEjemplos.MiGrupo
 
             secondCarMesh.Position = new Vector3(pos2.X, 0, pos2.Z);
             secondCar = new Auto2(secondCarMesh, this);
+            autitus.Add(secondCar);
 
-            iaCar = new AutoIA(iaCarMesh, this);
-            iaCar.setPosition(pos3.X, 0, pos3.Z);
-            //autitus.Add(secondCar);
+            //iaCar = new AutoIA(iaCarMesh, this);
+            //iaCar.setPosition(pos3.X, 0, pos3.Z);
             //autitus.Add(iaCar);
         }
         
@@ -438,8 +438,8 @@ namespace AlumnoEjemplos.MiGrupo
             TgcD3dInput input = GuiController.Instance.D3dInput;
             if (input.keyDown(Key.LeftShift))
             {
-                camaraAuto1.RotationY = mainCar.rotacion;
-                camaraAuto1.Target = mainCar.meshAuto.Position;
+                camaraAuto1.RotationY = mainCar.rotacionY;
+                camaraAuto1.Target = autoPos;
                 camaraActiva1 = camaraAuto1;
             }
             else
@@ -452,8 +452,8 @@ namespace AlumnoEjemplos.MiGrupo
             //conviene deshabilitar ambas camaras para que no haya interferencia
             if (input.keyDown(Key.RightShift))
             {
-                camaraAuto2.RotationY = secondCar.rotacion;
-                camaraAuto2.Target = secondCar.meshAuto.Position;
+                camaraAuto2.RotationY = secondCar.rotacionY;
+                camaraAuto2.Target = auto2Pos;
                 camaraActiva2 = camaraAuto2;
             }
             else
