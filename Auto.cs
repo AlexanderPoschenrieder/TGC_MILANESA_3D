@@ -34,13 +34,12 @@ namespace AlumnoEjemplos.MiGrupo
         public float velocidadHorizontal;
         public float velocidadVertical;
         public Vector3 pos;
-        public float rotacionY=0;
+        public float rotacion = 0;
         Matrix matWorld;
 
         protected float velocidadMaximaReversa = -7500f;
         protected float velocidadMaxima = 1000f;
 
-        public float rotacion;
         public float elapsedTime;
         protected List<TgcViewer.Utils.TgcSceneLoader.TgcMesh> ruedas;
         public TgcMesh meshAuto;
@@ -129,7 +128,7 @@ namespace AlumnoEjemplos.MiGrupo
         public void rotate(Vector3 axisRotation, float angle)
         {
             Matrix originalMatWorld = matWorld;
-            rotacionY += angle;
+            rotacion += angle;
             Matrix gotoObjectSpace = Matrix.Invert(matWorld);
             //axisRotation.TransformCoordinate(gotoObjectSpace);
 
@@ -196,6 +195,11 @@ namespace AlumnoEjemplos.MiGrupo
                 {
                     Retroceder();
                 }
+                else
+                {
+                    Acelerar(0);
+                }
+
             }
             else
             {
@@ -292,7 +296,7 @@ namespace AlumnoEjemplos.MiGrupo
 
             var rot = (elapsedTime * unaDireccion * elapsedTime*(handling * velocidadHorizontal / 10)); //direccion puede ser 1 o -1, 1 es derecha y -1 izquierda
             rotate(new Vector3(0, 1, 0), rot);
-            obb.setRotation(new Vector3(0f, rotacionY, 0f));
+            obb.setRotation(new Vector3(0f, rotacion, 0f));
             direccion.TransformCoordinate(Matrix.RotationAxis(new Vector3(0, 1, 0), rot));
             direccion.Normalize();
         }
@@ -403,8 +407,8 @@ namespace AlumnoEjemplos.MiGrupo
                         }
                         else
                         {
-                            if (gradoDeProyeccionAlLateral > 0) rotacion = 0;
-                            else rotacion = FastMath.PI;
+                            if (gradoDeProyeccionAlLateral > 0) Rotar(0);
+                            else Rotar(FastMath.PI);
                             velocidadHorizontal = velocidadHorizontal * FastMath.Abs(gradoDeProyeccionAlLateral);
                         }
                         velocidadHorizontal = velocidadHorizontal - 10 * Math.Sign(velocidadHorInicial);
@@ -424,8 +428,8 @@ namespace AlumnoEjemplos.MiGrupo
                         else
                         {
 
-                            if (gradoDeProyeccionALaPared > 0) rotacion = FastMath.PI_HALF;
-                            else rotacion = 3 * FastMath.PI_HALF;
+                            if (gradoDeProyeccionALaPared > 0) Rotar(FastMath.PI_HALF);
+                            else Rotar(3 * FastMath.PI_HALF);
                             velocidadHorizontal = velocidadHorizontal * FastMath.Abs(gradoDeProyeccionALaPared);
                         }
                         velocidadHorizontal = velocidadHorizontal - 10 * Math.Sign(velocidadHorInicial);
