@@ -19,7 +19,7 @@ namespace AlumnoEjemplos.MiGrupo
         const float CONSTANTEFRENAR = 800f;
         const float CONSTANTEMARCHAATRAS = 400f;
         const float ROZAMIENTOCOEF = 200f;
-        const float CONST_SALTO = 0.1f;
+        const float CONST_SALTO = 7f;
         //Luego de pasar a matrices esta constante simplifica todo
         const float CONSTANTE_LOCA = 0.01f;
         
@@ -182,6 +182,10 @@ namespace AlumnoEjemplos.MiGrupo
                 if (!saltando)
                 {
                     Acelerar(aceleracion);
+                }
+                else
+                {
+                    Acelerar(0);
                 }
 
             }
