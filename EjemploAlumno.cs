@@ -104,6 +104,7 @@ namespace AlumnoEjemplos.MiGrupo
         private TgcBox rejaSuperiorArcoNegativo;
 
         TgcBox[] lightMeshes;
+        Microsoft.DirectX.Direct3D.Effect lightEffect;
 
         #endregion DECLARACIONES
 
@@ -291,10 +292,10 @@ namespace AlumnoEjemplos.MiGrupo
 
                 i++;
             }
-            lightMeshes[0].Position = new Vector3(2600, 0, 4000);
-            lightMeshes[1].Position = new Vector3(-2600, 0, 4000);
-            lightMeshes[2].Position = new Vector3(2600, 0, -4000);
-            lightMeshes[3].Position = new Vector3(-2600, 0, -4000);
+            lightMeshes[0].Position = new Vector3(2550, 1000, 3950);
+            lightMeshes[1].Position = new Vector3(-2550, 1000, 3950);
+            lightMeshes[2].Position = new Vector3(2550, 1000, -3950);
+            lightMeshes[3].Position = new Vector3(-2550, 1000, -3950);
         }
 
         #endregion
@@ -348,6 +349,13 @@ namespace AlumnoEjemplos.MiGrupo
             GuiController.Instance.Modifiers.addFloat("VelocidadRotacion", 0f, 5f, 1.5f);
             GuiController.Instance.Modifiers.addColor("ColorHUD", Color.Gold);
 
+            GuiController.Instance.Modifiers.addBoolean("lightEnable", "lightEnable", true);
+            GuiController.Instance.Modifiers.addFloat("lightIntensity", 0, 1000, 200);
+            GuiController.Instance.Modifiers.addFloat("lightAttenuation", 0.1f, 2, 0.15f);
+
+            GuiController.Instance.Modifiers.addColor("mEmissive", Color.Black);
+            GuiController.Instance.Modifiers.addColor("mDiffuse", Color.White);
+
         }
         #endregion
 
@@ -367,6 +375,11 @@ namespace AlumnoEjemplos.MiGrupo
             TgcSceneLoader loader = new TgcSceneLoader();
             scene = loader.loadSceneFromFile(sceneFolder + "predio\\predio-TgcScene.xml");
             
+            foreach(TgcMesh m in scene.Meshes)
+            {
+                todosLosMeshes.Add(m);
+            }
+            
             mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
            // mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Sphere\\Sphere-TgcScene.xml").Meshes[0];
             secondCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
@@ -374,14 +387,19 @@ namespace AlumnoEjemplos.MiGrupo
             iaCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
             iaCarMesh.setColor(Color.Green);
 
+            todosLosMeshes.Add(mainCarMesh);
+            todosLosMeshes.Add(secondCarMesh);
+            //TODO PASAR LA PELOTA A MESH!!! AGGGGHHHH
 
 
-           // mainEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\EnvMap.fx");
+            lightEffect = TgcShaders.loadEffect(mediaFolder+ "shaders\\MultiDiffuseLights.fx");
 
-           // int[] adj = new int[mainCarMesh.D3dMesh.NumberFaces * 3];
-           // mainCarMesh.D3dMesh.GenerateAdjacency(0, adj);
-           // mainCarMesh.D3dMesh.ComputeNormals(adj);
-           // mainCarMesh.Effect = mainEffect;
+            // mainEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\EnvMap.fx");
+
+            // int[] adj = new int[mainCarMesh.D3dMesh.NumberFaces * 3];
+            // mainCarMesh.D3dMesh.GenerateAdjacency(0, adj);
+            // mainCarMesh.D3dMesh.ComputeNormals(adj);
+            // mainCarMesh.Effect = mainEffect;
 
 
 
@@ -581,10 +599,50 @@ namespace AlumnoEjemplos.MiGrupo
 
         private void RenderAllObjects(Boolean cubemap)
         {
-            pelota.render();
+            Microsoft.DirectX.Direct3D.Effect currentShader;
+            String currentTechnique;
+            bool lightEnable = (bool)GuiController.Instance.Modifiers["lightEnable"];
+            if (lightEnable)
+            {
+                //Shader personalizado de iluminacion
+                currentShader = this.lightEffect;
+                currentTechnique = "MultiDiffuseLightsTechnique";
+            }
+            else
+            {
+                //Sin luz: Restaurar shader default
+                currentShader = GuiController.Instance.Shaders.TgcMeshShader;
+                currentTechnique = GuiController.Instance.Shaders.getTgcMeshTechnique(TgcMesh.MeshRenderType.DIFFUSE_MAP);
+            }
+
+            foreach (TgcMesh mesh in todosLosMeshes)
+            {
+                mesh.Effect = currentShader;
+                mesh.Technique = currentTechnique;
+            }
+
+            ColorValue[] lightColors = new ColorValue[lightMeshes.Length];
+            Vector4[] pointLightPositions = new Vector4[lightMeshes.Length];
+            float[] pointLightIntensity = new float[lightMeshes.Length];
+            float[] pointLightAttenuation = new float[lightMeshes.Length];
+            for (int i = 0; i < lightMeshes.Length; i++)
+            {
+                TgcBox lightMesh = lightMeshes[i];
+
+                lightColors[i] = ColorValue.FromColor(lightMesh.Color);
+                pointLightPositions[i] = TgcParserUtils.vector3ToVector4(lightMesh.Position);
+                pointLightIntensity[i] = (float)GuiController.Instance.Modifiers["lightIntensity"];
+                pointLightAttenuation[i] = (float)GuiController.Instance.Modifiers["lightAttenuation"];
+            }
+
+
            
             arcoPositivo.render();
             arcoNegativo.render();
+            skyBox.render();
+            pelota.render();
+
+            /*
             scene.renderAll();
             
 
@@ -603,7 +661,24 @@ namespace AlumnoEjemplos.MiGrupo
             foreach (TgcMesh box in meshesCajasEscenario)
             {
                 box.render();
+            }*/
+            foreach (TgcMesh mesh in todosLosMeshes)
+            {
+                if (lightEnable)
+                {
+                    //Cargar variables de shader
+                    mesh.Effect.SetValue("lightColor", lightColors);
+                    mesh.Effect.SetValue("lightPosition", pointLightPositions);
+                    mesh.Effect.SetValue("lightIntensity", pointLightIntensity);
+                    mesh.Effect.SetValue("lightAttenuation", pointLightAttenuation);
+                    mesh.Effect.SetValue("materialEmissiveColor", ColorValue.FromColor((Color)GuiController.Instance.Modifiers["mEmissive"]));
+                    mesh.Effect.SetValue("materialDiffuseColor", ColorValue.FromColor((Color)GuiController.Instance.Modifiers["mDiffuse"]));
+                }
+
+                //Renderizar modelo
+                mesh.render();
             }
+
 
 
 

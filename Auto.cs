@@ -310,7 +310,7 @@ namespace AlumnoEjemplos.MiGrupo
                 return;
             }
 
-            var rot = (elapsedTime * unaDireccion * elapsedTime*(handling * velocidadHorizontal / 10)); //direccion puede ser 1 o -1, 1 es derecha y -1 izquierda
+            var rot = (elapsedTime * unaDireccion * elapsedTime*(handling * velocidadHorizontal / 50)); //direccion puede ser 1 o -1, 1 es derecha y -1 izquierda
             rotate(new Vector3(0, 1, 0), rot);
             obb.setRotation(new Vector3(0f, rotacion, 0f));
             direccion.TransformCoordinate(Matrix.RotationAxis(new Vector3(0, 1, 0), rot));
