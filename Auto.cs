@@ -170,7 +170,7 @@ namespace AlumnoEjemplos.MiGrupo
         protected void CalcularExtraInvoluntario()
         {
             translate(desvio * elapsedTime);
-            desvio = desvio * 0.9f;
+            desvio = desvio * 0.92f;
         }
 
 
@@ -412,13 +412,13 @@ namespace AlumnoEjemplos.MiGrupo
                 transVec = transVec + this.desvio * dt;
                 translate(transVec);
 
-                
+                //pro-tip: no leer los 4 ifs que siguen
 
                 if(TgcCollisionUtils.testObbAABB(obb, parent.limiteLateralPositivo))
                 {
                     float perpendicularidadChoque = Vector3.Dot(new Vector3(1, 0, 0), Vector3.Normalize((direccion * velocidadHorInicial) + desvio));
                     translate(-transVec);
-                    desviar(new Vector3(1 * Math.Abs(velocidadTotalInicial * perpendicularidadChoque), 0, 0));
+                    desviar(new Vector3(1f * Math.Abs(velocidadTotalInicial * perpendicularidadChoque), 0, 0));
                     velocidadHorizontal = velocidadHorInicial * Math.Abs(1 - perpendicularidadChoque * perpendicularidadChoque);
                 }
 
@@ -426,17 +426,16 @@ namespace AlumnoEjemplos.MiGrupo
                 {
                     float perpendicularidadChoque = Vector3.Dot(new Vector3(1, 0, 0), Vector3.Normalize((direccion * velocidadHorInicial) + desvio));
                     translate(-transVec);
-                    desviar(new Vector3(-1 * Math.Abs(velocidadTotalInicial * perpendicularidadChoque), 0, 0));
+                    desviar(new Vector3(-1f * Math.Abs(velocidadTotalInicial * perpendicularidadChoque), 0, 0));
                     velocidadHorizontal = velocidadHorInicial * Math.Abs(1 - perpendicularidadChoque * perpendicularidadChoque);
                 }
-
-
+                
                
                 if (TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoPositivo1) || TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoPositivo2))
                 {
                     float perpendicularidadChoque = Vector3.Dot(new Vector3(0, 0, 1), Vector3.Normalize((direccion * velocidadHorInicial) + desvio));
                     translate(-transVec);
-                    desviar(new Vector3(0, 0, -1 * Math.Abs(velocidadTotalInicial * perpendicularidadChoque)));
+                    desviar(new Vector3(0, 0, -1f * Math.Abs(velocidadTotalInicial * perpendicularidadChoque)));
                     velocidadHorizontal = velocidadHorInicial * Math.Abs(1 - perpendicularidadChoque * perpendicularidadChoque);
                 }
 
@@ -444,7 +443,7 @@ namespace AlumnoEjemplos.MiGrupo
                 {
                     float perpendicularidadChoque = Vector3.Dot(new Vector3(0, 0, 1), Vector3.Normalize((direccion * velocidadHorInicial) + desvio));
                     translate(-transVec);
-                    desviar(new Vector3(0, 0, 1 * Math.Abs(velocidadTotalInicial * perpendicularidadChoque)));
+                    desviar(new Vector3(0, 0, 1f * Math.Abs(velocidadTotalInicial * perpendicularidadChoque)));
                     velocidadHorizontal = velocidadHorInicial * Math.Abs(1 - perpendicularidadChoque * perpendicularidadChoque);
                 }
 
@@ -463,10 +462,11 @@ namespace AlumnoEjemplos.MiGrupo
                         TgcRay ray = new TgcRay(lastPos, auto.pos - lastPos);
                         TgcCollisionUtils.intersectRayObb(ray, auto.obb, out collisionPos);
 
-                        Vector3 d = lastPos - collisionPos;
+                        Vector3 d = Vector3.Normalize(lastPos - collisionPos);
                         d = new Vector3(d.X, 0, d.Z); //proyectar en y=0 para que los autos no se levanten ni se hundan entre sí
 
-                        desviar(d*15);
+                        desviar(d * 0.5f);
+                        auto.desviar(-d * velocidadTotalInicial * 0.2f);
                         colisionando = true;
                         translate(-transVec);
 
@@ -487,7 +487,7 @@ namespace AlumnoEjemplos.MiGrupo
                     TgcRay ray = new TgcRay(lastPos, spherePosition - lastPos);
                     TgcCollisionUtils.intersectRayObb(ray, obb, out collisionPos);
 
-                    Vector3 velocidadATransmitir = 0.02f * (spherePosition - collisionPos) * FastMath.Abs(velocidadHorInicial);
+                    Vector3 velocidadATransmitir = 0.02f * (spherePosition - collisionPos) * FastMath.Abs(velocidadTotalInicial);
                     velocidadATransmitir = new Vector3(velocidadATransmitir.X, velocidadATransmitir.Y * 0.3f, velocidadATransmitir.Z);
 
                     //translate(spherePosition - lastPos);
