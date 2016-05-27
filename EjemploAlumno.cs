@@ -374,9 +374,9 @@ namespace AlumnoEjemplos.MiGrupo
             
             secondCar = new Auto2(secondCarMesh, this);
             secondCar.setPosition(pos2.X, 0, pos2.Z);
-
-            secondCarMesh.Position = new Vector3(pos2.X, 0, pos2.Z);
-            secondCar = new Auto2(secondCarMesh, this);
+            autitus.Add(secondCar);
+            //secondCarMesh.Position = new Vector3(pos2.X, 0, pos2.Z);
+            //secondCar = new Auto2(secondCarMesh, this);
             
 
             //iaCar = new AutoIA(iaCarMesh, this);

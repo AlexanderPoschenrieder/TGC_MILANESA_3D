@@ -50,6 +50,7 @@ namespace AlumnoEjemplos.MiGrupo
         public Vector3 ejeRotacionSalto;
         protected float alturaObb;
         protected bool colisionando = false;
+        public Vector3 desvio = new Vector3(0, 0, 0);
 
         #endregion
 
@@ -160,21 +161,29 @@ namespace AlumnoEjemplos.MiGrupo
             this.elapsedTime = et;
             chequearColisiones();
             CalcularMovimiento();
+            CalcularExtraInvoluntario();
 
             Saltar();
             MoverMesh();
         }
+
+        protected void CalcularExtraInvoluntario()
+        {
+            translate(desvio * elapsedTime);
+            desvio = desvio * 0.9f;
+        }
+
 
         protected virtual void CalcularMovimiento()
         {
             TgcD3dInput input = GuiController.Instance.D3dInput;
             if (input.keyDown(Key.A))
             {
-                Rotar(-1);
+                if (!saltando) Rotar(-1);
             }
             else if (input.keyDown(Key.D))
             {
-                Rotar(1);
+                if (!saltando) Rotar(1);
             }
 
             if (input.keyDown(Key.W))
@@ -224,6 +233,11 @@ namespace AlumnoEjemplos.MiGrupo
                     velocidadVertical = 100;
                 }
             }
+        }
+
+        public void desviar(Vector3 d)
+        {
+            desvio += d;
         }
 
         public void Saltar()
@@ -287,6 +301,7 @@ namespace AlumnoEjemplos.MiGrupo
             if (velocidadHorizontal > 0) Frenar();
             if (velocidadHorizontal <= 0) MarchaAtras();
         }
+
 
         public void Rotar(float unaDireccion)
         {
@@ -393,6 +408,7 @@ namespace AlumnoEjemplos.MiGrupo
                 //dt = dt / 2;
                 Vector3 lastPos = pos;
                 Vector3 transVec = (this.velocidadHorizontal * direccion * dt);
+                transVec = transVec + this.desvio * dt;
                 translate(transVec);
 
                 float gradoDeProyeccionAlLateral = Vector3.Dot(direccion, new Vector3(0, 0, 1));
@@ -403,7 +419,7 @@ namespace AlumnoEjemplos.MiGrupo
                 {
                     if (TgcCollisionUtils.testObbAABB(obb, lateral))
                     {
-                        if (FastMath.Abs(gradoDeProyeccionAlLateral) < 0.4)
+                        if (true)//(FastMath.Abs(gradoDeProyeccionAlLateral) < 0.4)
                         {
 
                             velocidadHorizontal = -velocidadHorInicial * 0.5f;
@@ -451,16 +467,19 @@ namespace AlumnoEjemplos.MiGrupo
 
                     if (TgcCollisionUtils.testObbObb(obb, auto.obb))
                     {
-                        var anguloChoque = Vector3.Dot(direccion, auto.direccion);
+                        Vector3 collisionPos;
 
-                        //if (FastMath.Abs(anguloChoque) < 0.4)
-                        //{
-                        velocidadHorizontal = -velocidadHorizontal * 0.5f;
-                        //}
-                        //else
-                        //{
-                        //velocidadHorizontal = -velocidadHorizontal * 0.5f;
-                        //}
+                        TgcRay ray = new TgcRay(lastPos, auto.pos - lastPos);
+                        TgcCollisionUtils.intersectRayObb(ray, auto.obb, out collisionPos);
+
+                        Vector3 d = lastPos - collisionPos;
+                        d = new Vector3(d.X, 0, d.Z); //proyectar en y=0 para que los autos no se levanten ni se hundan entre sí
+
+                        desviar(d*20);
+                        colisionando = true;
+                        translate(-transVec);
+                        
+
                     }
                 }
 
