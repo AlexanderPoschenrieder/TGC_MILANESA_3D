@@ -401,6 +401,7 @@ namespace AlumnoEjemplos.MiGrupo
             Vector3 originalPos = pos;
             Vector3 originalObbPos = obb.Position;
             float velocidadHorInicial = velocidadHorizontal;
+            float velocidadTotalInicial = Vector3.Length(velocidadHorInicial * direccion + desvio);
 
             while (i < 5)
             {
@@ -411,52 +412,42 @@ namespace AlumnoEjemplos.MiGrupo
                 transVec = transVec + this.desvio * dt;
                 translate(transVec);
 
-                float gradoDeProyeccionAlLateral = Vector3.Dot(direccion, new Vector3(0, 0, 1));
-                float gradoDeProyeccionALaPared = Vector3.Dot(direccion, new Vector3(1, 0, 0));
+                
 
-
-                foreach (TgcBoundingBox lateral in parent.laterales)
+                if(TgcCollisionUtils.testObbAABB(obb, parent.limiteLateralPositivo))
                 {
-                    if (TgcCollisionUtils.testObbAABB(obb, lateral))
-                    {
-                        if (true)//(FastMath.Abs(gradoDeProyeccionAlLateral) < 0.4)
-                        {
-
-                            velocidadHorizontal = -velocidadHorInicial * 0.5f;
-
-                            choqueFuerteConParedOLateral();
-                        }
-                        else
-                        {
-                            if (gradoDeProyeccionAlLateral > 0) Rotar(0);
-                            else Rotar(-FastMath.PI);
-                            velocidadHorizontal = velocidadHorizontal * FastMath.Abs(gradoDeProyeccionAlLateral);
-                        }
-                        translate(-transVec * 500 - direccion * Math.Sign(velocidadHorInicial));
-
-                    }
+                    float perpendicularidadChoque = Vector3.Dot(new Vector3(1, 0, 0), Vector3.Normalize((direccion * velocidadHorInicial) + desvio));
+                    translate(-transVec);
+                    desviar(new Vector3(1 * Math.Abs(velocidadTotalInicial * perpendicularidadChoque), 0, 0));
+                    velocidadHorizontal = velocidadHorInicial * Math.Abs(1 - perpendicularidadChoque * perpendicularidadChoque);
                 }
 
-                foreach (TgcBoundingBox pared in parent.limitesArcos)
+                if (TgcCollisionUtils.testObbAABB(obb, parent.limiteLateralNegativo))
                 {
-                    if (TgcCollisionUtils.testObbAABB(obb, pared))
-                    {
-                        if (FastMath.Abs(gradoDeProyeccionALaPared) < 0.4)
-                        {
-                            velocidadHorizontal = -velocidadHorInicial * 0.5f;
-                            choqueFuerteConParedOLateral();
-                        }
-                        else
-                        {
-
-                            if (gradoDeProyeccionALaPared > 0) Rotar(-FastMath.PI_HALF);
-                            else Rotar(-3 * FastMath.PI_HALF);
-                            velocidadHorizontal = velocidadHorizontal * FastMath.Abs(gradoDeProyeccionALaPared);
-                        }
-
-                        translate(-transVec * 500 - direccion * Math.Sign(velocidadHorInicial));
-                    }
+                    float perpendicularidadChoque = Vector3.Dot(new Vector3(1, 0, 0), Vector3.Normalize((direccion * velocidadHorInicial) + desvio));
+                    translate(-transVec);
+                    desviar(new Vector3(-1 * Math.Abs(velocidadTotalInicial * perpendicularidadChoque), 0, 0));
+                    velocidadHorizontal = velocidadHorInicial * Math.Abs(1 - perpendicularidadChoque * perpendicularidadChoque);
                 }
+
+
+               
+                if (TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoPositivo1) || TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoPositivo2))
+                {
+                    float perpendicularidadChoque = Vector3.Dot(new Vector3(0, 0, 1), Vector3.Normalize((direccion * velocidadHorInicial) + desvio));
+                    translate(-transVec);
+                    desviar(new Vector3(0, 0, -1 * Math.Abs(velocidadTotalInicial * perpendicularidadChoque)));
+                    velocidadHorizontal = velocidadHorInicial * Math.Abs(1 - perpendicularidadChoque * perpendicularidadChoque);
+                }
+
+                if (TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoNegativo1) || TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoNegativo2))
+                {
+                    float perpendicularidadChoque = Vector3.Dot(new Vector3(0, 0, 1), Vector3.Normalize((direccion * velocidadHorInicial) + desvio));
+                    translate(-transVec);
+                    desviar(new Vector3(0, 0, 1 * Math.Abs(velocidadTotalInicial * perpendicularidadChoque)));
+                    velocidadHorizontal = velocidadHorInicial * Math.Abs(1 - perpendicularidadChoque * perpendicularidadChoque);
+                }
+
 
                 foreach (var auto in parent.autitus)
                 {
@@ -475,9 +466,12 @@ namespace AlumnoEjemplos.MiGrupo
                         Vector3 d = lastPos - collisionPos;
                         d = new Vector3(d.X, 0, d.Z); //proyectar en y=0 para que los autos no se levanten ni se hundan entre sí
 
-                        desviar(d*20);
+                        desviar(d*15);
                         colisionando = true;
                         translate(-transVec);
+
+                        //¿puede mejorarse? sí
+                        //¿lo voy a mejorar? no creo
                         
 
                     }
