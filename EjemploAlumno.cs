@@ -60,6 +60,8 @@ namespace AlumnoEjemplos.MiGrupo
         public List<TgcBoundingBox> laterales;
 
         public List<TgcBox> cajasVisiblesEscenario;
+        public List<TgcMesh> meshesCajasEscenario;
+        public List<TgcMesh> todosLosMeshes;
 
 
         public TgcBox piso;
@@ -236,6 +238,14 @@ namespace AlumnoEjemplos.MiGrupo
             foreach (TgcBox box in cajasVisiblesEscenario)
             {
                 box.updateValues();
+                TgcMesh mesh;
+                mesh = box.toMesh("abc");
+                meshesCajasEscenario.Add(mesh);
+                //mñeh
+                //esto es un paso extra porque a los tgcBox no les gusta iluminarse
+
+                todosLosMeshes.Add(mesh);
+
             }
 
             skyBox = new TgcSkyBox();
@@ -322,6 +332,8 @@ namespace AlumnoEjemplos.MiGrupo
         {
             time = 0f;
             cajasVisiblesEscenario = new List<TgcBox>();
+            meshesCajasEscenario = new List<TgcMesh>();
+            todosLosMeshes = new List<TgcMesh>();
 
             crearEscenario();
             createVars();
@@ -340,7 +352,7 @@ namespace AlumnoEjemplos.MiGrupo
 
 
 
-            mainEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\EnvMap.fx");
+           // mainEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\EnvMap.fx");
 
            // int[] adj = new int[mainCarMesh.D3dMesh.NumberFaces * 3];
            // mainCarMesh.D3dMesh.GenerateAdjacency(0, adj);
@@ -564,7 +576,7 @@ namespace AlumnoEjemplos.MiGrupo
 
             skyBox.render();
 
-            foreach (TgcBox box in cajasVisiblesEscenario)
+            foreach (TgcMesh box in meshesCajasEscenario)
             {
                 box.render();
             }
