@@ -103,6 +103,8 @@ namespace AlumnoEjemplos.MiGrupo
         private TgcBox rejaArcoNegativo2;
         private TgcBox rejaSuperiorArcoNegativo;
 
+        TgcBox[] lightMeshes;
+
         #endregion DECLARACIONES
 
         #region BUROCRACIA
@@ -276,6 +278,27 @@ namespace AlumnoEjemplos.MiGrupo
 
         #endregion
 
+        #region LUCES
+
+        public void initLights()
+        {
+            int i = 0;
+            lightMeshes = new TgcBox[4];
+
+            while (i<4)
+            {
+                lightMeshes[i] = TgcBox.fromSize(new Vector3(10, 10, 10), Color.White);
+
+                i++;
+            }
+            lightMeshes[0].Position = new Vector3(2600, 0, 4000);
+            lightMeshes[1].Position = new Vector3(-2600, 0, 4000);
+            lightMeshes[2].Position = new Vector3(2600, 0, -4000);
+            lightMeshes[3].Position = new Vector3(-2600, 0, -4000);
+        }
+
+        #endregion
+
 
         #region GUI
         public void createHud()
@@ -336,6 +359,7 @@ namespace AlumnoEjemplos.MiGrupo
             todosLosMeshes = new List<TgcMesh>();
 
             crearEscenario();
+            initLights();
             createVars();
             createModifiers();
             createHud();
@@ -581,6 +605,8 @@ namespace AlumnoEjemplos.MiGrupo
                 box.render();
             }
 
+
+
             if (!cubemap) { //ningún hud debería aparecer en el cubemap
 
                 txtScoreVisitante.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
@@ -592,6 +618,14 @@ namespace AlumnoEjemplos.MiGrupo
                 txtScoreVisitante.render();
                 txtTimer.render();
                 txtDebug.render();
+
+                int i = 0;
+
+                while(i<4)
+                {
+                    lightMeshes[i].render();
+                    i++;
+                }
 
             }
         }
@@ -752,6 +786,14 @@ namespace AlumnoEjemplos.MiGrupo
             }
             arcoNegativo.dispose();
             arcoPositivo.dispose();
+
+            int i = 0;
+
+            while (i < 4)
+            {
+                lightMeshes[i].dispose();
+                i++;
+            }
 
             skyBox.dispose();
         }
