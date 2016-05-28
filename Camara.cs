@@ -204,9 +204,10 @@ namespace AlumnoEjemplos.MiGrupo
     public class TwoTargetsCamera : TgcCamera, IMilanesaCamera
     {
         static readonly Vector3 UP_VECTOR = new Vector3(0, 1, 0);
+        TgcObb obb;
 
         float offsetHeight;
-
+        public float alejamiento =200;
         EjemploAlumno parent;
 
         private Matrix viewMatrix;
@@ -215,14 +216,6 @@ namespace AlumnoEjemplos.MiGrupo
         {
             updateCamera();
             return viewMatrix;
-        }
-
-        private Vector3 direccion;
-
-        public Vector3 Direccion
-        {
-            get { return direccion; }
-            set { direccion = value; }
         }
 
 
@@ -321,6 +314,7 @@ namespace AlumnoEjemplos.MiGrupo
         public TwoTargetsCamera(EjemploAlumno ej)
         {
             resetValues();
+            obb = TgcObb.computeFromPoints(new Vector3[] { new Vector3(1, 1,1), new Vector3(-1, -1, -1) });
             parent = ej;
         }
 
@@ -358,29 +352,60 @@ namespace AlumnoEjemplos.MiGrupo
         /// <returns>Futura matriz de view generada</returns>
         public Matrix generateViewMatrix()
         {
+            var lastPos = position;
+            var newPos = new Vector3();
+
             var desplazamiento = new Vector3(0, 80, 0);
-            var alejamiento = 200;
 
             var targetCenter = Vector3.Add(firstTarget, desplazamiento);
-            var vectorDirector = (secondTarget - targetCenter);
+            var vectorDirector = Vector3.Normalize(secondTarget - targetCenter);
+            
+            newPos = chequearColisiones(targetCenter,vectorDirector);
 
-            chequearColisiones(ref desplazamiento, ref alejamiento, ref vectorDirector);
+            Matrix m = Matrix.Translation(targetCenter - newPos) * Matrix.LookAtLH(targetCenter, secondTarget, UP_VECTOR);
 
-            vectorDirector.Normalize();
-            Matrix m = Matrix.Translation(vectorDirector * alejamiento) * Matrix.LookAtLH(targetCenter, secondTarget, UP_VECTOR);
+            position = newPos;
+            obb.Center = position;
 
-            //Extraer la posicion final de la matriz de transformacion
-            position.X = m.M41;
-            position.Y = m.M42;
-            position.Z = m.M43;
 
             //Obtener ViewMatrix haciendo un LookAt desde la posicion final anterior al centro de la camara
             return m;
         }
 
-        private void chequearColisiones(ref Vector3 desplazamiento, ref int alejamiento, ref Vector3 vectorDirector)
+        private Vector3 chequearColisiones(Vector3 targetCenter, Vector3 director)
         {
 
+            var newPos = targetCenter - director * (alejamiento+10);
+            obb.Center = newPos;
+            if (obb.Center == new Vector3(0, 0, 0))
+            {
+                return newPos;
+            }
+            if (Colisiona())
+            {
+                while (Colisiona())
+                {
+                    alejamiento -= 2;
+                    newPos = targetCenter - director * alejamiento;
+                    obb.Center = newPos;
+                }
+            }
+            else if(alejamiento < 200)
+            {
+                var valor = alejamiento +2;
+                alejamiento = valor > 200 ? 200 : valor;
+                newPos = targetCenter - director * (alejamiento + 5);
+                obb.Center = newPos;
+            }          
+
+            return newPos;
+        }
+
+        private bool Colisiona()
+        {
+            return TgcCollisionUtils.testObbAABB(obb, parent.limiteLateralPositivo) || TgcCollisionUtils.testObbAABB(obb, parent.limiteLateralNegativo)
+                              || TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoPositivo1) || TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoPositivo2)
+                              || TgcCollisionUtils.testObbAABB(obb, parent.piso.BoundingBox);
         }
 
         public void updateCamera()
@@ -406,7 +431,6 @@ namespace AlumnoEjemplos.MiGrupo
         {
             return secondTarget;
         }
-
 
         public void updateViewMatrix(Microsoft.DirectX.Direct3D.Device d3dDevice)
         {

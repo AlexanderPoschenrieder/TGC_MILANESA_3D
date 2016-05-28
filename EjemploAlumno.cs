@@ -43,6 +43,7 @@ namespace AlumnoEjemplos.MiGrupo
         MilanesaThirdPersonCamera camaraAuto2;
 
         public Pelota pelota;
+        public float lastElapsedTime =0f;
         TgcText2d txtScoreLocal = new TgcText2d();
         TgcText2d txtScoreVisitante = new TgcText2d();
         TgcText2d txtTimer = new TgcText2d();
@@ -443,6 +444,8 @@ namespace AlumnoEjemplos.MiGrupo
 
         public override void render(float elapsedTime)
         {
+            lastElapsedTime = elapsedTime;
+
             foreach (var auto in autitus)
             {
                 auto.elapsedTime = elapsedTime;
