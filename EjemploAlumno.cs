@@ -409,7 +409,7 @@ namespace AlumnoEjemplos.MiGrupo
             SetCarPositions();
             CreateViewports();
             initCarCameras();
-            //ResizeFrustum();
+            ResizeFrustum();
         }
 
         private void SetCarPositions()
@@ -725,7 +725,7 @@ namespace AlumnoEjemplos.MiGrupo
         #endregion
 
         #region CAMERAS
-        private void ResizeFrustum(float aspectRatio)
+        private void ResizeFrustum()
         {
             GuiController.Instance.D3dDevice.Transform.Projection = Matrix.PerspectiveFovLH(
                 FastMath.ToRad(45.0f), (float)GuiController.Instance.Panel3d.Width / GuiController.Instance.Panel3d.Height, 1.0f, float.MaxValue);
