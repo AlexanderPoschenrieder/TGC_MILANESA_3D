@@ -140,36 +140,36 @@ namespace AlumnoEjemplos.MiGrupo
             arcoNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 0, -4000), new Vector3(500, 400, -4500) });
 
 
-            limiteArcoNegativo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2600, 0, -4050), new Vector3(-500, 1000, -4000) });
-            limiteArcoNegativo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(500, 0, -4050), new Vector3(2600, 1000, -4000) });
-            limiteArcoNegativo3 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 400, -4050), new Vector3(500, 1000, -4000) });
+            limiteArcoNegativo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2600, 0, -4250), new Vector3(-500, 1000, -4000) });
+            limiteArcoNegativo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(500, 0, -4250), new Vector3(2600, 1000, -4000) });
+            limiteArcoNegativo3 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 400, -4250), new Vector3(500, 1000, -4000) });
 
             paredArcoNegativo1 = TgcBox.fromExtremes(new Vector3(-2600, 0, -4050), new Vector3(-500, 100, -4000));
             paredArcoNegativo2 = TgcBox.fromExtremes(new Vector3(500, 0, -4050), new Vector3(2600, 100, -4000));
 
-            rejaArcoNegativo1 = TgcBox.fromExtremes(new Vector3(-2600, 100, -4000), new Vector3(-500, 400, -4000));
-            rejaArcoNegativo2 = TgcBox.fromExtremes(new Vector3(500, 100, -4000), new Vector3(2600, 400, -4000));
-            rejaSuperiorArcoNegativo = TgcBox.fromExtremes(new Vector3(-2600, 400, -4000), new Vector3(2600, 1000, -4000));
+            rejaArcoNegativo1 = TgcBox.fromExtremes(new Vector3(-2600, 100, -4001), new Vector3(-500, 400, -4000));
+            rejaArcoNegativo2 = TgcBox.fromExtremes(new Vector3(500, 100, -4001), new Vector3(2600, 400, -4000));
+            rejaSuperiorArcoNegativo = TgcBox.fromExtremes(new Vector3(-2600, 400, -4001), new Vector3(2600, 1000, -4001));
 
-            limiteArcoPositivo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2600, 0, 4000), new Vector3(-500, 1000, 4050) });
-            limiteArcoPositivo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(500, 0, 4000), new Vector3(2600, 1000, 4050) });
-            limiteArcoPositivo3 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 400, 4000), new Vector3(500, 1000, 4050) });
+            limiteArcoPositivo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2600, 0, 4000), new Vector3(-500, 1000, 4250) });
+            limiteArcoPositivo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(500, 0, 4000), new Vector3(2600, 1000, 4250) });
+            limiteArcoPositivo3 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 400, 4000), new Vector3(500, 1000, 4250) });
 
             paredArcoPositivo1 = TgcBox.fromExtremes(new Vector3(-2600, 0, 4000), new Vector3(-500, 100, 4050));
             paredArcoPositivo2 = TgcBox.fromExtremes(new Vector3(500, 0, 4000), new Vector3(2600, 100, 4050));
 
-            rejaArcoPositivo1 = TgcBox.fromExtremes(new Vector3(-2600, 100, 4000), new Vector3(-500, 400, 4000));
-            rejaArcoPositivo2 = TgcBox.fromExtremes(new Vector3(500, 100, 4000), new Vector3(2600, 400, 4000));
-            rejaSuperiorArcoPositivo = TgcBox.fromExtremes(new Vector3(-2600, 400, 4000), new Vector3(2600, 1000, 4000));
+            rejaArcoPositivo1 = TgcBox.fromExtremes(new Vector3(-2600, 100, 4000), new Vector3(-500, 400, 4001));
+            rejaArcoPositivo2 = TgcBox.fromExtremes(new Vector3(500, 100, 4000), new Vector3(2600, 400, 4001));
+            rejaSuperiorArcoPositivo = TgcBox.fromExtremes(new Vector3(-2600, 400, 4000), new Vector3(2600, 1000, 4001));
 
-            limiteLateralPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2650, 0, -4000), new Vector3(-2600, 1000, 4000) });
-            limiteLateralNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(2600, 0, -4000), new Vector3(2650, 1000, 4000) });
+            limiteLateralPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2850, 0, -4000), new Vector3(-2600, 1000, 4000) });
+            limiteLateralNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(2600, 0, -4000), new Vector3(2850, 1000, 4000) });
 
-            paredLateralNegativa = TgcBox.fromExtremes(new Vector3(-2600, 0, -4000), new Vector3(-2600, 100, 4000));
-            paredLateralPositiva = TgcBox.fromExtremes(new Vector3(2600, 0, -4000), new Vector3(2600, 100, 4000));
+            paredLateralNegativa = TgcBox.fromExtremes(new Vector3(-2650, 0, -4000), new Vector3(-2600, 100, 4000));
+            paredLateralPositiva = TgcBox.fromExtremes(new Vector3(2600, 0, -4000), new Vector3(2650, 100, 4000));
 
-            rejaLateralNegativa = TgcBox.fromExtremes(new Vector3(-2600, 100, -4000), new Vector3(-2600, 1000, 4000));
-            rejaLateralPositiva = TgcBox.fromExtremes(new Vector3(2600, 100, -4000), new Vector3(2600, 1000, 4000));
+            rejaLateralNegativa = TgcBox.fromExtremes(new Vector3(-2601, 100, -4000), new Vector3(-2600, 1000, 4000));
+            rejaLateralPositiva = TgcBox.fromExtremes(new Vector3(2600, 100, -4000), new Vector3(2601, 1000, 4000));
 
 
             TgcTexture pasto = TgcTexture.createTexture(d3dDevice, mediaFolder + "textures\\pasto.jpg");
