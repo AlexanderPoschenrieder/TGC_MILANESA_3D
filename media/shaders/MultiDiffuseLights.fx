@@ -40,8 +40,11 @@ sampler2D lightMap = sampler_state
 //Material del mesh
 float3 materialEmissiveColor; //Color RGB
 float3 materialDiffuseColor; //Color RGB
+float3 materialSpecularColor = float3 ( 0.00, 0.00, 0.00);
 
 //Variables de las 4 luces
+float3 fvEyePosition = float3( 0.00, 0.00, 0.00 );
+
 float3 lightColor[4]; //Color RGB de las 4 luces
 float4 lightPosition[4]; //Posicion de las 4 luces
 float lightIntensity[4]; //Intensidad de las 4 luces
@@ -107,7 +110,7 @@ struct PS_INPUT
 
 
 //Funcion para calcular color RGB de Diffuse
-float3 computeDiffuseComponent(float3 surfacePosition, float3 N, int i)
+float3 computeDiffuseAndSpecularComponent(float3 surfacePosition, float3 N, int i)
 {
 	//Calcular intensidad de luz, con atenuacion por distancia
 	float distAtten = length(lightPosition[i].xyz - surfacePosition);
@@ -116,8 +119,13 @@ float3 computeDiffuseComponent(float3 surfacePosition, float3 N, int i)
 	float intensity = lightIntensity[i] / distAtten; //Dividimos intensidad sobre distancia
 
 	//Calcular Diffuse (N dot L)
-	return intensity * lightColor[i].rgb * materialDiffuseColor * max(0.0, dot(N, Ln));
+	float3 diffuseComponent = intensity * lightColor[i].rgb * materialDiffuseColor * max(0.0, dot(N, Ln));
+	float3 specularComponent = float3 ( 0.00, 0.00, 0.00);
+	
+	return diffuseComponent;
 }
+
+
 
 
 
@@ -130,16 +138,16 @@ float4 point_light_ps(PS_INPUT input) : COLOR0
 	float3 diffuseLighting = materialEmissiveColor;
 
 	//Diffuse 0
-	diffuseLighting += computeDiffuseComponent(input.WorldPosition, Nn, 0);
+	diffuseLighting += computeDiffuseAndSpecularComponent(input.WorldPosition, Nn, 0);
 
 	//Diffuse 1
-	diffuseLighting += computeDiffuseComponent(input.WorldPosition, Nn, 1);
+	diffuseLighting += computeDiffuseAndSpecularComponent(input.WorldPosition, Nn, 1);
 	
 	//Diffuse 2
-	diffuseLighting += computeDiffuseComponent(input.WorldPosition, Nn, 2);
+	diffuseLighting += computeDiffuseAndSpecularComponent(input.WorldPosition, Nn, 2);
 	
 	//Diffuse 3
-	diffuseLighting += computeDiffuseComponent(input.WorldPosition, Nn, 3);
+	diffuseLighting += computeDiffuseAndSpecularComponent(input.WorldPosition, Nn, 3);
 	
 	//Obtener texel de la textura
 	float4 texelColor = tex2D(diffuseMap, input.Texcoord);
@@ -155,8 +163,8 @@ technique MultiDiffuseLightsTechnique
 {
    pass Pass_0
    {
-	  VertexShader = compile vs_2_0 vs_general();
-	  PixelShader = compile ps_2_0 point_light_ps();
+	  VertexShader = compile vs_3_0 vs_general();
+	  PixelShader = compile ps_3_0 point_light_ps();
    }
 
 }
