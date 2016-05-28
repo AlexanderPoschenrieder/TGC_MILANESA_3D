@@ -19,30 +19,28 @@ using TgcViewer.Utils.Shaders;
 
 namespace AlumnoEjemplos.MiGrupo
 {
-    
+
     public class EjemploAlumno : TgcExample
     {
 
         #region DECLARACIONES
         TgcSkyBox skyBox;
         TgcScene scene;
-        TgcMesh mainCarMesh,secondCarMesh,iaCarMesh;
+        TgcMesh mainCarMesh, secondCarMesh, iaCarMesh;
         Microsoft.DirectX.Direct3D.Effect mainEffect, secondEffect;
         Auto mainCar;
         Auto2 secondCar;
-        AutoIA iaCar;
         IMilanesaCamera camaraActiva1, camaraActiva2;
-        float farPlane = 100.0f;
         float time;
         float kx, kc;
 
         Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
 
-        TwoTargetsCamera camaraPelota1 = new TwoTargetsCamera();
-        MilanesaThirdPersonCamera camaraAuto1 = new MilanesaThirdPersonCamera();
+        TwoTargetsCamera camaraPelota1;
+        MilanesaThirdPersonCamera camaraAuto1;
 
-        TwoTargetsCamera camaraPelota2 = new TwoTargetsCamera();
-        MilanesaThirdPersonCamera camaraAuto2 = new MilanesaThirdPersonCamera();
+        TwoTargetsCamera camaraPelota2;
+        MilanesaThirdPersonCamera camaraAuto2;
 
         public Pelota pelota;
         TgcText2d txtScoreLocal = new TgcText2d();
@@ -56,7 +54,7 @@ namespace AlumnoEjemplos.MiGrupo
         public int scoreVisitante = 0;
 
         public List<Auto> autitus;
-        public List<TgcBoundingBox> limitesArcos; 
+        public List<TgcBoundingBox> limitesArcos;
         public List<TgcBoundingBox> laterales;
 
         public List<TgcBox> cajasVisiblesEscenario;
@@ -139,7 +137,7 @@ namespace AlumnoEjemplos.MiGrupo
 
             arcoPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 0, 4000), new Vector3(500, 400, 4500) });
             arcoNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 0, -4000), new Vector3(500, 400, -4500) });
-            
+
 
             limiteArcoNegativo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2600, 0, -4050), new Vector3(-500, 1000, -4000) });
             limiteArcoNegativo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(500, 0, -4050), new Vector3(2600, 1000, -4000) });
@@ -176,7 +174,7 @@ namespace AlumnoEjemplos.MiGrupo
             TgcTexture pasto = TgcTexture.createTexture(d3dDevice, mediaFolder + "textures\\pasto.jpg");
             piso.setTexture(pasto);
             piso.UVTiling = new Vector2(150, 150);
-            
+
             cajasVisiblesEscenario.Add(piso);
 
 
@@ -225,7 +223,7 @@ namespace AlumnoEjemplos.MiGrupo
                 r.setTexture(textura_reja);
                 cajasVisiblesEscenario.Add(r);
             }
-            
+
             rejaLateralNegativa.UVTiling = new Vector2(150, 9);
             rejaLateralPositiva.UVTiling = new Vector2(150, 9);
 
@@ -286,7 +284,7 @@ namespace AlumnoEjemplos.MiGrupo
             int i = 0;
             lightMeshes = new TgcBox[4];
 
-            while (i<4)
+            while (i < 4)
             {
                 lightMeshes[i] = TgcBox.fromSize(new Vector3(10, 10, 10), Color.White);
 
@@ -313,7 +311,7 @@ namespace AlumnoEjemplos.MiGrupo
             txtScoreLocal.Position = new Point(0, 10);
             txtScoreLocal.Size = new Size(300, 100);
             txtScoreLocal.changeFont(new System.Drawing.Font("Calibri", 18, FontStyle.Bold | FontStyle.Italic));
-            txtScoreLocal.Color = (Color) GuiController.Instance.Modifiers.getValue("ColorHUD");
+            txtScoreLocal.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
 
 
             txtScoreVisitante.Text = "Equipo Azul: " + scoreVisitante.ToString();
@@ -374,14 +372,14 @@ namespace AlumnoEjemplos.MiGrupo
 
             TgcSceneLoader loader = new TgcSceneLoader();
             scene = loader.loadSceneFromFile(sceneFolder + "predio\\predio-TgcScene.xml");
-            
-            foreach(TgcMesh m in scene.Meshes)
+
+            foreach (TgcMesh m in scene.Meshes)
             {
                 todosLosMeshes.Add(m);
             }
-            
+
             mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
-           // mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Sphere\\Sphere-TgcScene.xml").Meshes[0];
+            // mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Sphere\\Sphere-TgcScene.xml").Meshes[0];
             secondCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
             secondCarMesh.setColor(Color.Red);
             iaCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
@@ -392,7 +390,7 @@ namespace AlumnoEjemplos.MiGrupo
             //TODO PASAR LA PELOTA A MESH!!! AGGGGHHHH
 
 
-            lightEffect = TgcShaders.loadEffect(mediaFolder+ "shaders\\MultiDiffuseLights.fx");
+            lightEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\MultiDiffuseLights.fx");
 
             // mainEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\EnvMap.fx");
 
@@ -416,22 +414,22 @@ namespace AlumnoEjemplos.MiGrupo
         private void SetCarPositions()
         {
             var direccion = arcoNegativo.Position - arcoPositivo.Position;
-            var pos1=Vector3.Add(arcoPositivo.Position, Vector3.Multiply(direccion,0.1f));
+            var pos1 = Vector3.Add(arcoPositivo.Position, Vector3.Multiply(direccion, 0.1f));
             var pos2 = Vector3.Add(arcoNegativo.Position, Vector3.Multiply(direccion, -0.1f));
-            var pos3 = Vector3.Add(pos1, new Vector3(300,0,0));
+            var pos3 = Vector3.Add(pos1, new Vector3(300, 0, 0));
 
 
             mainCar = new Auto(mainCarMesh, this);
             mainCar.setPosition(pos1.X, 0, pos1.Z);
             autitus.Add(mainCar);
 
-            
+
             secondCar = new Auto2(secondCarMesh, this);
             secondCar.setPosition(pos2.X, 0, pos2.Z);
             autitus.Add(secondCar);
             //secondCarMesh.Position = new Vector3(pos2.X, 0, pos2.Z);
             //secondCar = new Auto2(secondCarMesh, this);
-            
+
 
             //iaCar = new AutoIA(iaCarMesh, this);
             //iaCar.setPosition(pos3.X, 0, pos3.Z);
@@ -557,7 +555,7 @@ namespace AlumnoEjemplos.MiGrupo
                 }
 
                 //Obtener ViewMatrix haciendo un LookAt desde la posicion final anterior al centro de la camara
-                Vector3 Pos = mainCarMesh.Position + new Vector3(0,1,0); //levanto un poquito el centro del cubo porque sino me queda al ras del piso
+                Vector3 Pos = mainCarMesh.Position + new Vector3(0, 1, 0); //levanto un poquito el centro del cubo porque sino me queda al ras del piso
                 //Vector3 Pos = mainCarMesh.Position;
                 d3dDevice.Transform.View = Matrix.LookAtLH(Pos, Pos + Dir, VUP);
 
@@ -636,7 +634,7 @@ namespace AlumnoEjemplos.MiGrupo
             }
 
 
-           
+
             arcoPositivo.render();
             arcoNegativo.render();
             skyBox.render();
@@ -682,7 +680,8 @@ namespace AlumnoEjemplos.MiGrupo
 
 
 
-            if (!cubemap) { //ningún hud debería aparecer en el cubemap
+            if (!cubemap)
+            { //ningún hud debería aparecer en el cubemap
 
                 txtScoreVisitante.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
                 txtScoreLocal.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
@@ -696,7 +695,7 @@ namespace AlumnoEjemplos.MiGrupo
 
                 int i = 0;
 
-                while(i<4)
+                while (i < 4)
                 {
                     lightMeshes[i].render();
                     i++;
@@ -707,7 +706,7 @@ namespace AlumnoEjemplos.MiGrupo
 
         public String formatAsTime(float f)
         {
-            int totalSecs = (int) f;
+            int totalSecs = (int)f;
 
             int secs = totalSecs % 60;
             int mins = totalSecs / 60;
@@ -738,7 +737,7 @@ namespace AlumnoEjemplos.MiGrupo
                 else
                     splitScreen = true;
             }
-            
+
         }
 
         private void CreateViewports()
@@ -767,7 +766,7 @@ namespace AlumnoEjemplos.MiGrupo
             var pelotaPos = pelota.pos;
             var autoPos = mainCar.pos;
             var auto2Pos = secondCar.pos;
-             ///////////////INPUT//////////////////
+            ///////////////INPUT//////////////////
             //conviene deshabilitar ambas camaras para que no haya interferencia
             TgcD3dInput input = GuiController.Instance.D3dInput;
             if (input.keyDown(Key.LeftShift))
@@ -794,14 +793,20 @@ namespace AlumnoEjemplos.MiGrupo
             {
                 camaraPelota2.FirstTarget = auto2Pos;
                 camaraPelota2.SecondTarget = pelotaPos;
-                camaraActiva2 = camaraPelota2;                
+                camaraActiva2 = camaraPelota2;
             }
-            
-            
+
+
         }
 
         private void initCarCameras()
         {
+            camaraPelota1 = new TwoTargetsCamera(this);
+            camaraAuto1 = new MilanesaThirdPersonCamera();
+
+            camaraPelota2 = new TwoTargetsCamera(this);
+            camaraAuto2 = new MilanesaThirdPersonCamera();
+
             camaraAuto1.setCamera(mainCar.pos, 40, 250);
             camaraPelota1.setCamera(mainCar.pos, 0, 0);
 
@@ -828,7 +833,7 @@ namespace AlumnoEjemplos.MiGrupo
             txtScoreLocal.Text = "Equipo Rojo: " + scoreLocal.ToString();
             txtScoreVisitante.Text = "Equipo Azul: " + scoreVisitante.ToString();
 
-            mainCar.meshAuto.Position = new Vector3(0,0,0);
+            mainCar.meshAuto.Position = new Vector3(0, 0, 0);
             mainCar.obb = TgcObb.computeFromAABB(mainCar.meshAuto.BoundingBox);
             pelota.ownSphere.dispose();
             pelota = new Pelota(this);
@@ -851,11 +856,11 @@ namespace AlumnoEjemplos.MiGrupo
             {
                 box.dispose();
             }
-            foreach(TgcBoundingBox bb in limitesArcos)
+            foreach (TgcBoundingBox bb in limitesArcos)
             {
                 bb.dispose();
             }
-            foreach(TgcBoundingBox bb in laterales)
+            foreach (TgcBoundingBox bb in laterales)
             {
                 bb.dispose();
             }

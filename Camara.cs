@@ -167,7 +167,7 @@ namespace AlumnoEjemplos.MiGrupo
         public void updateCamera()
         {
             Vector3 targetCenter;
-            viewMatrix = generateViewMatrix(out position, out targetCenter); 
+            viewMatrix = generateViewMatrix(out position, out targetCenter);
         }
 
         /// <summary>
@@ -201,12 +201,13 @@ namespace AlumnoEjemplos.MiGrupo
         }
     }
 
-
-    public class TwoTargetsCamera : TgcCamera, IMilanesaCamera 
+    public class TwoTargetsCamera : TgcCamera, IMilanesaCamera
     {
         static readonly Vector3 UP_VECTOR = new Vector3(0, 1, 0);
 
         float offsetHeight;
+
+        EjemploAlumno parent;
 
         private Matrix viewMatrix;
 
@@ -216,15 +217,14 @@ namespace AlumnoEjemplos.MiGrupo
             return viewMatrix;
         }
 
-        Vector3 manualPosition;
-        /// <summary>
-        /// Posicion del ojo de la camara
-        /// </summary>
-        public Vector3 ManualPosition
+        private Vector3 direccion;
+
+        public Vector3 Direccion
         {
-            get { return manualPosition; }
-            set { manualPosition = value; }
+            get { return direccion; }
+            set { direccion = value; }
         }
+
 
         /// <summary>
         /// Desplazamiento en altura de la camara respecto del target
@@ -274,7 +274,7 @@ namespace AlumnoEjemplos.MiGrupo
             get { return firstTarget; }
             set { firstTarget = value; }
         }
- 
+
         Vector3 secondTarget;
         /// <summary>
         /// Objetivo al cual la camara tiene que apuntar
@@ -313,14 +313,15 @@ namespace AlumnoEjemplos.MiGrupo
                 }
             }
         }
-        
+
 
         /// <summary>
         /// Crear una nueva camara
         /// </summary>
-        public TwoTargetsCamera()
+        public TwoTargetsCamera(EjemploAlumno ej)
         {
             resetValues();
+            parent = ej;
         }
 
         /// <summary>
@@ -355,28 +356,36 @@ namespace AlumnoEjemplos.MiGrupo
         /// <param name="pos">Futura posicion de camara generada</param>
         /// <param name="pos">Futuro centro de camara a generada</param>
         /// <returns>Futura matriz de view generada</returns>
-        public Matrix generateViewMatrix(out Vector3 pos, out Vector3 targetCenter)
+        public Matrix generateViewMatrix()
         {
             var desplazamiento = new Vector3(0, 80, 0);
-            //alejarse, luego rotar y lueg ubicar camara en el centro deseado
-            targetCenter = Vector3.Add(firstTarget, desplazamiento);
-            var diff = (secondTarget - targetCenter);
-            diff.Normalize();
-            Matrix m = Matrix.Translation(diff*200) * Matrix.LookAtLH(targetCenter,secondTarget,UP_VECTOR);
-            
+            var alejamiento = 200;
+
+            var targetCenter = Vector3.Add(firstTarget, desplazamiento);
+            var vectorDirector = (secondTarget - targetCenter);
+
+            chequearColisiones(ref desplazamiento, ref alejamiento, ref vectorDirector);
+
+            vectorDirector.Normalize();
+            Matrix m = Matrix.Translation(vectorDirector * alejamiento) * Matrix.LookAtLH(targetCenter, secondTarget, UP_VECTOR);
+
             //Extraer la posicion final de la matriz de transformacion
-            pos.X = m.M41;
-            pos.Y = m.M42;
-            pos.Z = m.M43;
-            
+            position.X = m.M41;
+            position.Y = m.M42;
+            position.Z = m.M43;
+
             //Obtener ViewMatrix haciendo un LookAt desde la posicion final anterior al centro de la camara
             return m;
         }
 
+        private void chequearColisiones(ref Vector3 desplazamiento, ref int alejamiento, ref Vector3 vectorDirector)
+        {
+
+        }
+
         public void updateCamera()
         {
-            Vector3 targetCenter;
-            viewMatrix = generateViewMatrix(out position, out targetCenter); 
+            viewMatrix = generateViewMatrix();
         }
 
         /// <summary>
