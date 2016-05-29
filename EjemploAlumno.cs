@@ -28,8 +28,8 @@ namespace AlumnoEjemplos.MiGrupo
         TgcScene scene;
         TgcMesh mainCarMesh, secondCarMesh, iaCarMesh;
         Microsoft.DirectX.Direct3D.Effect mainEffect, secondEffect;
-        Auto mainCar;
-        Auto2 secondCar;
+        public Auto mainCar;
+        public Auto2 secondCar;
         IMilanesaCamera camaraActiva1, camaraActiva2;
         float time;
         float kx, kc;

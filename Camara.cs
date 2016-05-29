@@ -404,9 +404,15 @@ namespace AlumnoEjemplos.MiGrupo
 
         private bool Colisiona()
         {
-            return TgcCollisionUtils.testObbAABB(obb, parent.limiteLateralPositivo) || TgcCollisionUtils.testObbAABB(obb, parent.limiteLateralNegativo)
-                              || TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoPositivo1) || TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoPositivo2)
-                              || TgcCollisionUtils.testObbAABB(obb, parent.piso.BoundingBox);
+            return TgcCollisionUtils.testObbAABB(obb, parent.limiteLateralPositivo) 
+                || TgcCollisionUtils.testObbAABB(obb, parent.limiteLateralNegativo)
+                || TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoPositivo1) 
+                || TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoPositivo2)
+                || TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoNegativo1)
+                || TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoNegativo2)
+                || TgcCollisionUtils.testObbAABB(obb, parent.piso.BoundingBox)
+                || TgcCollisionUtils.testObbObb(obb, parent.mainCar.obb)
+                || TgcCollisionUtils.testObbObb(obb, parent.secondCar.obb);
         }
 
         public void updateCamera()
