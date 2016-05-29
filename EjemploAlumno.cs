@@ -42,6 +42,8 @@ namespace AlumnoEjemplos.MiGrupo
         TwoTargetsCamera camaraPelota2;
         MilanesaThirdPersonCamera camaraAuto2;
 
+        Vector3 currentCameraPos = new Vector3();
+
         public Pelota pelota;
         public float lastElapsedTime =0f;
         TgcText2d txtScoreLocal = new TgcText2d();
@@ -243,6 +245,7 @@ namespace AlumnoEjemplos.MiGrupo
                 TgcMesh mesh;
                 mesh = box.toMesh("abc");
                 meshesCajasEscenario.Add(mesh);
+
                 //mñeh
                 //esto es un paso extra porque a los tgcBox no les gusta iluminarse
 
@@ -386,8 +389,14 @@ namespace AlumnoEjemplos.MiGrupo
             iaCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
             iaCarMesh.setColor(Color.Green);
 
+
             todosLosMeshes.Add(mainCarMesh);
+
+
+
             todosLosMeshes.Add(secondCarMesh);
+
+
             //TODO PASAR LA PELOTA A MESH!!! AGGGGHHHH
 
 
@@ -476,12 +485,14 @@ namespace AlumnoEjemplos.MiGrupo
                 d3dDevice.Viewport = View1;
                 d3dDevice.Transform.View = camaraActiva1.GetUpdatedViewMatrix();
                 d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+                currentCameraPos = camaraActiva1.getPosition();
                 RenderAllObjects(false);
 
 
                 d3dDevice.Viewport = View2;
                 d3dDevice.Transform.View = camaraActiva2.GetUpdatedViewMatrix();
                 d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+                currentCameraPos = camaraActiva2.getPosition();
                 RenderAllObjects(false);
 
             }
@@ -489,6 +500,8 @@ namespace AlumnoEjemplos.MiGrupo
             {
                 d3dDevice.Transform.View = camaraActiva1.GetUpdatedViewMatrix();
                 d3dDevice.Viewport = ViewF;
+                currentCameraPos = camaraActiva1.getPosition();
+                txtDebug.Text = currentCameraPos.ToString();
                 RenderAllObjects(false);
             }
         }
@@ -667,6 +680,7 @@ namespace AlumnoEjemplos.MiGrupo
             {
                 if (lightEnable)
                 {
+
                     //Cargar variables de shader
                     mesh.Effect.SetValue("lightColor", lightColors);
                     mesh.Effect.SetValue("lightPosition", pointLightPositions);
@@ -674,12 +688,45 @@ namespace AlumnoEjemplos.MiGrupo
                     mesh.Effect.SetValue("lightAttenuation", pointLightAttenuation);
                     mesh.Effect.SetValue("materialEmissiveColor", ColorValue.FromColor((Color)GuiController.Instance.Modifiers["mEmissive"]));
                     mesh.Effect.SetValue("materialDiffuseColor", ColorValue.FromColor((Color)GuiController.Instance.Modifiers["mDiffuse"]));
+
+                    mesh.Effect.SetValue("fvEyePosition", TgcParserUtils.vector3ToFloat4Array(currentCameraPos));
+                    mesh.Effect.SetValue("shininess", 1);
                 }
 
                 //Renderizar modelo
                 mesh.render();
             }
 
+
+           /* if (lightEnable)
+            {
+
+                //Cargar variables de shader
+                mainCarMesh.Effect.SetValue("lightColor", lightColors);
+                mainCarMesh.Effect.SetValue("lightPosition", pointLightPositions);
+                mainCarMesh.Effect.SetValue("lightIntensity", pointLightIntensity);
+                mainCarMesh.Effect.SetValue("lightAttenuation", pointLightAttenuation);
+                mainCarMesh.Effect.SetValue("materialEmissiveColor", ColorValue.FromColor((Color)GuiController.Instance.Modifiers["mEmissive"]));
+                mainCarMesh.Effect.SetValue("materialDiffuseColor", ColorValue.FromColor((Color)GuiController.Instance.Modifiers["mDiffuse"]));
+
+                mainCarMesh.Effect.SetValue("fvEyePosition", TgcParserUtils.vector3ToFloat4Array(currentCameraPos));
+                mainCarMesh.Effect.SetValue("shininess", 15);
+
+
+                secondCarMesh.Effect.SetValue("lightColor", lightColors);
+                secondCarMesh.Effect.SetValue("lightPosition", pointLightPositions);
+                secondCarMesh.Effect.SetValue("lightIntensity", pointLightIntensity);
+                secondCarMesh.Effect.SetValue("lightAttenuation", pointLightAttenuation);
+                secondCarMesh.Effect.SetValue("materialEmissiveColor", ColorValue.FromColor((Color)GuiController.Instance.Modifiers["mEmissive"]));
+                secondCarMesh.Effect.SetValue("materialDiffuseColor", ColorValue.FromColor((Color)GuiController.Instance.Modifiers["mDiffuse"]));
+
+                secondCarMesh.Effect.SetValue("fvEyePosition", TgcParserUtils.vector3ToFloat4Array(currentCameraPos));
+                secondCarMesh.Effect.SetValue("shininess", 15);
+            }
+
+            mainCarMesh.render();
+            secondCarMesh.render();
+            pelota.render();*/
 
 
 

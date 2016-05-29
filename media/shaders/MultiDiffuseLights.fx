@@ -40,10 +40,11 @@ sampler2D lightMap = sampler_state
 //Material del mesh
 float3 materialEmissiveColor; //Color RGB
 float3 materialDiffuseColor; //Color RGB
-float3 materialSpecularColor = float3 ( 0.00, 0.00, 0.00);
+float3 materialSpecularColor = float3 ( 1.00, 1.00, 1.00);
 
 //Variables de las 4 luces
-float3 fvEyePosition = float3( 0.00, 0.00, 0.00 );
+float3 fvEyePosition;
+float shininess = 0.2;
 
 float3 lightColor[4]; //Color RGB de las 4 luces
 float4 lightPosition[4]; //Posicion de las 4 luces
@@ -113,16 +114,24 @@ struct PS_INPUT
 float3 computeDiffuseAndSpecularComponent(float3 surfacePosition, float3 N, int i)
 {
 	//Calcular intensidad de luz, con atenuacion por distancia
-	float distAtten = length(lightPosition[i].xyz - surfacePosition);
-	float3 Ln = (lightPosition[i].xyz - surfacePosition) / distAtten;
+	float3 L = lightPosition[i].xyz - surfacePosition;
+	float distAtten = length(L);
+	
+	float3 Ln = L / distAtten;
 	distAtten = distAtten * lightAttenuation[i];
 	float intensity = lightIntensity[i] / distAtten; //Dividimos intensidad sobre distancia
 
 	//Calcular Diffuse (N dot L)
 	float3 diffuseComponent = intensity * lightColor[i].rgb * materialDiffuseColor * max(0.0, dot(N, Ln));
-	float3 specularComponent = float3 ( 0.00, 0.00, 0.00);
 	
-	return diffuseComponent;
+	float D = normalize(lightPosition[i].xyz-fvEyePosition);
+	//float ks = saturate(dot(reflect(Ln,N), D)); //o usar Ln en vez de L? mmm
+	float ks = saturate(dot(2 * N * dot(Ln, N) - Ln, D));
+	ks = pow(ks,shininess);
+	
+	float3 specularComponent = 0.4 * ks * materialSpecularColor;
+	
+	return diffuseComponent + specularComponent;// + max(0.0, specularComponent));
 }
 
 

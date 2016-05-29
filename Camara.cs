@@ -12,6 +12,7 @@ namespace AlumnoEjemplos.MiGrupo
     public interface IMilanesaCamera
     {
         Matrix GetUpdatedViewMatrix();
+        Vector3 getPosition();
     }
 
     public class MilanesaThirdPersonCamera : TgcCamera, IMilanesaCamera
