@@ -1,0 +1,12 @@
+D:\UTN\TGC\tgc-viewer-1.0.1\TgcViewer\AlumnoEjemplos\obj\Debug\AlumnoEjemplos.csprojResolveAssemblyReference.cache
+D:\UTN\TGC\tgc-viewer-1.0.1\TgcViewer\AlumnoEjemplos\obj\Debug\AlumnoEjemplos.dll
+D:\UTN\TGC\tgc-viewer-1.0.1\TgcViewer\AlumnoEjemplos\obj\Debug\AlumnoEjemplos.pdb
+D:\UTN\TGC\tgc-viewer-1.0.1\TgcViewer\AlumnoEjemplos\AlumnoEjemplos.dll
+D:\UTN\TGC\tgc-viewer-1.0.1\TgcViewer\AlumnoEjemplos\AlumnoEjemplos.pdb
+D:\UTN\TGC\tgc-viewer-1.0.1\TgcViewer\AlumnoEjemplos\Microsoft.DirectX.Direct3DX.dll
+D:\UTN\TGC\tgc-viewer-1.0.1\TgcViewer\AlumnoEjemplos\TgcViewer.exe
+D:\UTN\TGC\tgc-viewer-1.0.1\TgcViewer\AlumnoEjemplos\Ionic.Zip.dll
+D:\UTN\TGC\tgc-viewer-1.0.1\TgcViewer\AlumnoEjemplos\Microsoft.DirectX.DirectSound.dll
+D:\UTN\TGC\tgc-viewer-1.0.1\TgcViewer\AlumnoEjemplos\TgcViewer.pdb
+D:\UTN\TGC\tgc-viewer-1.0.1\TgcViewer\AlumnoEjemplos\Microsoft.DirectX.Direct3DX.xml
+D:\UTN\TGC\tgc-viewer-1.0.1\TgcViewer\AlumnoEjemplos\Microsoft.DirectX.DirectSound.xml
