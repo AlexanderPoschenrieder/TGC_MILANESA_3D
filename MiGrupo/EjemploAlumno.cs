@@ -502,7 +502,7 @@ namespace AlumnoEjemplos.MiGrupo
                 d3dDevice.Transform.View = camaraActiva1.GetUpdatedViewMatrix();
                 d3dDevice.Viewport = ViewF;
                 currentCameraPos = camaraActiva1.getPosition();
-                txtDebug.Text = currentCameraPos.ToString();
+                //txtDebug.Text = currentCameraPos.ToString();
                 RenderAllObjects(false);
             }
         }
