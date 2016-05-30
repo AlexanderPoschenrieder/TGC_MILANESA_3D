@@ -51,6 +51,7 @@ namespace AlumnoEjemplos.MiGrupo
         protected float alturaObb;
         protected bool colisionando = false;
         public Vector3 desvio = new Vector3(0, 0, 0);
+        private bool reposicionar=false;
 
         #endregion
 
@@ -242,6 +243,12 @@ namespace AlumnoEjemplos.MiGrupo
 
         public void Saltar()
         {
+            if (reposicionar)
+            {
+                translate(0, pos.Y * -1, 0);
+                reposicionar = false;
+            }
+
             if (!saltando)
             {
                 return;
@@ -256,22 +263,18 @@ namespace AlumnoEjemplos.MiGrupo
 
             if (!colisionando) aplicarGravedad(elapsedTime);
             
-            //rotacionSalto();
+            rotacionSalto();
 
         }
 
         private void rotacionSalto()
         {
-            float k = 1;
-            //if (FastMath.Abs(velocidadVertical) > 50)
-            //{
-                k = velocidadVertical*elapsedTime;
-            //}
-            //else
-            //{
-            //    k = -velocidadVertical * 0.01f;
-            //}
-                rotate(ejeRotacionSalto, elapsedTime * CONST_SALTO * k);
+            //float k = 1;
+
+            //k = -velocidadVertical * elapsedTime*0.01f;
+
+            //rotate(ejeRotacionSalto, CONST_SALTO * k);
+            
         }
 
         public void aplicarGravedad(float elapsedTime)
@@ -310,7 +313,7 @@ namespace AlumnoEjemplos.MiGrupo
                 return;
             }
 
-            var rot = (elapsedTime * unaDireccion * elapsedTime*(handling * velocidadHorizontal / 50)); //direccion puede ser 1 o -1, 1 es derecha y -1 izquierda
+            var rot = (elapsedTime * unaDireccion * elapsedTime*(handling * velocidadHorizontal / 50)); 
             rotate(new Vector3(0, 1, 0), rot);
             obb.setRotation(new Vector3(0f, rotacion, 0f));
             direccion.TransformCoordinate(Matrix.RotationAxis(new Vector3(0, 1, 0), rot));
@@ -376,10 +379,8 @@ namespace AlumnoEjemplos.MiGrupo
         {
             if (TgcCollisionUtils.testObbAABB(obb, parent.piso.BoundingBox))
             {
-
-                translate(0, meshAuto.Position.Y * -1, 0);
-
                 saltando = false;
+                reposicionar = true;
                 return true;
             }
 
