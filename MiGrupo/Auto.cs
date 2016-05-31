@@ -131,13 +131,19 @@ namespace AlumnoEjemplos.MiGrupo
 
         public void rotate(Vector3 axisRotation, float angle)
         {
+            var axis = Vector3.Cross(direccion,new Vector3(0,1,0));
             Matrix originalMatWorld = matWorld;
             rotacion += angle;
             Matrix gotoObjectSpace = Matrix.Invert(matWorld);
             //axisRotation.TransformCoordinate(gotoObjectSpace);
-
-            matWorld = Matrix.Identity * Matrix.RotationAxis(axisRotation, angle);
+            var rotMat = Matrix.RotationAxis(axisRotation, angle);
+            var rotObb = Matrix.RotationAxis(axis, angle);
+            matWorld = Matrix.Identity * rotMat;
             matWorld = matWorld * originalMatWorld;
+            //Rotación OBB defectuosa
+            obb.Orientation = Vector3.TransformCoordinate(obb.Orientation, rotObb);
+            
+            
         }
 
         public void scale(float k)
@@ -249,6 +255,7 @@ namespace AlumnoEjemplos.MiGrupo
             if (reposicionar)
             {
                 translate(0, pos.Y * -1, 0);
+
                 reposicionar = false;
             }
 
