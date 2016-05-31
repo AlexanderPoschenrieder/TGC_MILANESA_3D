@@ -639,6 +639,8 @@ namespace AlumnoEjemplos.MiGrupo
             pelota.ownSphere.Effect = currentShader;
             pelota.ownSphere.Technique = currentTechnique;
 
+            mainCar.obb.render();
+
 
             ColorValue[] lightColors = new ColorValue[lightMeshes.Length];
             Vector4[] pointLightPositions = new Vector4[lightMeshes.Length];

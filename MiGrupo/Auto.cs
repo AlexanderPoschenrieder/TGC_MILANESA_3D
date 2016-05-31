@@ -31,6 +31,8 @@ namespace AlumnoEjemplos.MiGrupo
 
         #region Atributos
 
+        public float rotacionAcumuladaEnElSalto = 0;
+
         public float velocidadHorizontal;
         public float velocidadVertical;
         public Vector3 pos;
@@ -230,7 +232,8 @@ namespace AlumnoEjemplos.MiGrupo
                 if (!saltando)
                 {
                     saltando = true;
-                    ejeRotacionSalto = Vector3.Cross(new Vector3(0, 1, 0), direccion);
+                    rotacionAcumuladaEnElSalto = 0;
+                    
                     velocidadVertical = 100;
                 }
             }
@@ -256,6 +259,7 @@ namespace AlumnoEjemplos.MiGrupo
 
             if (bajando && chocaPiso())
             {
+                rotate(new Vector3(1, 0, 0), -rotacionAcumuladaEnElSalto);
                 return;
             }
 
@@ -269,11 +273,11 @@ namespace AlumnoEjemplos.MiGrupo
 
         private void rotacionSalto()
         {
-            //float k = 1;
+            float k = 1;
 
-            //k = -velocidadVertical * elapsedTime*0.01f;
-
-            //rotate(ejeRotacionSalto, CONST_SALTO * k);
+            k = velocidadVertical * elapsedTime*0.004f;
+            rotate(new Vector3(1, 0, 0), CONST_SALTO * k);
+            rotacionAcumuladaEnElSalto += CONST_SALTO * k;
             
         }
 
@@ -523,6 +527,17 @@ namespace AlumnoEjemplos.MiGrupo
         public bool isLeft(Vector3 a, Vector3 b, Vector3 c)
         {
             return ((b.X - a.X) * (c.Y - a.Y) - (b.Y - a.Y) * (c.X - a.X)) > 0;
+        }
+
+        public Vector3 getTranslationComponent(Matrix world)
+        {
+            Vector3 result = new Vector3();
+
+            result.X = world.M41;
+            result.Y = world.M42;
+            result.Z = world.M43;
+
+            return result;
         }
 
         #endregion
