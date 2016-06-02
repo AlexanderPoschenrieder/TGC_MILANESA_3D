@@ -278,6 +278,8 @@ namespace AlumnoEjemplos.MiGrupo
             laterales.Add(limiteLateralNegativo);
             laterales.Add(limiteLateralPositivo);
 
+            
+
         }
 
         #endregion
@@ -299,6 +301,44 @@ namespace AlumnoEjemplos.MiGrupo
             lightMeshes[1].Position = new Vector3(-2550, 1000, 3950);
             lightMeshes[2].Position = new Vector3(2550, 1000, -3950);
             lightMeshes[3].Position = new Vector3(-2550, 1000, -3950);
+            //Meshes
+
+            initReflectors();
+        }
+
+        private void initReflectors()
+        {
+            var loader = new TgcSceneLoader();
+            var enterrar = Matrix.Translation(new Vector3(0, -2500, 0)) * Matrix.Translation(0, 0, 0);
+            var rot = -3 * FastMath.QUARTER_PI;
+
+            var reflector1 = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Reflector\\New+Light+Poles-TgcScene.xml").Meshes[0];
+            var matrizPos = Matrix.Translation(-2500, 0, -4400);
+            reflector1.AutoTransformEnable = false;
+            reflector1.Transform = enterrar * Matrix.RotationY(rot) * matrizPos;
+            rot -= FastMath.PI_HALF;
+
+            var reflector2 = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Reflector\\New+Light+Poles-TgcScene.xml").Meshes[0];
+            matrizPos = Matrix.Translation(2900, 0, -3950);
+            reflector2.AutoTransformEnable = false;
+            reflector2.Transform = enterrar * Matrix.RotationY(rot) * matrizPos;
+            rot -= FastMath.PI_HALF;
+
+            var reflector4 = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Reflector\\New+Light+Poles-TgcScene.xml").Meshes[0];
+            matrizPos = Matrix.Translation(2500, 0, 4400);
+            reflector4.AutoTransformEnable = false;
+            reflector4.Transform = enterrar * Matrix.RotationY(rot) * matrizPos;
+            rot -= FastMath.PI_HALF;
+
+            var reflector3 = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Reflector\\New+Light+Poles-TgcScene.xml").Meshes[0];
+            matrizPos = Matrix.Translation(-2900, 0, 3950);
+            reflector3.AutoTransformEnable = false;
+            reflector3.Transform = enterrar * Matrix.RotationY(rot) * matrizPos;
+
+            todosLosMeshes.Add(reflector1);
+            todosLosMeshes.Add(reflector2);
+            todosLosMeshes.Add(reflector3);
+            todosLosMeshes.Add(reflector4);
         }
 
         #endregion
