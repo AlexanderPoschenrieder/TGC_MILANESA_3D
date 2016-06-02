@@ -441,9 +441,9 @@ namespace AlumnoEjemplos.MiGrupo
                     desviar(new Vector3(-1f * Math.Abs(velocidadTotalInicial * perpendicularidadChoque), 0, 0));
                     velocidadHorizontal = velocidadHorInicial * Math.Abs(1 - perpendicularidadChoque * perpendicularidadChoque);
                 }
-                
-               
-                if (TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoPositivo1) || TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoPositivo2))
+
+
+                if (TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoPositivo1) || TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoPositivo2) || TgcCollisionUtils.testObbAABB(obb, parent.arcoPositivo)) 
                 {
                     float perpendicularidadChoque = Vector3.Dot(new Vector3(0, 0, 1), Vector3.Normalize((direccion * velocidadHorInicial) + desvio));
                     translate(-transVec);
@@ -451,7 +451,7 @@ namespace AlumnoEjemplos.MiGrupo
                     velocidadHorizontal = velocidadHorInicial * Math.Abs(1 - perpendicularidadChoque * perpendicularidadChoque);
                 }
 
-                if (TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoNegativo1) || TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoNegativo2))
+                if (TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoNegativo1) || TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoNegativo2) || TgcCollisionUtils.testObbAABB(obb, parent.arcoNegativo))
                 {
                     float perpendicularidadChoque = Vector3.Dot(new Vector3(0, 0, 1), Vector3.Normalize((direccion * velocidadHorInicial) + desvio));
                     translate(-transVec);
