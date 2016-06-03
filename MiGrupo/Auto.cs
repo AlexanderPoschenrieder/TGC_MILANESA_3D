@@ -193,6 +193,7 @@ namespace AlumnoEjemplos.MiGrupo
             else if (input.keyDown(Key.D))
             {
                 if (!saltando) Rotar(1);
+              
             }
 
             if (input.keyDown(Key.W))
@@ -324,11 +325,13 @@ namespace AlumnoEjemplos.MiGrupo
                 return;
             }
 
-            var rot = (elapsedTime * unaDireccion * elapsedTime*(handling * velocidadHorizontal / 50)); 
+            var rot = (unaDireccion * elapsedTime*(handling  * velocidadHorizontal / 2500)); 
             rotate(new Vector3(0, 1, 0), rot);
             obb.setRotation(new Vector3(0f, rotacion, 0f));
             direccion.TransformCoordinate(Matrix.RotationAxis(new Vector3(0, 1, 0), rot));
             direccion.Normalize();
+
+            
         }
 
         protected void Acelerar(float aumento)
