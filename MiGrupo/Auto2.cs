@@ -28,14 +28,16 @@ namespace AlumnoEjemplos.MiGrupo
         protected override void CalcularMovimiento()
         {
 TgcD3dInput input = GuiController.Instance.D3dInput;
-            if (input.keyDown(Key.Left))
-            {
-                Rotar(-1);
-            }
-            else if (input.keyDown(Key.Right))
-            {
-                Rotar(1);
-            }
+            
+                if (input.keyDown(Key.Left))
+                {
+                    if (!saltando) Rotar(-1);
+                }
+
+                else if (input.keyDown(Key.Right))
+                {
+                    if (!saltando) Rotar(1);
+                }
 
             if (input.keyDown(Key.Up))
             {
@@ -59,6 +61,7 @@ TgcD3dInput input = GuiController.Instance.D3dInput;
                 {
                     Acelerar(0);
                 }
+
             }
             else
             {
@@ -79,11 +82,12 @@ TgcD3dInput input = GuiController.Instance.D3dInput;
                 if (!saltando)
                 {
                     saltando = true;
-                    ejeRotacionSalto = Vector3.Cross(new Vector3(0, 1, 0), direccion);
+                    rotacionAcumuladaEnElSalto = 0;
+
                     velocidadVertical = 100;
                 }
             }
-        
+
         }
 
         #endregion

@@ -18,6 +18,7 @@ float4x4 matWorldViewProj; //Matriz World * View * Projection
 float4x4 matInverseTransposeWorld; //Matriz Transpose(Invert(World))
 float4x4 matViewProj;
 
+	
 //Textura para DiffuseMap
 texture texDiffuseMap;
 sampler2D diffuseMap = sampler_state
@@ -49,6 +50,7 @@ float4 lightPosition; //Posicion de las 4 luces
 /**************************************************************************************/
 /* MultiDiffuseLightsTechnique */
 /**************************************************************************************/
+
 
 //Input del Vertex Shader
 struct VS_INPUT
@@ -98,8 +100,8 @@ struct PS_INPUT
 
 float4 make_black_shadow_ps(PS_INPUT input) : COLOR0
 {      
-
-	return 1;
+	float4 pixel = (0.5f, 0, 0, 0.5f);
+	return pixel;
 }
 
 
@@ -111,7 +113,4 @@ technique SombrasTechnique
 	  VertexShader = compile vs_3_0 proyectar_al_piso_vs();
 	  PixelShader = compile ps_3_0 make_black_shadow_ps();
    }
-
 }
-
-
