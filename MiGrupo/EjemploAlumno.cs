@@ -441,7 +441,7 @@ namespace AlumnoEjemplos.MiGrupo
             //TODO PASAR LA PELOTA A MESH!!! AGGGGHHHH
 
 
-            lightEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\MultiDiffuseLights.fx");
+            lightEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\DifAndSpec.fx");
 
             // mainEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\EnvMap.fx");
 
@@ -662,6 +662,7 @@ namespace AlumnoEjemplos.MiGrupo
                 //Shader personalizado de iluminacion
                 currentShader = this.lightEffect;
                 currentTechnique = "MultiDiffuseLightsTechnique";
+                
             }
             else
             {
@@ -674,7 +675,14 @@ namespace AlumnoEjemplos.MiGrupo
             {
                 mesh.Effect = currentShader;
                 mesh.Technique = currentTechnique;
+                if(lightEnable)
+                {
+                    mainCarMesh.Technique = "DifAndSpecTechnique";
+                    secondCarMesh.Technique = "DifAndSpecTechnique";
+                }
             }
+
+            
 
             pelota.ownSphere.Effect = currentShader;
             pelota.ownSphere.Technique = currentTechnique;
