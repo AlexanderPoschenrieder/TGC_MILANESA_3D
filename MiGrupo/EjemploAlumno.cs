@@ -32,7 +32,6 @@ namespace AlumnoEjemplos.MiGrupo
         public Auto2 secondCar;
         IMilanesaCamera camaraActiva1, camaraActiva2;
         float time;
-        float kx, kc;
 
         Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
 
@@ -107,6 +106,7 @@ namespace AlumnoEjemplos.MiGrupo
 
         TgcBox[] lightMeshes;
         Microsoft.DirectX.Direct3D.Effect lightEffect;
+        Microsoft.DirectX.Direct3D.Effect sombrasEffect;
 
         #endregion DECLARACIONES
 
@@ -442,6 +442,7 @@ namespace AlumnoEjemplos.MiGrupo
 
 
             lightEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\DifAndSpec.fx");
+            sombrasEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\Sombras.fx");
 
             // mainEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\EnvMap.fx");
 
@@ -682,14 +683,16 @@ namespace AlumnoEjemplos.MiGrupo
                 }
             }
 
-            
 
-            pelota.ownSphere.Effect = currentShader;
-            pelota.ownSphere.Technique = currentTechnique;
+
+    
 
             mainCar.obb.render();
 
+            
 
+            pelota.ownSphere.Effect = sombrasEffect;
+            pelota.ownSphere.Technique = "SombrasTechnique";
             ColorValue[] lightColors = new ColorValue[lightMeshes.Length];
             Vector4[] pointLightPositions = new Vector4[lightMeshes.Length];
             float[] pointLightIntensity = new float[lightMeshes.Length];
@@ -702,10 +705,20 @@ namespace AlumnoEjemplos.MiGrupo
                 pointLightPositions[i] = TgcParserUtils.vector3ToVector4(lightMesh.Position);
                 pointLightIntensity[i] = (float)GuiController.Instance.Modifiers["lightIntensity"];
                 pointLightAttenuation[i] = (float)GuiController.Instance.Modifiers["lightAttenuation"];
+
+
+                pelota.ownSphere.AlphaBlendEnable = true;
+
+                pelota.ownSphere.Effect.SetValue("matViewProj", d3dDevice.Transform.View * d3dDevice.Transform.Projection);
+
+                pelota.ownSphere.Effect.SetValue("lightPosition", pointLightPositions[i]);
+                pelota.ownSphere.render();
             }
 
+            pelota.ownSphere.AlphaBlendEnable = false;
 
-
+            pelota.ownSphere.Effect = currentShader;
+            pelota.ownSphere.Technique = currentTechnique;
             arcoPositivo.render();
             arcoNegativo.render();
             skyBox.render();
@@ -751,7 +764,7 @@ namespace AlumnoEjemplos.MiGrupo
                 //Renderizar modelo
                 mesh.render();
             }
-
+            
             if(lightEnable)
             {
                 pelota.ownSphere.Effect.SetValue("lightColor", lightColors);
