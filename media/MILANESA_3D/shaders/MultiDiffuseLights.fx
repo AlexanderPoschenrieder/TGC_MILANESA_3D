@@ -125,11 +125,11 @@ float3 computeDiffuseAndSpecularComponent(float3 surfacePosition, float3 N, int 
 	float3 diffuseComponent = intensity * lightColor[i].rgb * materialDiffuseColor * max(0.0, dot(N, Ln));
 	
 	float D = normalize(lightPosition[i].xyz-fvEyePosition);
-	//float ks = saturate(dot(reflect(Ln,N), D)); //o usar Ln en vez de L? mmm
-	float ks = saturate(dot(2 * N * dot(Ln, N) - Ln, D));
-	ks = pow(ks,shininess);
+	//float ks = saturate(absdot(reflect(Ln,N), D)); //o usar Ln en vez de L? mmm
+	float ks = saturate(abs(dot(2 * N * dot(Ln, N) - Ln, D)));
+	ks = pow(ks,5);
 	
-	float3 specularComponent = 0.4 * ks * materialSpecularColor;
+	float3 specularComponent = ks;
 	
 	return diffuseComponent + specularComponent;// + max(0.0, specularComponent));
 }
