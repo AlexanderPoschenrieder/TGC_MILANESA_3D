@@ -315,7 +315,7 @@ namespace AlumnoEjemplos.MiGrupo
         public TwoTargetsCamera(EjemploAlumno ej)
         {
             resetValues();
-            obb = TgcObb.computeFromPoints(new Vector3[] { new Vector3(1, 1,1), new Vector3(-1, -1, -1) });
+            obb = TgcObb.computeFromPoints(new Vector3[] { new Vector3(2, 2, 2), new Vector3(2, 2, 2) });
             parent = ej;
         }
 
@@ -382,21 +382,25 @@ namespace AlumnoEjemplos.MiGrupo
             {
                 return newPos;
             }
-            if (Colisiona())
+
+            if(Colisiona())
             {
-                while (Colisiona())
-                {
-                    alejamiento -= 2;
-                    newPos = targetCenter - director * alejamiento;
-                    obb.Center = newPos;
-                }
+                alejamiento -= 2;
+                newPos = targetCenter - director * alejamiento;
+                obb.Center = newPos;
             }
-            else if(alejamiento < 200)
+            if(alejamiento < 200)
             {
                 var valor = alejamiento +2;
                 alejamiento = valor > 200 ? 200 : valor;
-                newPos = targetCenter - director * (alejamiento + 5);
+                newPos = targetCenter - director * alejamiento;
                 obb.Center = newPos;
+                if (Colisiona())
+                {
+                    newPos = newPos + director * (alejamiento - 2);
+                    obb.Center = newPos;
+
+                }
             }          
 
             return newPos;
