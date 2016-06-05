@@ -786,7 +786,7 @@ namespace AlumnoEjemplos.MiGrupo
                 pelota.ownSphere.AlphaBlendEnable = true;
 
                 pelota.ownSphere.Effect.SetValue("matViewProj", d3dDevice.Transform.View * d3dDevice.Transform.Projection);
-
+                pelota.ownSphere.Effect.SetValue("centroPelota", TgcParserUtils.vector3ToVector4(pelota.pos));
                 pelota.ownSphere.Effect.SetValue("lightPosition", pointLightPositions[i]);
                 pelota.ownSphere.render();
             }

@@ -42,6 +42,7 @@ sampler2D lightMap = sampler_state
 
 //float3 lightColor; //Color RGB de las 4 luces
 float4 lightPosition; //Posicion de las 4 luces
+float4 centroPelota;
 //float lightIntensity; //Intensidad de las 4 luces
 //float lightAttenuation; //Factor de atenuacion de las 4 luces
 
@@ -56,7 +57,7 @@ float4 lightPosition; //Posicion de las 4 luces
 struct VS_INPUT
 {
    float4 Position : POSITION0;
-   float3 Normal : NORMAL0;
+   float4 Normal : NORMAL0;
    float4 Color : COLOR;
    float2 Texcoord : TEXCOORD0;
 };
@@ -65,28 +66,33 @@ struct VS_INPUT
 struct VS_OUTPUT
 {
 	float4 Position : POSITION0;
+	float Alpha : TEXCOORD1;
 };
 
 //Vertex Shader
 VS_OUTPUT proyectar_al_piso_vs(VS_INPUT input)
 {
 	VS_OUTPUT output;
+	
+	
 
 	float4 puntoPelota = mul(input.Position, matWorld);
 	float4 puntoLuz = lightPosition;
 	
 	float4 v = normalize(puntoPelota-puntoLuz);
+	float4 vc = normalize(centroPelota-puntoLuz);
 	
 	float t = (1-puntoLuz.y)/v.y;
 	
 	float4 puntoProyectado = puntoLuz + v * t;
-	//float4 puntoProyectado4 = (puntoProyectado.x, puntoProyectado.y, puntoProyectado.z, 1);
 	
-	//Proyectar posicion
+	float4 N = normalize(input.Normal);
+	
+	
 	
 	output.Position = mul(puntoProyectado, matViewProj);
-	//output.Position = mul(input.Position, matWorldViewProj);
-
+	output.Alpha = max(0, sign(puntoPelota.y - centroPelota.y));
+	
 	return output;
 }
 
@@ -94,13 +100,13 @@ VS_OUTPUT proyectar_al_piso_vs(VS_INPUT input)
 //Input del Pixel Shader
 struct PS_INPUT
 {
-	float3 WorldPosition : TEXCOORD1;
-	float3 WorldNormal : TEXCOORD2;
+	float Alpha : TEXCOORD1;
 };
 
 float4 make_black_shadow_ps(PS_INPUT input) : COLOR
 {      
-	float4 pixel = float4(0, 0, 0, 0.5f);
+	float4 pixel = float4(0, 0, 0, input.Alpha * 0.5f);
+	//pixel = float4(0, 0, 0, 0.5f);
 	return pixel;
 }
 
