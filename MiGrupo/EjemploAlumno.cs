@@ -706,11 +706,7 @@ namespace AlumnoEjemplos.MiGrupo
                 }
             }
 
-
-
-
-
-            mainCar.obb.render();
+            
 
 
             

@@ -31,6 +31,7 @@ namespace AlumnoEjemplos.MiGrupo
 
         #region Atributos
 
+        public float nitroTimer = 0;
         public float rotacionAcumuladaEnElSalto = 0;
 
         public float velocidadHorizontal;
@@ -167,6 +168,16 @@ namespace AlumnoEjemplos.MiGrupo
         #region Métodos
         public void Mover(float et)
         {
+            parent.txtDebug.Text = nitroTimer.ToString();
+            if (nitroTimer > 0)
+            {
+                nitroTimer -= elapsedTime;
+            }
+            aceleracion = (float)GuiController.Instance.Modifiers["Aceleracion"];
+            gravedad = (float)GuiController.Instance.Modifiers["Gravedad"];
+           // handling = (float)GuiController.Instance.Modifiers["VelocidadRotacion"];
+
+
             this.elapsedTime = et;
             chequearColisiones();
             CalcularMovimiento();
@@ -182,6 +193,21 @@ namespace AlumnoEjemplos.MiGrupo
             desvio = desvio * 0.92f;
         }
 
+        public void usarNitro()
+        {
+            if(nitroTimer > 0.0001f)
+            {
+                //notificar al usuario que no puede usar nitro!
+                return;
+            }
+            if(velocidadHorizontal < 0)
+            {
+                return; //no usar nitro en marcha atrás
+            }
+            velocidadHorizontal *= 3;
+            nitroTimer = 5;
+
+        }
 
         protected virtual void CalcularMovimiento()
         {
@@ -233,9 +259,14 @@ namespace AlumnoEjemplos.MiGrupo
                 }
 
             }
-
-            if (input.keyDown(Key.Space))
+            
+            if (input.keyPressed(Key.Space))
             {
+                if(saltando)
+                {
+                    usarNitro();
+                }
+
                 if (!saltando)
                 {
                     saltando = true;
@@ -343,8 +374,10 @@ namespace AlumnoEjemplos.MiGrupo
 
         public void AjustarVelocidad()
         {
-            if (velocidadHorizontal > velocidadMaxima) velocidadHorizontal = velocidadMaxima;
-            if (velocidadHorizontal < velocidadMaximaReversa) velocidadHorizontal = velocidadMaximaReversa;
+          
+            if (velocidadHorizontal > velocidadMaxima) velocidadHorizontal -= elapsedTime * (velocidadHorizontal + velocidadMaxima) / 2;
+            if (velocidadHorizontal < velocidadMaximaReversa) velocidadHorizontal =+ elapsedTime * ( velocidadMaximaReversa + velocidadHorizontal ) /2;
+                       
         }
 
         public void EstablecerVelocidadMáximaEn(float velMaxima)
@@ -376,10 +409,7 @@ namespace AlumnoEjemplos.MiGrupo
 
         public void render()
         {
-            aceleracion = (float)GuiController.Instance.Modifiers["Aceleracion"];
-            gravedad = (float)GuiController.Instance.Modifiers["Gravedad"];
-            handling = (float)GuiController.Instance.Modifiers["VelocidadRotacion"];
-
+           //ojo que esto no lo estamos llamando nunca!
             meshAuto.render();
             obb.render();
         }
@@ -502,7 +532,7 @@ namespace AlumnoEjemplos.MiGrupo
                     TgcRay ray = new TgcRay(lastPos, spherePosition - lastPos);
                     TgcCollisionUtils.intersectRayObb(ray, obb, out collisionPos);
 
-                    Vector3 velocidadATransmitir = 0.02f * (spherePosition - collisionPos) * FastMath.Abs(velocidadTotalInicial);
+                    Vector3 velocidadATransmitir = 0.015f * (spherePosition - collisionPos) * FastMath.Abs(velocidadTotalInicial);
                     velocidadATransmitir = new Vector3(velocidadATransmitir.X, velocidadATransmitir.Y * 0.3f, velocidadATransmitir.Z);
 
                     //translate(spherePosition - lastPos);
