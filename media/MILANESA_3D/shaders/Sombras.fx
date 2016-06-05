@@ -98,9 +98,9 @@ struct PS_INPUT
 	float3 WorldNormal : TEXCOORD2;
 };
 
-float4 make_black_shadow_ps(PS_INPUT input) : COLOR0
+float4 make_black_shadow_ps(PS_INPUT input) : COLOR
 {      
-	float4 pixel = (0.5f, 0, 0, 0.5f);
+	float4 pixel = float4(0, 0, 0, 0.5f);
 	return pixel;
 }
 

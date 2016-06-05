@@ -691,8 +691,7 @@ namespace AlumnoEjemplos.MiGrupo
 
             
 
-            pelota.ownSphere.Effect = sombrasEffect;
-            pelota.ownSphere.Technique = "SombrasTechnique";
+            
             ColorValue[] lightColors = new ColorValue[lightMeshes.Length];
             Vector4[] pointLightPositions = new Vector4[lightMeshes.Length];
             float[] pointLightIntensity = new float[lightMeshes.Length];
@@ -706,16 +705,9 @@ namespace AlumnoEjemplos.MiGrupo
                 pointLightIntensity[i] = (float)GuiController.Instance.Modifiers["lightIntensity"];
                 pointLightAttenuation[i] = (float)GuiController.Instance.Modifiers["lightAttenuation"];
 
-
-                pelota.ownSphere.AlphaBlendEnable = true;
-
-                pelota.ownSphere.Effect.SetValue("matViewProj", d3dDevice.Transform.View * d3dDevice.Transform.Projection);
-
-                pelota.ownSphere.Effect.SetValue("lightPosition", pointLightPositions[i]);
-                pelota.ownSphere.render();
+                
             }
-
-            pelota.ownSphere.AlphaBlendEnable = false;
+            
 
             pelota.ownSphere.Effect = currentShader;
             pelota.ownSphere.Technique = currentTechnique;
@@ -778,7 +770,26 @@ namespace AlumnoEjemplos.MiGrupo
                 pelota.ownSphere.Effect.SetValue("shininess", 1);
             }
 
+            pelota.ownSphere.AlphaBlendEnable = false;
             pelota.render();
+
+            pelota.ownSphere.Effect = sombrasEffect;
+            pelota.ownSphere.Technique = "SombrasTechnique";
+
+            for (int i = 0; i < lightMeshes.Length; i++)
+            {
+                TgcBox lightMesh = lightMeshes[i];
+                
+                pointLightPositions[i] = TgcParserUtils.vector3ToVector4(lightMesh.Position);
+
+
+                pelota.ownSphere.AlphaBlendEnable = true;
+
+                pelota.ownSphere.Effect.SetValue("matViewProj", d3dDevice.Transform.View * d3dDevice.Transform.Projection);
+
+                pelota.ownSphere.Effect.SetValue("lightPosition", pointLightPositions[i]);
+                pelota.ownSphere.render();
+            }
 
             /* if (lightEnable)
              {
