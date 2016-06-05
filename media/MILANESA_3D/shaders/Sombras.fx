@@ -103,7 +103,7 @@ struct PS_INPUT
 	float Alpha : TEXCOORD1;
 };
 
-float4 make_black_shadow_ps(PS_INPUT input) : COLOR
+float4 make_black_shadow_ps(PS_INPUT input) : COLOR0
 {      
 	float4 pixel = float4(0, 0, 0, input.Alpha * 0.5f);
 	//pixel = float4(0, 0, 0, 0.5f);

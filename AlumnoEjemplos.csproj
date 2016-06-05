@@ -87,6 +87,8 @@
     <Compile Include="MiGrupo\Auto2.cs" />
     <Compile Include="MiGrupo\AutoIA.cs" />
     <Compile Include="MiGrupo\EjemploAlumno.cs" />
+    <Compile Include="MiGrupo\Menu\Menu.cs" />
+    <Compile Include="MiGrupo\Menu\MenuButton.cs" />
     <Compile Include="MiGrupo\Pelota.cs" />
     <Compile Include="MiGrupo\SphereCollisionManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

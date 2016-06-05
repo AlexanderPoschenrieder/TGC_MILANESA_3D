@@ -19,9 +19,20 @@ using TgcViewer.Utils.Shaders;
 
 namespace AlumnoEjemplos.MiGrupo
 {
+    public enum EstadoJuego
+    {
+        Menu,
+        Juego
+    }
 
     public class EjemploAlumno : TgcExample
     {
+        #region MENU
+
+        Menu menuPrincipal;
+        public EstadoJuego estadoJuego;
+
+        #endregion
 
         #region DECLARACIONES
         TgcSkyBox skyBox;
@@ -44,13 +55,13 @@ namespace AlumnoEjemplos.MiGrupo
         Vector3 currentCameraPos = new Vector3();
 
         public Pelota pelota;
-        public float lastElapsedTime =0f;
+        public float lastElapsedTime = 0f;
         TgcText2d txtScoreLocal = new TgcText2d();
         TgcText2d txtScoreVisitante = new TgcText2d();
         TgcText2d txtTimer = new TgcText2d();
         public TgcText2d txtDebug = new TgcText2d();
         Viewport View1, View2, ViewF;
-        bool splitScreen = false;
+        public bool splitScreen = false;
 
         public int scoreLocal = 0;
         public int scoreVisitante = 0;
@@ -93,10 +104,10 @@ namespace AlumnoEjemplos.MiGrupo
         public TgcBox rejaLateralNegativa;
 
 
-        static string rootDir = GuiController.Instance.AlumnoEjemplosDir;
-        static string mediaFolder = rootDir + "Media\\Milanesa_3D\\";
+        static public string rootDir = GuiController.Instance.AlumnoEjemplosDir;
+        static public string mediaFolder = rootDir + "Media\\Milanesa_3D\\";
         //static string mediaFolder = rootDir + "MiGrupo\\media\\";
-        static string sceneFolder = mediaFolder + "meshes\\scenes\\";
+        static public string sceneFolder = mediaFolder + "meshes\\scenes\\";
         private TgcBox rejaArcoPositivo1;
         private TgcBox rejaArcoPositivo2;
         private TgcBox rejaSuperiorArcoPositivo;
@@ -278,7 +289,7 @@ namespace AlumnoEjemplos.MiGrupo
             laterales.Add(limiteLateralNegativo);
             laterales.Add(limiteLateralPositivo);
 
-            
+
 
         }
 
@@ -342,7 +353,6 @@ namespace AlumnoEjemplos.MiGrupo
         }
 
         #endregion
-
 
         #region GUI
         public void createHud()
@@ -409,6 +419,7 @@ namespace AlumnoEjemplos.MiGrupo
             meshesCajasEscenario = new List<TgcMesh>();
             todosLosMeshes = new List<TgcMesh>();
 
+            initMenu();
             crearEscenario();
             initLights();
             createVars();
@@ -463,6 +474,12 @@ namespace AlumnoEjemplos.MiGrupo
             ResizeFrustum();
         }
 
+        private void initMenu()
+        {
+            menuPrincipal = new Menu(this);
+            estadoJuego = EstadoJuego.Menu;
+        }
+
         private void SetCarPositions()
         {
             var direccion = arcoNegativo.Position - arcoPositivo.Position;
@@ -495,27 +512,31 @@ namespace AlumnoEjemplos.MiGrupo
 
         public override void render(float elapsedTime)
         {
-            lastElapsedTime = elapsedTime;
-
-            foreach (var auto in autitus)
+            if (estadoJuego == EstadoJuego.Menu)
             {
-                auto.elapsedTime = elapsedTime;
-                auto.Mover(elapsedTime);
-
+                menuPrincipal.render();
             }
+            else
+            {
+                lastElapsedTime = elapsedTime;
 
-            pelota.mover(elapsedTime);
-            pelota.updateValues();
+                foreach (var auto in autitus)
+                {
+                    auto.elapsedTime = elapsedTime;
+                    auto.Mover(elapsedTime);
 
+                }
 
+                pelota.mover(elapsedTime);
+                pelota.updateValues();
 
-            time = time + elapsedTime;
+                time = time + elapsedTime;
 
-
-            SetCarCamera();
-            SetViewport();
-            DoRenderAll();
-            //RenderAll() //para envirnoment map
+                SetCarCamera();
+                SetViewport();
+                DoRenderAll();
+                //RenderAll() //para envirnoment map
+            }
         }
 
         private void DoRenderAll()
@@ -663,7 +684,7 @@ namespace AlumnoEjemplos.MiGrupo
                 //Shader personalizado de iluminacion
                 currentShader = this.lightEffect;
                 currentTechnique = "MultiDiffuseLightsTechnique";
-                
+
             }
             else
             {
@@ -676,7 +697,7 @@ namespace AlumnoEjemplos.MiGrupo
             {
                 mesh.Effect = currentShader;
                 mesh.Technique = currentTechnique;
-                if(lightEnable)
+                if (lightEnable)
                 {
                     mainCarMesh.Technique = "DifAndSpecTechnique";
                     secondCarMesh.Technique = "DifAndSpecTechnique";
@@ -685,11 +706,10 @@ namespace AlumnoEjemplos.MiGrupo
 
 
 
-    
+
 
             mainCar.obb.render();
 
-            
 
             
             ColorValue[] lightColors = new ColorValue[lightMeshes.Length];
@@ -714,7 +734,7 @@ namespace AlumnoEjemplos.MiGrupo
             arcoPositivo.render();
             arcoNegativo.render();
             skyBox.render();
-            
+
 
             /*
             scene.renderAll();
@@ -756,8 +776,8 @@ namespace AlumnoEjemplos.MiGrupo
                 //Renderizar modelo
                 mesh.render();
             }
-            
-            if(lightEnable)
+
+            if (lightEnable)
             {
                 pelota.ownSphere.Effect.SetValue("lightColor", lightColors);
                 pelota.ownSphere.Effect.SetValue("lightPosition", pointLightPositions);
