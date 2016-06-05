@@ -91,8 +91,8 @@ VS_OUTPUT proyectar_al_piso_vs(VS_INPUT input)
 	
 	
 	output.Position = mul(puntoProyectado, matViewProj);
-	output.Alpha = max(0, sign(dot(N, vc)));
-	
+	output.Alpha = max(0, sign(dot(N, vc))) * (1- t/9593);
+
 	return output;
 }
 
@@ -105,7 +105,7 @@ struct PS_INPUT
 
 float4 make_black_shadow_ps(PS_INPUT input) : COLOR0
 {      
-	float4 pixel = float4(0, 0, 0, input.Alpha * 0.4f);
+	float4 pixel = float4(0, 0, 0, input.Alpha);
 	//pixel = float4(0, 0, 0, 0.5f);
 	return pixel;
 }

@@ -426,6 +426,8 @@ namespace AlumnoEjemplos.MiGrupo
             createModifiers();
             createHud();
 
+            d3dDevice.RenderState.ReferenceAlpha = 10;
+
             TgcSceneLoader loader = new TgcSceneLoader();
             scene = loader.loadSceneFromFile(sceneFolder + "predio\\predio-TgcScene.xml");
 
