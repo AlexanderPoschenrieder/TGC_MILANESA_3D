@@ -85,13 +85,13 @@ VS_OUTPUT proyectar_al_piso_vs(VS_INPUT input)
 	float t = (1-puntoLuz.y)/v.y;
 	
 	float4 puntoProyectado = puntoLuz + v * t;
-	
+
 	float4 N = normalize(puntoPelota - centroPelota);
 	
 	
 	
 	output.Position = mul(puntoProyectado, matViewProj);
-	output.Alpha = max(0, sign(dot(N, vc))) * (1- t/9593);
+	output.Alpha = max(0, sign(dot(N, vc))) * (1- t/9593) * max(0, ((300-centroPelota.y)/300));
 
 	return output;
 }
