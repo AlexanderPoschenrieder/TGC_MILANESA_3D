@@ -15,6 +15,11 @@ namespace AlumnoEjemplos.MiGrupo
     {
         #region Constructor
 
+        override public void setearNitroHUD()
+        {
+            this.nitroHUD = parent.txtNitroVisitante;
+        }
+
         public Auto2(TgcMesh mesh, EjemploAlumno p)
             : base(mesh, p)
         {
@@ -74,11 +79,15 @@ TgcD3dInput input = GuiController.Instance.D3dInput;
                 {
                     FrenoDeMano();
                 }
-
+            
             }
 
-            if (input.keyDown(Key.RightAlt))
+            if (input.keyPressed(Key.RightAlt))
             {
+                if (saltando)
+                {
+                    usarNitro();
+                }
                 if (!saltando)
                 {
                     saltando = true;
@@ -86,6 +95,11 @@ TgcD3dInput input = GuiController.Instance.D3dInput;
 
                     velocidadVertical = 100;
                 }
+            }
+
+            if(input.keyPressed(Key.Period))
+            {
+                usarNitro();
             }
 
         }

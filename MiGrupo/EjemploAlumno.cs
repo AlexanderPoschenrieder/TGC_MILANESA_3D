@@ -59,6 +59,9 @@ namespace AlumnoEjemplos.MiGrupo
         TgcText2d txtScoreLocal = new TgcText2d();
         TgcText2d txtScoreVisitante = new TgcText2d();
         TgcText2d txtTimer = new TgcText2d();
+        public TgcText2d txtNitroVisitante = new TgcText2d();
+        public TgcText2d txtNitroLocal = new TgcText2d();
+       
         public TgcText2d txtDebug = new TgcText2d();
         Viewport View1, View2, ViewF;
         public bool splitScreen = false;
@@ -380,6 +383,18 @@ namespace AlumnoEjemplos.MiGrupo
             txtTimer.Size = new Size(300, 100);
             txtTimer.changeFont(new System.Drawing.Font("Calibri", 18, FontStyle.Bold | FontStyle.Italic));
             txtTimer.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
+
+            txtNitroLocal.Text = "Nitro ready!";
+            txtNitroLocal.Position = new Point(200, 10);
+            txtNitroLocal.Size = new Size(300, 100);
+            txtNitroLocal.changeFont(new System.Drawing.Font("Calibri", 18, FontStyle.Bold | FontStyle.Italic));
+            txtNitroLocal.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
+
+            txtNitroVisitante.Text = "Nitro ready!";
+            txtNitroVisitante.Position = new Point(200, 30);
+            txtNitroVisitante.Size = new Size(300, 100);
+            txtNitroVisitante.changeFont(new System.Drawing.Font("Calibri", 18, FontStyle.Bold | FontStyle.Italic));
+            txtNitroVisitante.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
 
         }
 
@@ -852,6 +867,8 @@ namespace AlumnoEjemplos.MiGrupo
                 txtScoreLocal.render();
                 txtScoreVisitante.render();
                 txtTimer.render();
+                txtNitroVisitante.render();
+                txtNitroLocal.render();
                 txtDebug.render();
 
                 int i = 0;

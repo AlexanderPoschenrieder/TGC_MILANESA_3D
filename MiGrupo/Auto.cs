@@ -8,6 +8,7 @@ using Microsoft.DirectX;
 using TgcViewer.Utils.Input;
 using Microsoft.DirectX.DirectInput;
 using TgcViewer.Utils.TgcGeometry;
+using TgcViewer.Utils._2D;
 
 namespace AlumnoEjemplos.MiGrupo
 {
@@ -55,6 +56,7 @@ namespace AlumnoEjemplos.MiGrupo
         protected bool colisionando = false;
         public Vector3 desvio = new Vector3(0, 0, 0);
         private bool reposicionar=false;
+        public TgcText2d nitroHUD;
 
         #endregion
 
@@ -81,6 +83,11 @@ namespace AlumnoEjemplos.MiGrupo
 
         #region Constructor
 
+        public virtual void setearNitroHUD()
+        {
+            this.nitroHUD = parent.txtNitroLocal;
+        }
+
         public Auto(TgcMesh mesh, EjemploAlumno p)
         {
             parent = p;
@@ -90,6 +97,7 @@ namespace AlumnoEjemplos.MiGrupo
             matWorld = meshAuto.Transform;
             iniciarDirMovimiento();
             meshAuto.AutoTransformEnable = false;
+            this.setearNitroHUD();
         }
 
         protected void iniciarDirMovimiento()
@@ -168,11 +176,14 @@ namespace AlumnoEjemplos.MiGrupo
         #region Métodos
         public void Mover(float et)
         {
-            parent.txtDebug.Text = nitroTimer.ToString();
+
             if (nitroTimer > 0)
             {
                 nitroTimer -= elapsedTime;
             }
+
+            nitroHUD.Text = this.formatNitroTime(nitroTimer);
+
             aceleracion = (float)GuiController.Instance.Modifiers["Aceleracion"];
             gravedad = (float)GuiController.Instance.Modifiers["Gravedad"];
            // handling = (float)GuiController.Instance.Modifiers["VelocidadRotacion"];
@@ -267,7 +278,7 @@ namespace AlumnoEjemplos.MiGrupo
                     usarNitro();
                 }
 
-                if (!saltando)
+                else
                 {
                     saltando = true;
                     rotacionAcumuladaEnElSalto = 0;
@@ -275,6 +286,12 @@ namespace AlumnoEjemplos.MiGrupo
                     velocidadVertical = 100;
                 }
             }
+
+            if (input.keyPressed(Key.C))
+            {
+                usarNitro();
+            }
+
         }
 
         public void desviar(Vector3 d)
@@ -563,6 +580,14 @@ namespace AlumnoEjemplos.MiGrupo
         #endregion
 
         #region Auxiliar
+
+        public String formatNitroTime(float time)
+        {
+            if (time > 0.0001f) return "Nitro: wait " + FastMath.Ceiling(time).ToString() + " seconds...";
+
+
+            return "Nitro ready!";
+        }
 
         public bool isLeft(Vector3 a, Vector3 b, Vector3 c)
         {
