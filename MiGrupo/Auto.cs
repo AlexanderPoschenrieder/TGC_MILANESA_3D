@@ -346,7 +346,7 @@ namespace AlumnoEjemplos.MiGrupo
         {
             meshAuto.Transform = matWorld;
 
-            if (this.GetType().Name == "Auto")
+           /* if (this.GetType().Name == "Auto")
             {
                 GuiController.Instance.UserVars.setValue("Pos Auto 1", TgcParserUtils.printVector3(pos));
                 GuiController.Instance.UserVars.setValue("Pos Obb 1", TgcParserUtils.printVector3(obb.Position));
@@ -355,7 +355,7 @@ namespace AlumnoEjemplos.MiGrupo
             {
                 GuiController.Instance.UserVars.setValue("Pos Auto 2", TgcParserUtils.printVector3(pos));
                 GuiController.Instance.UserVars.setValue("Pos Obb 2", TgcParserUtils.printVector3(obb.Position));
-            }
+            }*/
 
         }
 

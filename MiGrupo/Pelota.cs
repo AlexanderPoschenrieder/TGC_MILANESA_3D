@@ -79,7 +79,6 @@ namespace AlumnoEjemplos.MiGrupo
             Matrix gotoObjectSpace = Matrix.Invert(matWorld);
             axisRotation.TransformCoordinate( gotoObjectSpace);
             
-            GuiController.Instance.UserVars.setValue("Pos Pelota", TgcParserUtils.printVector3(axisRotation));
 
             matWorld = Matrix.Identity * Matrix.RotationAxis(axisRotation, angle);
             matWorld = matWorld * originalMatWorld;

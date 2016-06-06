@@ -400,13 +400,7 @@ namespace AlumnoEjemplos.MiGrupo
 
         public void createVars()
         {
-
-            GuiController.Instance.UserVars.addVar("Velocidad");
-            GuiController.Instance.UserVars.addVar("Pos Auto 1");
-            GuiController.Instance.UserVars.addVar("Pos Obb 1");
-            GuiController.Instance.UserVars.addVar("Pos Auto 2");
-            GuiController.Instance.UserVars.addVar("Pos Obb 2");
-            GuiController.Instance.UserVars.addVar("Pos Pelota");
+            
 
         }
 
