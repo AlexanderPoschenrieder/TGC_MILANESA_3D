@@ -25,7 +25,7 @@ namespace AlumnoEjemplos.MiGrupo
         
 
         const float DELTA_T = 0.01f;
-        const float GRAVEDAD = -9.81f;
+        public float gravedad = -9.81f;
         public TgcSphere ownSphere;
 
         #endregion
@@ -127,7 +127,7 @@ namespace AlumnoEjemplos.MiGrupo
 
         public void aplicarGravedad(float elapsedTime)
         {
-            velocity = velocity + new Vector3(0,  GRAVEDAD * 20f * elapsedTime, 0);
+            velocity = velocity + new Vector3(0,  gravedad * 20f * elapsedTime, 0);
         }
 
         public void chequearColisiones(float elapsedTime)
@@ -212,6 +212,7 @@ namespace AlumnoEjemplos.MiGrupo
 
         public void mover(float elapsedTime)
         {
+            gravedad = (float)GuiController.Instance.Modifiers["Gravedad"];
             chequearColisiones(elapsedTime);
             aplicarGravedad(elapsedTime);
             girar(elapsedTime);
