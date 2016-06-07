@@ -275,7 +275,7 @@ namespace AlumnoEjemplos.MiGrupo
             }
 
             skyBox = new TgcSkyBox();
-            skyBox.Center = new Vector3(0, 100, 0);
+            skyBox.Center = new Vector3(0, -500, 0);
             skyBox.Size = new Vector3(16000, 16000, 16000);
             string texturesPath = mediaFolder + "textures\\SkyBox3\\";
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, texturesPath + "Up.jpg");
@@ -443,6 +443,16 @@ namespace AlumnoEjemplos.MiGrupo
             scoreLocal = 0;
             scoreVisitante = 0;
 
+            TgcSceneLoader loader = new TgcSceneLoader();
+            scene = loader.loadSceneFromFile(sceneFolder + "predio\\predio-TgcScene.xml");
+
+            foreach (TgcMesh m in scene.Meshes)
+            {
+                todosLosMeshes.Add(m);
+            }
+
+            //la escena se tiene que renderizar ANTES del escenario para asegurar que funcione bien el alpha blending
+
             initMenues();
             crearEscenario();
             initLights();
@@ -453,13 +463,6 @@ namespace AlumnoEjemplos.MiGrupo
 
             d3dDevice.RenderState.ReferenceAlpha = 10;
 
-            TgcSceneLoader loader = new TgcSceneLoader();
-            scene = loader.loadSceneFromFile(sceneFolder + "predio\\predio-TgcScene.xml");
-
-            foreach (TgcMesh m in scene.Meshes)
-            {
-                todosLosMeshes.Add(m);
-            }
 
             mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Auto\\Auto-TgcScene.xml").Meshes[0];
             // mainCarMesh = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\Sphere\\Sphere-TgcScene.xml").Meshes[0];
