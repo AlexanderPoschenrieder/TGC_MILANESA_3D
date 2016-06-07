@@ -67,6 +67,11 @@ namespace AlumnoEjemplos.MiGrupo
         }
         public void translate(Vector3 vec)
         {
+            if(vec.Y + pos.Y > 1000)
+            {
+                vec.Y = 0;
+            }
+
             matWorld = matWorld * Matrix.Translation(vec);
             pos = pos + vec;
             ownSphere.BoundingSphere.moveCenter(vec);
