@@ -185,8 +185,7 @@ namespace AlumnoEjemplos.MiGrupo
             }
 
             nitroHUD.Text = this.formatNitroTime(nitroTimer);
-
-            aceleracion = (float)GuiController.Instance.Modifiers["Aceleracion"];
+            
             gravedad = (float)GuiController.Instance.Modifiers["Gravedad"];
 
 

@@ -419,7 +419,6 @@ namespace AlumnoEjemplos.MiGrupo
         {
             GuiController.Instance.Modifiers.addFloat("PesoPelota", 25, 125, 75);
             GuiController.Instance.Modifiers.addFloat("Gravedad", -15, -5, -9.81f);
-            GuiController.Instance.Modifiers.addFloat("Aceleracion", 100f, 1000f, 500f);
             GuiController.Instance.Modifiers.addColor("ColorHUD", Color.Gold);
 
             GuiController.Instance.Modifiers.addBoolean("lightEnable", "lightEnable", true);
