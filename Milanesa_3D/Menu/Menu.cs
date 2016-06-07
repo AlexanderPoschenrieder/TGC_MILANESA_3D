@@ -27,7 +27,6 @@ namespace AlumnoEjemplos.Milanesa_3D
         public TgcSprite defaultBackgroud = new TgcSprite();
         private System.Windows.Forms.Control panel;
         EjemploAlumno parent;
-        private float selector = 1;
 
         public Menu()
         {
@@ -59,6 +58,7 @@ namespace AlumnoEjemplos.Milanesa_3D
             //});
          
         }
+
 
         public virtual void setHeader(string headerFile)
         {
@@ -104,6 +104,11 @@ namespace AlumnoEjemplos.Milanesa_3D
                     button.handleClick(parent, mouseX, mouseY);
                 }
             }
+        }
+
+        internal void ShowGameOver()
+        {
+
         }
     }
 }

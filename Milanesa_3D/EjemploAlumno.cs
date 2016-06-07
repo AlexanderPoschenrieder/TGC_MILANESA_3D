@@ -24,7 +24,8 @@ namespace AlumnoEjemplos.Milanesa_3D
     {
         MenuPrincipal,
         MenuControles,
-        Juego
+        Juego,
+        GameOver
     }
 
     public class EjemploAlumno : TgcExample
@@ -553,6 +554,9 @@ namespace AlumnoEjemplos.Milanesa_3D
                 case EstadoJuego.Juego:
                     renderGame(elapsedTime);
                     break;
+                case EstadoJuego.GameOver:
+                    menuPrincipal.ShowGameOver();
+                    break;
             }
         }
 
@@ -752,10 +756,6 @@ namespace AlumnoEjemplos.Milanesa_3D
                 }
             }
 
-            
-
-
-            
             ColorValue[] lightColors = new ColorValue[lightMeshes.Length];
             Vector4[] pointLightPositions = new Vector4[lightMeshes.Length];
             float[] pointLightIntensity = new float[lightMeshes.Length];
@@ -987,7 +987,6 @@ namespace AlumnoEjemplos.Milanesa_3D
                 camaraActiva2 = camaraPelota2;
             }
 
-
         }
 
         private void initCarCameras()
@@ -1037,7 +1036,8 @@ namespace AlumnoEjemplos.Milanesa_3D
         {
 
             //todo creo que falta disposear algunas cosas!
-            
+            d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+            d3dDevice.Viewport = ViewF;
             mainCar.meshAuto.dispose();
             secondCar.meshAuto.dispose();
             pelota.ownSphere.dispose();
