@@ -9,7 +9,7 @@ using TgcViewer.Utils.Input;
 using Microsoft.DirectX.DirectInput;
 using TgcViewer.Utils.TgcGeometry;
 
-namespace AlumnoEjemplos.MiGrupo
+namespace AlumnoEjemplos.Milanesa_3D
 {
     public class AutoIA : Auto
     {

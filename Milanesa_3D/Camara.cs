@@ -7,7 +7,7 @@ using Microsoft.DirectX;
 using TgcViewer;
 using TgcViewer.Utils.TgcGeometry;
 
-namespace AlumnoEjemplos.MiGrupo
+namespace AlumnoEjemplos.Milanesa_3D
 {
     public interface IMilanesaCamera
     {

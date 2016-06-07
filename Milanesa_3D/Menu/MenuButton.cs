@@ -6,7 +6,7 @@ using TgcViewer;
 using TgcViewer.Utils._2D;
 using Microsoft.DirectX;
 
-namespace AlumnoEjemplos.MiGrupo
+namespace AlumnoEjemplos.Milanesa_3D
 {
     public delegate void ButtonCallback();
     public class MenuButton

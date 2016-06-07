@@ -18,7 +18,7 @@ using System.Windows.Forms;
 using TgcViewer.Utils._2D;
 using TgcViewer.Utils;
 
-namespace AlumnoEjemplos.MiGrupo
+namespace AlumnoEjemplos.Milanesa_3D
 {
     public class MenuControles: Menu
     {

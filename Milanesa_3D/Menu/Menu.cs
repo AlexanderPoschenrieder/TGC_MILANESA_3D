@@ -18,7 +18,7 @@ using System.Windows.Forms;
 using TgcViewer.Utils._2D;
 using TgcViewer.Utils;
 
-namespace AlumnoEjemplos.MiGrupo
+namespace AlumnoEjemplos.Milanesa_3D
 {
     public class Menu
     {
@@ -27,6 +27,7 @@ namespace AlumnoEjemplos.MiGrupo
         public TgcSprite defaultBackgroud = new TgcSprite();
         private System.Windows.Forms.Control panel;
         EjemploAlumno parent;
+        private float selector = 1;
 
         public Menu()
         {

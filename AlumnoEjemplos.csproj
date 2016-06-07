@@ -82,16 +82,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MiGrupo\Auto.cs" />
-    <Compile Include="MiGrupo\Camara.cs" />
-    <Compile Include="MiGrupo\Auto2.cs" />
-    <Compile Include="MiGrupo\AutoIA.cs" />
-    <Compile Include="MiGrupo\EjemploAlumno.cs" />
-    <Compile Include="MiGrupo\Menu\MenuControles.cs" />
-    <Compile Include="MiGrupo\Menu\Menu.cs" />
-    <Compile Include="MiGrupo\Menu\MenuButton.cs" />
-    <Compile Include="MiGrupo\Pelota.cs" />
-    <Compile Include="MiGrupo\SphereCollisionManager.cs" />
+    <Compile Include="Milanesa_3D\Auto.cs" />
+    <Compile Include="Milanesa_3D\Camara.cs" />
+    <Compile Include="Milanesa_3D\Auto2.cs" />
+    <Compile Include="Milanesa_3D\AutoIA.cs" />
+    <Compile Include="Milanesa_3D\EjemploAlumno.cs" />
+    <Compile Include="Milanesa_3D\Menu\MenuControles.cs" />
+    <Compile Include="Milanesa_3D\Menu\Menu.cs" />
+    <Compile Include="Milanesa_3D\Menu\MenuButton.cs" />
+    <Compile Include="Milanesa_3D\Pelota.cs" />
+    <Compile Include="Milanesa_3D\SphereCollisionManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

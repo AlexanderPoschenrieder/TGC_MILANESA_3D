@@ -5,7 +5,7 @@ using TgcViewer.Utils.TgcGeometry;
 using Microsoft.DirectX;
 using TgcViewer;
 
-namespace AlumnoEjemplos.MiGrupo
+namespace AlumnoEjemplos.Milanesa_3D
 {
     /// <summary>
     /// Herramienta para realizar el movimiento de una Esfera con detección de colisiones,
