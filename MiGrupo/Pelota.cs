@@ -35,7 +35,7 @@ namespace AlumnoEjemplos.MiGrupo
         {
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             parent = p;
-            velocity = new Vector3(50, 0, 0);
+            velocity = new Vector3(0, 0, 0);
             ownSphere = new TgcSphere();
             pos = new Vector3(0, 0, 0);
             matWorld = Matrix.Identity;
@@ -45,8 +45,8 @@ namespace AlumnoEjemplos.MiGrupo
             String ballTexture = GuiController.Instance.AlumnoEjemplosDir  + "Media\\MILANESA_3D\\textures\\football.png";
 
             scale(50);
-            translate(-400, 200, 2300);
-            ownSphere.BoundingSphere.setValues(new Vector3(-400, 200, 2300), 50);
+            translate(0, 200, 0);
+            ownSphere.BoundingSphere.setValues(new Vector3(0, 200, 0), 50);
             ownSphere.setColor(Color.Red);
             ownSphere.setTexture(TgcTexture.createTexture(d3dDevice, ballTexture));
 

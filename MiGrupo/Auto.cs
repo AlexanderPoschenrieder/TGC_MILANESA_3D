@@ -549,13 +549,15 @@ namespace AlumnoEjemplos.MiGrupo
                     TgcRay ray = new TgcRay(lastPos, spherePosition - lastPos);
                     TgcCollisionUtils.intersectRayObb(ray, obb, out collisionPos);
 
-                    Vector3 velocidadATransmitir = 0.015f * (spherePosition - collisionPos) * FastMath.Abs(velocidadTotalInicial);
-                    velocidadATransmitir = new Vector3(velocidadATransmitir.X, velocidadATransmitir.Y * 0.3f, velocidadATransmitir.Z);
+                    float pesadezPelota = (float) GuiController.Instance.Modifiers.getValue("PesoPelota");
+
+                    Vector3 velocidadATransmitir = 1/pesadezPelota * (spherePosition - collisionPos) * FastMath.Abs(velocidadTotalInicial);
+                    velocidadATransmitir = new Vector3(velocidadATransmitir.X, velocidadATransmitir.Y * 0.2f, velocidadATransmitir.Z);
 
                     //translate(spherePosition - lastPos);
                     parent.pelota.velocity = parent.pelota.velocity + velocidadATransmitir;
                     parent.pelota.mover(elapsedTime);
-                    velocidadHorizontal = velocidadHorInicial * (1/i*i);
+                    velocidadHorizontal = velocidadHorInicial * (1/i*i) * (50/pesadezPelota);
 
                     colisionando = true;
                     if (i == 5) velocidadHorizontal = -velocidadHorizontal;

@@ -410,6 +410,7 @@ namespace AlumnoEjemplos.MiGrupo
 
         public void createModifiers()
         {
+            GuiController.Instance.Modifiers.addFloat("PesoPelota", 25, 125, 75);
             GuiController.Instance.Modifiers.addFloat("Gravedad", -50, 0, -9.81f);
             GuiController.Instance.Modifiers.addFloat("Aceleracion", 100f, 1000f, 500f);
             GuiController.Instance.Modifiers.addFloat("VelocidadRotacion", 0f, 5f, 1.5f);
@@ -432,12 +433,16 @@ namespace AlumnoEjemplos.MiGrupo
             meshesCajasEscenario = new List<TgcMesh>();
             todosLosMeshes = new List<TgcMesh>();
 
+            scoreLocal = 0;
+            scoreVisitante = 0;
+
             initMenues();
             crearEscenario();
             initLights();
             createVars();
             createModifiers();
             createHud();
+
 
             d3dDevice.RenderState.ReferenceAlpha = 10;
 
