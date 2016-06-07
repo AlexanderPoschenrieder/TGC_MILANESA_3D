@@ -21,7 +21,8 @@ namespace AlumnoEjemplos.MiGrupo
 {
     public enum EstadoJuego
     {
-        Menu,
+        MenuPrincipal,
+        MenuControles,
         Juego
     }
 
@@ -30,6 +31,7 @@ namespace AlumnoEjemplos.MiGrupo
         #region MENU
 
         Menu menuPrincipal;
+        MenuControles menuControles;
         public EstadoJuego estadoJuego;
 
         #endregion
@@ -428,7 +430,7 @@ namespace AlumnoEjemplos.MiGrupo
             meshesCajasEscenario = new List<TgcMesh>();
             todosLosMeshes = new List<TgcMesh>();
 
-            initMenu();
+            initMenues();
             crearEscenario();
             initLights();
             createVars();
@@ -485,10 +487,11 @@ namespace AlumnoEjemplos.MiGrupo
             ResizeFrustum();
         }
 
-        private void initMenu()
+        private void initMenues()
         {
             menuPrincipal = new Menu(this);
-            estadoJuego = EstadoJuego.Menu;
+            menuControles = new MenuControles(this);
+            estadoJuego = EstadoJuego.MenuPrincipal;
         }
 
         private void SetCarPositions()
@@ -523,31 +526,41 @@ namespace AlumnoEjemplos.MiGrupo
 
         public override void render(float elapsedTime)
         {
-            if (estadoJuego == EstadoJuego.Menu)
+            switch (estadoJuego)
             {
-                menuPrincipal.render();
+                case EstadoJuego.MenuPrincipal:
+                    menuPrincipal.render();
+                    break;
+                case EstadoJuego.MenuControles:
+                    menuControles.render();
+                    break;
+                case EstadoJuego.Juego:
+                    renderGame(elapsedTime);
+                    break;
             }
-            else
+        }
+
+        private void renderGame(float elapsedTime)
+        {
+
+            lastElapsedTime = elapsedTime;
+
+            foreach (var auto in autitus)
             {
-                lastElapsedTime = elapsedTime;
+                auto.elapsedTime = elapsedTime;
+                auto.Mover(elapsedTime);
 
-                foreach (var auto in autitus)
-                {
-                    auto.elapsedTime = elapsedTime;
-                    auto.Mover(elapsedTime);
-
-                }
-
-                pelota.mover(elapsedTime);
-                pelota.updateValues();
-
-                time = time + elapsedTime;
-
-                SetCarCamera();
-                SetViewport();
-                DoRenderAll();
-                //RenderAll() //para envirnoment map
             }
+
+            pelota.mover(elapsedTime);
+            pelota.updateValues();
+
+            time = time + elapsedTime;
+
+            SetCarCamera();
+            SetViewport();
+            DoRenderAll();
+            //RenderAll() //para envirnoment map
         }
 
         private void DoRenderAll()
@@ -1017,6 +1030,7 @@ namespace AlumnoEjemplos.MiGrupo
         {
 
             //todo creo que falta disposear algunas cosas!
+            
             mainCar.meshAuto.dispose();
             secondCar.meshAuto.dispose();
             pelota.ownSphere.dispose();

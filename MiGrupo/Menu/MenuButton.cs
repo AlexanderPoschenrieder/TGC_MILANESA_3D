@@ -20,10 +20,10 @@ namespace AlumnoEjemplos.MiGrupo
             panel = GuiController.Instance.Panel3d;
             this.sprite = sprite;
             this.callback = callback;
-            this.sprite.Scaling = new Vector2(.18f,.18f);
+            this.sprite.Scaling = new Vector2(.14f,.14f);
             this.sprite.Position = new Vector2(
                 (GuiController.Instance.Panel3d.Size.Width - this.width()) / 2,
-                100 + (index * ((float)panel.Size.Height/400) * this.height()));
+                150 + (index * ((float)panel.Size.Height/400) * this.height()));
         }
 
         private float width()

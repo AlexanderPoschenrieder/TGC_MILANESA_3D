@@ -20,7 +20,7 @@ using TgcViewer.Utils;
 
 namespace AlumnoEjemplos.MiGrupo
 {
-    public class Menu
+    public class MenuControles: Menu
     {
         public List<MenuButton> buttons = new List<MenuButton>();
         public TgcSprite header;
@@ -28,11 +28,7 @@ namespace AlumnoEjemplos.MiGrupo
         private System.Windows.Forms.Control panel;
         EjemploAlumno parent;
 
-        public Menu()
-        {
-        }
-
-        public Menu(EjemploAlumno par)
+        public MenuControles(EjemploAlumno par)
         {
             parent = par;
             panel = GuiController.Instance.Panel3d;
@@ -42,30 +38,22 @@ namespace AlumnoEjemplos.MiGrupo
             this.defaultBackgroud.Scaling = new Vector2(
                 (float)panel.Size.Width / this.defaultBackgroud.Texture.Width,
                 (float)panel.Size.Height / this.defaultBackgroud.Texture.Height);
-            this.setHeader("ligaCuete.png");
+            this.setHeader("desc_controles.png");
 
-            addButton(1, "jugar.png", (EjemploAlumno ej) => 
+            addButton(5, "volver.png", (EjemploAlumno ej) =>
             {
-                ej.splitScreen = true;
-                ej.estadoJuego = EstadoJuego.Juego;
-            });
-            addButton(2, "controles.png", (EjemploAlumno ej) =>
-            {
-                ej.estadoJuego = EstadoJuego.MenuControles;
-            });
-            addButton(3, "configuracion.png", (EjemploAlumno ej) =>
-            {
+                parent.estadoJuego = EstadoJuego.MenuPrincipal;
             });
          
         }
 
-        public virtual void setHeader(string headerFile)
+        public override void setHeader(string headerFile)
         {
             this.header = new TgcSprite(); 
             this.header.Texture = TgcTexture.createTexture(EjemploAlumno.mediaFolder + "menu\\"+headerFile); 
-            this.header.Scaling = new Vector2(0.5f,0.5f);
+            this.header.Scaling = new Vector2(0.3f,0.3f);
             this.header.Position = new Vector2(
-                (GuiController.Instance.Panel3d.Size.Width - this.header.Texture.Width/2) / 2 ,50 );
+                (GuiController.Instance.Panel3d.Size.Width - this.header.Texture.Width/2) / 2 +100 ,50 );
         }
 
         private void addButton(int position, string texturePath,Action<EjemploAlumno> callback)
