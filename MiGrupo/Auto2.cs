@@ -82,7 +82,7 @@ TgcD3dInput input = GuiController.Instance.D3dInput;
             
             }
 
-            if (input.keyPressed(Key.RightAlt))
+            if (input.keyPressed(Key.RightShift))
             {
                 if (saltando)
                 {
