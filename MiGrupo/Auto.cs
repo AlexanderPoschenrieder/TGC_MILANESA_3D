@@ -116,6 +116,8 @@ namespace AlumnoEjemplos.MiGrupo
         {
             var vec = new Vector3(x, y, z);
 
+            translate(-pos);
+
             matWorld = matWorld * Matrix.Translation(vec);
             pos = pos + vec;
             obb.Center = pos + new Vector3(0, alturaObb, 0);

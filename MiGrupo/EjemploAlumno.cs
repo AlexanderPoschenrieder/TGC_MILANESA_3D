@@ -463,13 +463,7 @@ namespace AlumnoEjemplos.MiGrupo
 
 
             todosLosMeshes.Add(mainCarMesh);
-
-
-
             todosLosMeshes.Add(secondCarMesh);
-
-
-            //TODO PASAR LA PELOTA A MESH!!! AGGGGHHHH
 
 
             lightEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\DifAndSpec.fx");
@@ -483,11 +477,11 @@ namespace AlumnoEjemplos.MiGrupo
             // mainCarMesh.Effect = mainEffect;
 
 
-
             pelota = new Pelota(this);
 
             autitus = new List<Auto>();
 
+            CreateCars();
             SetCarPositions();
             CreateViewports();
             initCarCameras();
@@ -509,29 +503,24 @@ namespace AlumnoEjemplos.MiGrupo
             estadoJuego = EstadoJuego.MenuPrincipal;
         }
 
+        private void CreateCars()
+        {
+            mainCar = new Auto(mainCarMesh, this);
+            autitus.Add(mainCar);
+            secondCar = new Auto2(secondCarMesh, this);
+            autitus.Add(secondCar);
+        }
+
         private void SetCarPositions()
         {
             var direccion = arcoNegativo.Position - arcoPositivo.Position;
             var pos1 = Vector3.Add(arcoPositivo.Position, Vector3.Multiply(direccion, 0.1f));
             var pos2 = Vector3.Add(arcoNegativo.Position, Vector3.Multiply(direccion, -0.1f));
             var pos3 = Vector3.Add(pos1, new Vector3(300, 0, 0));
+            
 
-
-            mainCar = new Auto(mainCarMesh, this);
             mainCar.setPosition(pos1.X, 0, pos1.Z);
-            autitus.Add(mainCar);
-
-
-            secondCar = new Auto2(secondCarMesh, this);
             secondCar.setPosition(pos2.X, 0, pos2.Z);
-            autitus.Add(secondCar);
-            //secondCarMesh.Position = new Vector3(pos2.X, 0, pos2.Z);
-            //secondCar = new Auto2(secondCarMesh, this);
-
-
-            //iaCar = new AutoIA(iaCarMesh, this);
-            //iaCar.setPosition(pos3.X, 0, pos3.Z);
-            //autitus.Add(iaCar);
         }
 
 
@@ -1032,11 +1021,11 @@ namespace AlumnoEjemplos.MiGrupo
         {
             txtScoreLocal.Text = "Equipo Rojo: " + scoreLocal.ToString();
             txtScoreVisitante.Text = "Equipo Azul: " + scoreVisitante.ToString();
-
-            mainCar.meshAuto.Position = new Vector3(0, 0, 0);
+            
             mainCar.obb = TgcObb.computeFromAABB(mainCar.meshAuto.BoundingBox);
             pelota.ownSphere.dispose();
             pelota = new Pelota(this);
+            SetCarPositions();
 
         }
         #endregion GOLES
