@@ -46,6 +46,7 @@ namespace AlumnoEjemplos.MiGrupo
         public Auto2 secondCar;
         IMilanesaCamera camaraActiva1, camaraActiva2;
         float time;
+        CubeTexture cubemap;
 
         Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
 
@@ -442,6 +443,7 @@ namespace AlumnoEjemplos.MiGrupo
 
             TgcSceneLoader loader = new TgcSceneLoader();
             scene = loader.loadSceneFromFile(sceneFolder + "predio\\predio-TgcScene.xml");
+            cubemap = TextureLoader.FromCubeFile(d3dDevice, mediaFolder + "textures\\cubemap.dds");
 
             foreach (TgcMesh m in scene.Meshes)
             {
@@ -472,7 +474,7 @@ namespace AlumnoEjemplos.MiGrupo
             todosLosMeshes.Add(mainCarMesh);
             todosLosMeshes.Add(secondCarMesh);
 
-
+            mainEffect = TgcShaders.loadEffect(mediaFolder + "\\shaders\\EnvMap.fx");
             lightEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\DifAndSpec.fx");
             sombrasEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\Sombras.fx");
 
@@ -573,7 +575,7 @@ namespace AlumnoEjemplos.MiGrupo
             SetCarCamera();
             SetViewport();
             DoRenderAll();
-            //RenderAll() //para envirnoment map
+            //RenderAll(); //para crear las texturas de envirnoment map
         }
 
         private void DoRenderAll()
@@ -615,6 +617,7 @@ namespace AlumnoEjemplos.MiGrupo
             d3dDevice.EndScene();
             CubeTexture g_pCubeMap = new CubeTexture(d3dDevice, 256, 1, Usage.RenderTarget,
                 Format.A16B16G16R16F, Pool.Default);
+            
             Surface pOldRT = d3dDevice.GetRenderTarget(0);
             // ojo: es fundamental que el fov sea de 90 grados.
             // asi que re-genero la matriz de proyeccion
@@ -671,7 +674,7 @@ namespace AlumnoEjemplos.MiGrupo
                 }
 
                 //Obtener ViewMatrix haciendo un LookAt desde la posicion final anterior al centro de la camara
-                Vector3 Pos = mainCarMesh.Position + new Vector3(0, 1, 0); //levanto un poquito el centro del cubo porque sino me queda al ras del piso
+                Vector3 Pos = mainCarMesh.Position + new Vector3(0, 50, 0); //levanto un poquito el centro del cubo porque sino me queda al ras del piso
                 //Vector3 Pos = mainCarMesh.Position;
                 d3dDevice.Transform.View = Matrix.LookAtLH(Pos, Pos + Dir, VUP);
 
@@ -686,8 +689,8 @@ namespace AlumnoEjemplos.MiGrupo
 
                 d3dDevice.EndScene();
 
-                //string fname = string.Format("D:\\UTN\\face{0:D}.bmp", nFace);
-                //SurfaceLoader.Save(fname, ImageFileFormat.Bmp, pFace);
+                string fname = string.Format("D:\\UTN\\face{0:D}.bmp", nFace);
+                SurfaceLoader.Save(fname, ImageFileFormat.Bmp, pFace);
 
 
             }
@@ -738,6 +741,7 @@ namespace AlumnoEjemplos.MiGrupo
                 if (lightEnable)
                 {
                     mainCarMesh.Technique = "DifAndSpecTechnique";
+
                     secondCarMesh.Technique = "DifAndSpecTechnique";
                 }
             }
@@ -765,8 +769,8 @@ namespace AlumnoEjemplos.MiGrupo
 
             pelota.ownSphere.Effect = currentShader;
             pelota.ownSphere.Technique = currentTechnique;
-            arcoPositivo.render();
-            arcoNegativo.render();
+            //arcoPositivo.render();
+            //arcoNegativo.render();
             skyBox.render();
 
 

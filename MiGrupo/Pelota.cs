@@ -42,7 +42,7 @@ namespace AlumnoEjemplos.MiGrupo
 
             ownSphere.AutoTransformEnable = false;
 
-            String ballTexture = GuiController.Instance.AlumnoEjemplosDir  + "Media\\MILANESA_3D\\textures\\football.png";
+            String ballTexture = EjemploAlumno.mediaFolder  + "textures\\football.png";
 
             scale(50);
             translate(0, 200, 0);
