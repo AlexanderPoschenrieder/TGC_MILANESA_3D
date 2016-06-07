@@ -36,6 +36,18 @@ sampler2D lightMap = sampler_state
    Texture = (texLightMap);
 };
 
+// enviroment map
+texture  g_txCubeMap;
+samplerCUBE g_samCubeMap = 
+sampler_state
+{
+    Texture = <g_txCubeMap>;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    MipFilter = Linear;
+};
+
+
 
 //Material del mesh
 float3 materialEmissiveColor; //Color RGB
@@ -45,6 +57,9 @@ float3 materialSpecularColor = float3 ( 1.00, 1.00, 1.00);
 //Variables de las 4 luces
 float3 fvEyePosition;
 float shininess = 0.2;
+
+float kx = 0.9;
+float kc = 0.1;
 
 float3 lightColor[4]; //Color RGB de las 4 luces
 float4 lightPosition[4]; //Posicion de las 4 luces
@@ -70,9 +85,14 @@ struct VS_INPUT
 struct VS_OUTPUT
 {
 	float4 Position : POSITION0;
-	float2 Texcoord : TEXCOORD0;
-	float3 WorldPosition : TEXCOORD1;
-	float3 WorldNormal : TEXCOORD2;
+	float2 Tex : TEXCOORD0;
+	float3 WorldNormal : TEXCOORD1;
+	float3 EnvTex : TEXCOORD2;
+	float3 EnvTex1 : TEXCOORD3;
+	float3 EnvTex2 : TEXCOORD4;
+	float3 EnvTex3 : TEXCOORD5;
+	float3 WorldPosition : TEXCOORD6;
+	float3 N : TEXCOORD7;
 };
 
 //Vertex Shader
@@ -84,7 +104,7 @@ VS_OUTPUT vs_general(VS_INPUT input)
 	output.Position = mul(input.Position, matWorldViewProj);
 
 	//Enviar Texcoord directamente
-	output.Texcoord = input.Texcoord;
+	output.Tex = input.Texcoord;
 
 	//Posicion pasada a World-Space (necesaria para atenuación por distancia)
 	output.WorldPosition = mul(input.Position, matWorld);
@@ -94,6 +114,28 @@ VS_OUTPUT vs_general(VS_INPUT input)
 	Por eso usamos matInverseTransposeWorld en vez de matWorld */
 	output.WorldNormal = mul(input.Normal, matInverseTransposeWorld).xyz;
 	
+	
+	float3 vEyeR = normalize(output.Position-fvEyePosition);
+
+	// corrijo la normal (depende de la malla)
+	// ej. el tanque esta ok, la esfera esta invertida.
+	//input.Normal*= -1;
+    float3 vN = mul( input.Normal, (float3x3)matWorld);
+    vN = normalize( vN );
+    output.EnvTex = reflect(vEyeR,vN);
+    
+	// Refraccion de la luz
+    output.EnvTex1 = refract(vEyeR,vN,1.001);
+    output.EnvTex2 = refract(vEyeR,vN,1.009);
+    output.EnvTex3 = refract(vEyeR,vN,1.02); 
+    
+    
+    
+    //Propago la normal
+    output.N = vN;
+	
+	
+	
 
 	return output;
 }
@@ -102,13 +144,16 @@ VS_OUTPUT vs_general(VS_INPUT input)
 //Input del Pixel Shader
 struct PS_INPUT
 {
-	float2 Texcoord : TEXCOORD0;
-	float3 WorldPosition : TEXCOORD1;
-	float3 WorldNormal : TEXCOORD2;
+	float4 Position : POSITION0;
+	float2 Tex : TEXCOORD0;
+	float3 WorldNormal : TEXCOORD1;
+	float3 EnvTex : TEXCOORD2;
+	float3 EnvTex1 : TEXCOORD3;
+	float3 EnvTex2 : TEXCOORD4;
+	float3 EnvTex3 : TEXCOORD5;
+	float3 WorldPosition : TEXCOORD6;
+	float3 N : TEXCOORD7;
 };
-
-
-
 
 //Funcion para calcular color RGB de Diffuse
 float3 computeDiffuseAndSpecularComponent(float3 surfacePosition, float3 N, int i)
@@ -156,11 +201,21 @@ float4 point_light_ps(PS_INPUT input) : COLOR0
 	//Diffuse 3
 	diffuseLighting += computeDiffuseAndSpecularComponent(input.WorldPosition, Nn, 3);
 	
-	//Obtener texel de la textura
-	float4 texelColor = tex2D(diffuseMap, input.Texcoord);
-	texelColor.rgb *= diffuseLighting;
+	
+	float k = 0.30;
+	float4 fvBaseColor = k*texCUBE( g_samCubeMap, input.EnvTex ) +
+						(1-k)*tex2D( diffuseMap, input.Tex );
+	
+	float4 color_reflejado = fvBaseColor * float4(diffuseLighting.x, diffuseLighting.y, diffuseLighting.z, 1);
 
-	return texelColor;
+	float4 color_refractado = float4(
+		texCUBE( g_samCubeMap, input.EnvTex1).x, 
+		texCUBE( g_samCubeMap, input.EnvTex2).y,
+		texCUBE( g_samCubeMap, input.EnvTex3).z,
+		1);
+	
+	return color_reflejado*kx + color_refractado*kc;
+
 }
 
 

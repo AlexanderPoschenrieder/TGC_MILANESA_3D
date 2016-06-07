@@ -744,9 +744,8 @@ namespace AlumnoEjemplos.MiGrupo
                 {
                     mainCarMesh.Effect = carEffect;
                     secondCarMesh.Effect = carEffect;
-                    //mainCarMesh.Technique = "RenderCubeMap";
-                    //mainCarMesh.Effect.SetValue("g_txCubeMap", cubeTexture);
-
+                    mainCarMesh.Effect.SetValue("g_txCubeMap", cubeTexture);
+                    secondCarMesh.Effect.SetValue("g_txCubeMap", cubeTexture);
                     mainCarMesh.Technique = "DifAndSpecTechnique";
 
                     secondCarMesh.Technique = "DifAndSpecTechnique";
