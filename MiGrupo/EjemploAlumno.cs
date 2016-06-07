@@ -64,6 +64,8 @@ namespace AlumnoEjemplos.MiGrupo
         TgcText2d txtTimer = new TgcText2d();
         public TgcText2d txtNitroVisitante = new TgcText2d();
         public TgcText2d txtNitroLocal = new TgcText2d();
+        public TgcText2d txtGol = new TgcText2d();
+        public float golTimer = 0f;
        
         public TgcText2d txtDebug = new TgcText2d();
         Viewport View1, View2, ViewF;
@@ -400,6 +402,11 @@ namespace AlumnoEjemplos.MiGrupo
             txtNitroVisitante.changeFont(new System.Drawing.Font("Calibri", 18, FontStyle.Bold | FontStyle.Italic));
             txtNitroVisitante.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
 
+            txtGol.Text = "Guuulllll!!!";
+            txtGol.Position = new Point(40, 50);
+            txtGol.changeFont(new System.Drawing.Font("Calibri", 30, FontStyle.Bold | FontStyle.Italic));
+            txtGol.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
+
         }
 
         public void createVars()
@@ -559,6 +566,7 @@ namespace AlumnoEjemplos.MiGrupo
             pelota.mover(elapsedTime);
             pelota.updateValues();
 
+            golTimer = golTimer - elapsedTime;
             time = time + elapsedTime;
 
             SetCarCamera();
@@ -882,6 +890,11 @@ namespace AlumnoEjemplos.MiGrupo
                 txtNitroLocal.render();
                 txtDebug.render();
 
+                if (golTimer > 0)
+                {
+                    txtGol.render();
+                }
+
                 int i = 0;
 
                 while (i < 4)
@@ -1019,6 +1032,7 @@ namespace AlumnoEjemplos.MiGrupo
 
         public void gol()
         {
+            golTimer = 2;
             txtScoreLocal.Text = "Equipo Rojo: " + scoreLocal.ToString();
             txtScoreVisitante.Text = "Equipo Azul: " + scoreVisitante.ToString();
             
