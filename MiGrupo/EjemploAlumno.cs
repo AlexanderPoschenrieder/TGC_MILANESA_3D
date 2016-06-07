@@ -41,12 +41,12 @@ namespace AlumnoEjemplos.MiGrupo
         TgcSkyBox skyBox;
         TgcScene scene;
         TgcMesh mainCarMesh, secondCarMesh, iaCarMesh;
-        Microsoft.DirectX.Direct3D.Effect mainEffect, secondEffect;
+        Microsoft.DirectX.Direct3D.Effect mainEffect, carEffect;
         public Auto mainCar;
         public Auto2 secondCar;
         IMilanesaCamera camaraActiva1, camaraActiva2;
         float time;
-        CubeTexture cubemap;
+        CubeTexture cubeTexture;
 
         Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
 
@@ -443,7 +443,7 @@ namespace AlumnoEjemplos.MiGrupo
 
             TgcSceneLoader loader = new TgcSceneLoader();
             scene = loader.loadSceneFromFile(sceneFolder + "predio\\predio-TgcScene.xml");
-            cubemap = TextureLoader.FromCubeFile(d3dDevice, mediaFolder + "textures\\cubemap.dds");
+            cubeTexture = TextureLoader.FromCubeFile(d3dDevice, mediaFolder + "textures\\cubemap.dds");
 
             foreach (TgcMesh m in scene.Meshes)
             {
@@ -475,7 +475,9 @@ namespace AlumnoEjemplos.MiGrupo
             todosLosMeshes.Add(secondCarMesh);
 
             mainEffect = TgcShaders.loadEffect(mediaFolder + "\\shaders\\EnvMap.fx");
-            lightEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\DifAndSpec.fx");
+            carEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\DifAndSpec.fx");
+
+            lightEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\DiffuseLight.fx");
             sombrasEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\Sombras.fx");
 
             // mainEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\EnvMap.fx");
@@ -740,6 +742,11 @@ namespace AlumnoEjemplos.MiGrupo
                 mesh.Technique = currentTechnique;
                 if (lightEnable)
                 {
+                    mainCarMesh.Effect = carEffect;
+                    secondCarMesh.Effect = carEffect;
+                    //mainCarMesh.Technique = "RenderCubeMap";
+                    //mainCarMesh.Effect.SetValue("g_txCubeMap", cubeTexture);
+
                     mainCarMesh.Technique = "DifAndSpecTechnique";
 
                     secondCarMesh.Technique = "DifAndSpecTechnique";
@@ -796,7 +803,7 @@ namespace AlumnoEjemplos.MiGrupo
             }*/
             foreach (TgcMesh mesh in todosLosMeshes)
             {
-                if (lightEnable)
+                if (lightEnable && mesh != mainCarMesh)
                 {
 
                     //Cargar variables de shader

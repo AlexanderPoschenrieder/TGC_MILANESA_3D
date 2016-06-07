@@ -164,7 +164,7 @@ void VSCubeMap( float4 Pos : POSITION,
 
 	// corrijo la normal (depende de la malla)
 	// ej. el tanque esta ok, la esfera esta invertida.
-	//Normal*= -1;
+	Normal*= -1;
     float3 vN = mul( Normal, (float3x3)matWorld);
     vN = normalize( vN );
     EnvTex = reflect(vEyeR,vN);
@@ -213,7 +213,7 @@ float4 PSCubeMap(	float3 EnvTex: TEXCOORD0,
 	le += ks*k_ls;
 
 	//Obtener el texel de textura
-	float k = 0.60;
+	float k = 1;
 	float4 fvBaseColor = k*texCUBE( g_samCubeMap, EnvTex ) +
 						(1-k)*tex2D( diffuseMap, Texcoord );
 	
