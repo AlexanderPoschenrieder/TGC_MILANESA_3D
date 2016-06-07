@@ -429,6 +429,7 @@ namespace AlumnoEjemplos.MiGrupo
         }
         #endregion
 
+        #region INICIALIZACION
         public override void init()
         {
             time = 0f;
@@ -529,6 +530,7 @@ namespace AlumnoEjemplos.MiGrupo
             secondCar.setPosition(pos2.X, 0, pos2.Z);
         }
 
+#endregion
 
         /// <param name="elapsedTime">Tiempo en segundos transcurridos desde el último frame</param>
 
