@@ -188,7 +188,6 @@ namespace AlumnoEjemplos.MiGrupo
 
             aceleracion = (float)GuiController.Instance.Modifiers["Aceleracion"];
             gravedad = (float)GuiController.Instance.Modifiers["Gravedad"];
-           // handling = (float)GuiController.Instance.Modifiers["VelocidadRotacion"];
 
 
             this.elapsedTime = et;

@@ -418,17 +418,14 @@ namespace AlumnoEjemplos.MiGrupo
         public void createModifiers()
         {
             GuiController.Instance.Modifiers.addFloat("PesoPelota", 25, 125, 75);
-            GuiController.Instance.Modifiers.addFloat("Gravedad", -50, 0, -9.81f);
+            GuiController.Instance.Modifiers.addFloat("Gravedad", -15, -5, -9.81f);
             GuiController.Instance.Modifiers.addFloat("Aceleracion", 100f, 1000f, 500f);
-            GuiController.Instance.Modifiers.addFloat("VelocidadRotacion", 0f, 5f, 1.5f);
             GuiController.Instance.Modifiers.addColor("ColorHUD", Color.Gold);
 
             GuiController.Instance.Modifiers.addBoolean("lightEnable", "lightEnable", true);
             GuiController.Instance.Modifiers.addFloat("lightIntensity", 0, 1000, 200);
             GuiController.Instance.Modifiers.addFloat("lightAttenuation", 0.1f, 2, 0.15f);
-
-            GuiController.Instance.Modifiers.addColor("mEmissive", Color.Black);
-            GuiController.Instance.Modifiers.addColor("mDiffuse", Color.White);
+            
 
         }
         #endregion
@@ -802,8 +799,8 @@ namespace AlumnoEjemplos.MiGrupo
                     mesh.Effect.SetValue("lightPosition", pointLightPositions);
                     mesh.Effect.SetValue("lightIntensity", pointLightIntensity);
                     mesh.Effect.SetValue("lightAttenuation", pointLightAttenuation);
-                    mesh.Effect.SetValue("materialEmissiveColor", ColorValue.FromColor((Color)GuiController.Instance.Modifiers["mEmissive"]));
-                    mesh.Effect.SetValue("materialDiffuseColor", ColorValue.FromColor((Color)GuiController.Instance.Modifiers["mDiffuse"]));
+                    mesh.Effect.SetValue("materialEmissiveColor", ColorValue.FromColor(Color.Black));
+                    mesh.Effect.SetValue("materialDiffuseColor", ColorValue.FromColor(Color.White));
 
                     mesh.Effect.SetValue("fvEyePosition", TgcParserUtils.vector3ToFloat4Array(currentCameraPos));
                     mesh.Effect.SetValue("shininess", 1);
@@ -819,8 +816,8 @@ namespace AlumnoEjemplos.MiGrupo
                 pelota.ownSphere.Effect.SetValue("lightPosition", pointLightPositions);
                 pelota.ownSphere.Effect.SetValue("lightIntensity", pointLightIntensity);
                 pelota.ownSphere.Effect.SetValue("lightAttenuation", pointLightAttenuation);
-                pelota.ownSphere.Effect.SetValue("materialEmissiveColor", ColorValue.FromColor((Color)GuiController.Instance.Modifiers["mEmissive"]));
-                pelota.ownSphere.Effect.SetValue("materialDiffuseColor", ColorValue.FromColor((Color)GuiController.Instance.Modifiers["mDiffuse"]));
+                pelota.ownSphere.Effect.SetValue("materialEmissiveColor", ColorValue.FromColor(Color.Black));
+                pelota.ownSphere.Effect.SetValue("materialDiffuseColor", ColorValue.FromColor(Color.White));
 
                 pelota.ownSphere.Effect.SetValue("fvEyePosition", TgcParserUtils.vector3ToFloat4Array(currentCameraPos));
                 pelota.ownSphere.Effect.SetValue("shininess", 1);
@@ -859,6 +856,10 @@ namespace AlumnoEjemplos.MiGrupo
                 txtScoreLocal.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
                 txtTimer.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
                 txtDebug.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
+                txtGol.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
+                txtNitroVisitante.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
+                txtNitroLocal.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
+
                 txtTimer.Text = formatAsTime(time);
                 txtScoreLocal.render();
                 txtScoreVisitante.render();
