@@ -53,9 +53,9 @@ namespace AlumnoEjemplos.MiGrupo
             {
                 ej.estadoJuego = EstadoJuego.MenuControles;
             });
-            addButton(3, "configuracion.png", (EjemploAlumno ej) =>
-            {
-            });
+            //addButton(3, "configuracion.png", (EjemploAlumno ej) =>
+            //{
+            //});
          
         }
 

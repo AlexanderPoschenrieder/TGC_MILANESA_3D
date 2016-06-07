@@ -16,6 +16,7 @@ using System.Windows.Forms;
 using TgcViewer.Utils.Terrain;
 using TgcViewer.Utils;
 using TgcViewer.Utils.Shaders;
+using TgcViewer.Utils.Sound;
 
 namespace AlumnoEjemplos.MiGrupo
 {
@@ -123,6 +124,7 @@ namespace AlumnoEjemplos.MiGrupo
         TgcBox[] lightMeshes;
         Microsoft.DirectX.Direct3D.Effect lightEffect;
         Microsoft.DirectX.Direct3D.Effect sombrasEffect;
+        private string pathSoundtrack = mediaFolder + "music\\t.mp3";
 
         #endregion DECLARACIONES
 
@@ -484,7 +486,15 @@ namespace AlumnoEjemplos.MiGrupo
             SetCarPositions();
             CreateViewports();
             initCarCameras();
+            initMusic();
             ResizeFrustum();
+        }
+
+        private void initMusic()
+        {
+            GuiController.Instance.Mp3Player.FileName = pathSoundtrack;
+            var player = GuiController.Instance.Mp3Player;
+            player.play(true);
         }
 
         private void initMenues()
