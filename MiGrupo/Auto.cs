@@ -217,7 +217,7 @@ namespace AlumnoEjemplos.MiGrupo
             {
                 return; //no usar nitro en marcha atrás
             }
-            velocidadHorizontal *= 3;
+            velocidadHorizontal = FastMath.Max(750, velocidadHorizontal * 3);
             nitroTimer = 5;
 
         }
