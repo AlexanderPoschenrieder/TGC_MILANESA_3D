@@ -732,6 +732,7 @@ namespace AlumnoEjemplos.MiGrupo
                 currentTechnique = GuiController.Instance.Shaders.getTgcMeshTechnique(TgcMesh.MeshRenderType.DIFFUSE_MAP);
             }
 
+            
             foreach (TgcMesh mesh in todosLosMeshes)
             {
                 mesh.Effect = currentShader;
@@ -828,54 +829,27 @@ namespace AlumnoEjemplos.MiGrupo
             pelota.ownSphere.AlphaBlendEnable = false;
             pelota.render();
 
-            pelota.ownSphere.Effect = sombrasEffect;
-            pelota.ownSphere.Technique = "SombrasTechnique";
-
-            for (int i = 0; i < lightMeshes.Length; i++)
+            if (lightEnable)
             {
-                TgcBox lightMesh = lightMeshes[i];
+                pelota.ownSphere.Effect = sombrasEffect;
+                pelota.ownSphere.Technique = "SombrasTechnique";
+
+                for (int i = 0; i < lightMeshes.Length; i++)
+                {
+                    TgcBox lightMesh = lightMeshes[i];
                 
-                pointLightPositions[i] = TgcParserUtils.vector3ToVector4(lightMesh.Position);
+                    pointLightPositions[i] = TgcParserUtils.vector3ToVector4(lightMesh.Position);
 
 
-                pelota.ownSphere.AlphaBlendEnable = true;
+                    pelota.ownSphere.AlphaBlendEnable = true;
 
-                pelota.ownSphere.Effect.SetValue("matViewProj", d3dDevice.Transform.View * d3dDevice.Transform.Projection);
-                pelota.ownSphere.Effect.SetValue("centroPelota", TgcParserUtils.vector3ToVector4(pelota.pos));
-                pelota.ownSphere.Effect.SetValue("lightPosition", pointLightPositions[i]);
-                pelota.ownSphere.render();
+                    pelota.ownSphere.Effect.SetValue("matViewProj", d3dDevice.Transform.View * d3dDevice.Transform.Projection);
+                    pelota.ownSphere.Effect.SetValue("centroPelota", TgcParserUtils.vector3ToVector4(pelota.pos));
+                    pelota.ownSphere.Effect.SetValue("lightPosition", pointLightPositions[i]);
+                    pelota.ownSphere.render();
+                }
+
             }
-
-            /* if (lightEnable)
-             {
-
-                 //Cargar variables de shader
-                 mainCarMesh.Effect.SetValue("lightColor", lightColors);
-                 mainCarMesh.Effect.SetValue("lightPosition", pointLightPositions);
-                 mainCarMesh.Effect.SetValue("lightIntensity", pointLightIntensity);
-                 mainCarMesh.Effect.SetValue("lightAttenuation", pointLightAttenuation);
-                 mainCarMesh.Effect.SetValue("materialEmissiveColor", ColorValue.FromColor((Color)GuiController.Instance.Modifiers["mEmissive"]));
-                 mainCarMesh.Effect.SetValue("materialDiffuseColor", ColorValue.FromColor((Color)GuiController.Instance.Modifiers["mDiffuse"]));
-
-                 mainCarMesh.Effect.SetValue("fvEyePosition", TgcParserUtils.vector3ToFloat4Array(currentCameraPos));
-                 mainCarMesh.Effect.SetValue("shininess", 15);
-
-
-                 secondCarMesh.Effect.SetValue("lightColor", lightColors);
-                 secondCarMesh.Effect.SetValue("lightPosition", pointLightPositions);
-                 secondCarMesh.Effect.SetValue("lightIntensity", pointLightIntensity);
-                 secondCarMesh.Effect.SetValue("lightAttenuation", pointLightAttenuation);
-                 secondCarMesh.Effect.SetValue("materialEmissiveColor", ColorValue.FromColor((Color)GuiController.Instance.Modifiers["mEmissive"]));
-                 secondCarMesh.Effect.SetValue("materialDiffuseColor", ColorValue.FromColor((Color)GuiController.Instance.Modifiers["mDiffuse"]));
-
-                 secondCarMesh.Effect.SetValue("fvEyePosition", TgcParserUtils.vector3ToFloat4Array(currentCameraPos));
-                 secondCarMesh.Effect.SetValue("shininess", 15);
-             }
-
-             mainCarMesh.render();
-             secondCarMesh.render();
-             pelota.render();*/
-
 
 
             if (!cubemap)
