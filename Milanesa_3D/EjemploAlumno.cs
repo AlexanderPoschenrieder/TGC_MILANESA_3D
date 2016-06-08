@@ -34,6 +34,7 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         Menu menuPrincipal;
         MenuControles menuControles;
+        GameOver gameOver;
         public EstadoJuego estadoJuego;
 
         #endregion
@@ -47,6 +48,7 @@ namespace AlumnoEjemplos.Milanesa_3D
         public Auto2 secondCar;
         IMilanesaCamera camaraActiva1, camaraActiva2;
         float time;
+        float gameDuration = 5f;
         CubeTexture cubeTexture;
 
         Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
@@ -61,8 +63,8 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         public Pelota pelota;
         public float lastElapsedTime = 0f;
-        TgcText2d txtScoreLocal = new TgcText2d();
-        TgcText2d txtScoreVisitante = new TgcText2d();
+        public TgcText2d txtScoreLocal = new TgcText2d();
+        public TgcText2d txtScoreVisitante = new TgcText2d();
         TgcText2d txtTimer = new TgcText2d();
         public TgcText2d txtNitroVisitante = new TgcText2d();
         public TgcText2d txtNitroLocal = new TgcText2d();
@@ -499,6 +501,7 @@ namespace AlumnoEjemplos.Milanesa_3D
             initCarCameras();
             initMusic();
             ResizeFrustum();
+
         }
 
         private void initMusic()
@@ -512,6 +515,7 @@ namespace AlumnoEjemplos.Milanesa_3D
         {
             menuPrincipal = new Menu(this);
             menuControles = new MenuControles(this);
+            gameOver = new GameOver(this);
             estadoJuego = EstadoJuego.MenuPrincipal;
         }
 
@@ -543,6 +547,10 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         public override void render(float elapsedTime)
         {
+            if (time >= gameDuration)
+            {
+                estadoJuego = EstadoJuego.GameOver;
+            }
             switch (estadoJuego)
             {
                 case EstadoJuego.MenuPrincipal:
@@ -555,7 +563,10 @@ namespace AlumnoEjemplos.Milanesa_3D
                     renderGame(elapsedTime);
                     break;
                 case EstadoJuego.GameOver:
-                    menuPrincipal.ShowGameOver();
+                    splitScreen = false;
+                    d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+                    d3dDevice.Viewport = ViewF;
+                    gameOver.render();
                     break;
             }
         }
@@ -989,6 +1000,8 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         }
 
+        
+
         private void initCarCameras()
         {
             camaraPelota1 = new TwoTargetsCamera(this);
@@ -1038,9 +1051,12 @@ namespace AlumnoEjemplos.Milanesa_3D
             //todo creo que falta disposear algunas cosas!
             d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
             d3dDevice.Viewport = ViewF;
+            GuiController.Instance.Modifiers.clear();
+            GuiController.Instance.Mp3Player.closeFile();
             mainCar.meshAuto.dispose();
             secondCar.meshAuto.dispose();
             pelota.ownSphere.dispose();
+
 
             scene.disposeAll();
             piso.dispose();
@@ -1071,5 +1087,10 @@ namespace AlumnoEjemplos.Milanesa_3D
             skyBox.dispose();
         }
 
+        public void resetGame()
+        {
+            close();
+            init();
+        }
     }
 }
