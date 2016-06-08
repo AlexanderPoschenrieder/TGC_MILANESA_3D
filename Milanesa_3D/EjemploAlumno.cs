@@ -48,7 +48,7 @@ namespace AlumnoEjemplos.Milanesa_3D
         public Auto2 secondCar;
         IMilanesaCamera camaraActiva1, camaraActiva2;
         float time;
-        float gameDuration = 60f;
+        float gameDuration = 1f;
         CubeTexture cubeTexture;
 
         Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;

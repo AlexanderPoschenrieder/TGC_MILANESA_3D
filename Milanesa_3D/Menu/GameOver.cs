@@ -35,6 +35,7 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         public GameOver(EjemploAlumno par)
         {
+
             parent = par;
             panel = GuiController.Instance.Panel3d;
             this.defaultBackgroud.Texture = TgcTexture.createTexture(
@@ -61,9 +62,9 @@ namespace AlumnoEjemplos.Milanesa_3D
         {
             this.resultsFrame = new TgcSprite();
             this.resultsFrame.Texture = TgcTexture.createTexture(EjemploAlumno.mediaFolder + "menu\\" + "cuadro_vacio.png");
-            this.resultsFrame.Scaling = new Vector2(0.3f, 0.3f);
+            this.resultsFrame.Scaling = new Vector2(0.4f, 0.3f);
             this.resultsFrame.Position = new Vector2(
-                (GuiController.Instance.Panel3d.Size.Width - this.header.Texture.Width / 2) / 2 + 100, 100);
+                (GuiController.Instance.Panel3d.Size.Width - this.header.Texture.Width / 2) / 2 + 50, 100);
         }
 
         public override void setHeader(string headerFile)
