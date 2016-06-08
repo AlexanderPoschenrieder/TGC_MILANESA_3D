@@ -87,6 +87,7 @@
     <Compile Include="Milanesa_3D\Auto2.cs" />
     <Compile Include="Milanesa_3D\AutoIA.cs" />
     <Compile Include="Milanesa_3D\EjemploAlumno.cs" />
+    <Compile Include="Milanesa_3D\Menu\GameOver.cs" />
     <Compile Include="Milanesa_3D\Menu\MenuControles.cs" />
     <Compile Include="Milanesa_3D\Menu\Menu.cs" />
     <Compile Include="Milanesa_3D\Menu\MenuButton.cs" />
