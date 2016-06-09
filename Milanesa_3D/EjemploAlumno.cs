@@ -50,6 +50,7 @@ namespace AlumnoEjemplos.Milanesa_3D
         float time;
         float gameDuration = 60f;
         CubeTexture cubeTexture;
+        //List<TgcMesh> people = new List<TgcMesh>();
 
         Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
 
@@ -437,6 +438,8 @@ namespace AlumnoEjemplos.Milanesa_3D
         #region INICIALIZACION
         public override void init()
         {
+            //initPeople();
+
             time = 0f;
             cajasVisiblesEscenario = new List<TgcBox>();
             meshesCajasEscenario = new List<TgcMesh>();
@@ -505,6 +508,20 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         }
 
+        //private void initPeople()
+        //{
+        //    var loader = new TgcSceneLoader();
+        //    int i = 0;
+        //    for(i = 0; i < 100; i++)
+        //    {
+        //        var person = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\People\\3persons\\3-Spectators-TgcScene.xml").Meshes[0];
+        //        person.Position = new Vector3(i*10, 0, i*10);
+        //        people.Add(person);
+
+        //    }
+
+        //}
+
         private void initMusic()
         {
             GuiController.Instance.Mp3Player.FileName = pathSoundtrack;
@@ -570,6 +587,8 @@ namespace AlumnoEjemplos.Milanesa_3D
                     gameOver.render();
                     break;
             }
+
+            people.ForEach(p => p.render());
         }
 
         private void renderGame(float elapsedTime)
