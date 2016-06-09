@@ -112,22 +112,22 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         private void createResults()
         {
-            var centerX =panel.Size.Width /2;
-            var centerY =panel.Size.Height /2;
+            var centerX =(int)resultsFrame.Position.X+50;
+            var centerY = (int)resultsFrame.Position.Y + 100;
 
             this.ganador.Text = "¡¡Ganador ";
             this.ganador.Size = new Size(300, 100);
             this.ganador.changeFont(new System.Drawing.Font("Calibri", 24, FontStyle.Bold | FontStyle.Italic));
             this.ganador.Color = Color.DarkGreen;
-            this.ganador.Position = new Point(centerX-150,centerY -100);
+            this.ganador.Position = new Point(centerX,centerY);
             
             this.scoreLocal = parent.txtScoreLocal;
             this.scoreLocal.Color = Color.DarkGreen;
-            this.scoreLocal.Position = new Point(centerX - 150, ganador.Position.Y + 50);
+            this.scoreLocal.Position = new Point(centerX, ganador.Position.Y + 50);
 
             this.scoreVisitante = parent.txtScoreVisitante;
             this.scoreVisitante.Color = Color.DarkGreen;
-            this.scoreVisitante.Position = new Point(centerX - 150, scoreLocal.Position.Y + 30);
+            this.scoreVisitante.Position = new Point(centerX, scoreLocal.Position.Y + 30);
 
             if (parent.scoreLocal > parent.scoreVisitante)
             {
