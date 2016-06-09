@@ -160,7 +160,7 @@ namespace AlumnoEjemplos.Milanesa_3D
         /// <returns></returns>
         public override string getDescription()
         {
-            return "Rocket League - Futbol de autos. Con V se habilita o deshabilita el split screen.";
+            return "Rocket League - Futbol de autos. El juego dura dos minutos. Con V se habilita o deshabilita el split screen.";
         }
 
         #endregion
@@ -564,19 +564,19 @@ namespace AlumnoEjemplos.Milanesa_3D
             //tribuna positiva
             while (i <= 10)
             {
-                int zpos = -2400;
-                while (zpos < 2600)
+                int zpos = -2300;
+                while (zpos < 2500)
                 {
                     var person = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\People\\dwight\\2D+People+-+Dwight+2-TgcScene.xml").Meshes[0];
                     //var person = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\People\\3persons\\3-Spectators-TgcScene.xml").Meshes[0];
 
-                    zpos = zpos + rgen.Next(10, 300);
+                    zpos = zpos + rgen.Next(40, 700);
                     person.rotateY(FastMath.PI_HALF);
                     person.Scale = new Vector3(0.045f, 0.045f, 0.045f);
                     person.Position = new Vector3(xpos, ypos, zpos);
                     people.Add(person);
                     todosLosMeshes.Add(person);
-                    zpos = zpos + rgen.Next(10, 300);
+                    zpos = zpos + rgen.Next(40, 700);
                 }
 
                 xpos = xpos + 180;
@@ -593,19 +593,19 @@ namespace AlumnoEjemplos.Milanesa_3D
 
             while (i <= 10)
             {
-                int zpos = -2400;
-                while (zpos < 2600)
+                int zpos = -2300;
+                while (zpos < 2500)
                 {
                     var person = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\People\\dwight\\2D+People+-+Dwight+2-TgcScene.xml").Meshes[0];
                     //var person = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\People\\3persons\\3-Spectators-TgcScene.xml").Meshes[0];
 
-                    zpos = zpos + rgen.Next(10, 300);
+                    zpos = zpos + rgen.Next(40, 700);
                     person.rotateY(FastMath.PI_HALF);
                     person.Scale = new Vector3(0.045f, 0.045f, 0.045f);
                     person.Position = new Vector3(xpos, ypos, zpos);
                     people.Add(person);
                     todosLosMeshes.Add(person);
-                    zpos = zpos + rgen.Next(10, 300);
+                    zpos = zpos + rgen.Next(40, 700);
                 }
 
                 xpos = xpos - 180;
