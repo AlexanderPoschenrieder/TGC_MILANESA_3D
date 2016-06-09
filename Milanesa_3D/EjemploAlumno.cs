@@ -152,7 +152,7 @@ namespace AlumnoEjemplos.Milanesa_3D
         /// <returns></returns>
         public override string getDescription()
         {
-            return "Rocket League - Futbol de autos. Auto principal: movimiento con W, A, S, D, freno con Ctrl izq, salto con Espacio, Nitro con C o doble salto. Auto secundario: movimiento con flechas, freno con Ctrl der, salto con Alt der, nitro con Punto o doble salto. Con v se habilita o deshabilita el split screen. Con shift izquierdo y shift derecho se accede a la camara detrás de cada auto.";
+            return "Rocket League - Futbol de autos. Con V se habilita o deshabilita el split screen.";
         }
 
         #endregion
