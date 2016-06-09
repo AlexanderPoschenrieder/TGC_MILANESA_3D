@@ -22,7 +22,6 @@ namespace AlumnoEjemplos.Milanesa_3D
 {
     public class GameOver: Menu
     {
-        public List<MenuButton> buttons = new List<MenuButton>();
         public TgcSprite header;
         public TgcSprite resultsFrame;
         public TgcSprite defaultBackgroud = new TgcSprite();
@@ -37,7 +36,15 @@ namespace AlumnoEjemplos.Milanesa_3D
         {
 
             parent = par;
-            panel = GuiController.Instance.Panel3d;
+            //if (GuiController.Instance.FullScreenEnable)
+            //{
+            //    panel = GuiController.Instance.FullScreenPanel;
+            //}
+            //else
+            //{
+                panel = GuiController.Instance.Panel3d;
+            //}
+            
             this.defaultBackgroud.Texture = TgcTexture.createTexture(
                 EjemploAlumno.mediaFolder +"\\menu\\fondo.jpg");
             this.defaultBackgroud.Position = new Vector2(0, 0);
@@ -55,7 +62,7 @@ namespace AlumnoEjemplos.Milanesa_3D
                 this.scoreVisitante.dispose();
                 parent.resetGame();
             });
-         
+            buttons[0].selected = true;
         }
 
         private void SetResults()
@@ -64,7 +71,7 @@ namespace AlumnoEjemplos.Milanesa_3D
             this.resultsFrame.Texture = TgcTexture.createTexture(EjemploAlumno.mediaFolder + "menu\\" + "cuadro_vacio.png");
             this.resultsFrame.Scaling = new Vector2(0.4f, 0.3f);
             this.resultsFrame.Position = new Vector2(
-                (GuiController.Instance.Panel3d.Size.Width - this.header.Texture.Width / 2) / 2 + 50, 100);
+                (panel.Size.Width - this.header.Texture.Width / 2) / 2 + 50, 100);
         }
 
         public override void setHeader(string headerFile)
@@ -73,7 +80,7 @@ namespace AlumnoEjemplos.Milanesa_3D
             this.header.Texture = TgcTexture.createTexture(EjemploAlumno.mediaFolder + "menu\\"+headerFile); 
             this.header.Scaling = new Vector2(0.3f,0.3f);
             this.header.Position = new Vector2(
-                (GuiController.Instance.Panel3d.Size.Width - this.header.Texture.Width/2) / 2 +100 ,10 );
+                (panel.Size.Width - this.header.Texture.Width/2) / 2 +100 ,10 );
         }
 
         private void addButton(int position, string texturePath,Action<EjemploAlumno> callback)
@@ -93,7 +100,7 @@ namespace AlumnoEjemplos.Milanesa_3D
             createResults();
             GuiController.Instance.Drawer2D.beginDrawSprite();
             this.defaultBackgroud.render();
-            this.handleClicks();
+            this.handleKeyboard();
             this.header.render();
             this.resultsFrame.render();
             this.buttons.ForEach(button => button.render());
@@ -105,8 +112,8 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         private void createResults()
         {
-            var centerX =GuiController.Instance.Panel3d.Size.Width /2;
-            var centerY =GuiController.Instance.Panel3d.Size.Height /2;
+            var centerX =panel.Size.Width /2;
+            var centerY =panel.Size.Height /2;
 
             this.ganador.Text = "¡¡Ganador ";
             this.ganador.Size = new Size(300, 100);
@@ -137,19 +144,5 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         }
 
-        public void handleClicks()
-        {
-            TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
-            float mouseX = d3dInput.Xpos;
-            float mouseY = d3dInput.Ypos;
-
-            if (d3dInput.buttonDown(TgcD3dInput.MouseButtons.BUTTON_LEFT))
-            {
-                foreach (MenuButton button in buttons)
-                {
-                    button.handleClick(parent, mouseX, mouseY);
-                }
-            }
-        }
     }
 }

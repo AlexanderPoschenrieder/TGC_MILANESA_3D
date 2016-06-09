@@ -5,6 +5,7 @@ using System.Text;
 using TgcViewer;
 using TgcViewer.Utils._2D;
 using Microsoft.DirectX;
+using TgcViewer.Utils.TgcSceneLoader;
 
 namespace AlumnoEjemplos.Milanesa_3D
 {
@@ -13,6 +14,8 @@ namespace AlumnoEjemplos.Milanesa_3D
     {
         private TgcSprite sprite;
         public Action<EjemploAlumno> callback;
+        public TgcSprite selector = new TgcSprite();
+        public bool selected = false;
         private System.Windows.Forms.Control panel;
 
         public MenuButton(float index, TgcSprite sprite, Action<EjemploAlumno> callback)
@@ -22,9 +25,19 @@ namespace AlumnoEjemplos.Milanesa_3D
             this.callback = callback;
             this.sprite.Scaling = new Vector2(.14f,.14f);
             this.sprite.Position = new Vector2(
-                (GuiController.Instance.Panel3d.Size.Width - this.width()) / 2,
+                (panel.Size.Width - this.width()) / 2,
                 150 + (index * ((float)panel.Size.Height/400) * this.height()));
+            createSelector();
         }
+
+
+        private void createSelector()
+        {
+            selector.Texture = TgcTexture.createTexture(EjemploAlumno.mediaFolder + "menu\\selector.png");
+            selector.Scaling = this.sprite.Scaling;
+            selector.Position = this.sprite.Position;
+        }
+
 
         private float width()
         {
@@ -39,6 +52,11 @@ namespace AlumnoEjemplos.Milanesa_3D
         public void render()
         {
             this.sprite.render();
+            if (selected)
+            {
+                selector.render();
+            }
+
         }
 
         public float topX()
@@ -61,20 +79,5 @@ namespace AlumnoEjemplos.Milanesa_3D
             return this.sprite.Position.Y;
         }
 
-        public bool clicked(float clickedX, float clickedY)
-        {
-            return (clickedX > this.bottomX()) &&
-                (clickedX < topX()) &&
-                (clickedY > this.bottomY()) &&
-                (clickedY < topY());
-        }
-
-        public void handleClick(EjemploAlumno game, float clickedX, float clickedY)
-        {
-            if(clicked(clickedX, clickedY))
-            {
-                callback(game);
-            }
-        }
     }
 }

@@ -22,7 +22,6 @@ namespace AlumnoEjemplos.Milanesa_3D
 {
     public class MenuControles: Menu
     {
-        public List<MenuButton> buttons = new List<MenuButton>();
         public TgcSprite header;
         public TgcSprite defaultBackgroud = new TgcSprite();
         private System.Windows.Forms.Control panel;
@@ -31,7 +30,15 @@ namespace AlumnoEjemplos.Milanesa_3D
         public MenuControles(EjemploAlumno par)
         {
             parent = par;
-            panel = GuiController.Instance.Panel3d;
+                        if (GuiController.Instance.FullScreenEnable)
+            {
+                panel = GuiController.Instance.FullScreenPanel;
+            }
+            else
+            {
+                panel = GuiController.Instance.Panel3d;
+            }
+            
             this.defaultBackgroud.Texture = TgcTexture.createTexture(
                 EjemploAlumno.mediaFolder +"\\menu\\fondo.jpg");
             this.defaultBackgroud.Position = new Vector2(0, 0);
@@ -44,7 +51,7 @@ namespace AlumnoEjemplos.Milanesa_3D
             {
                 parent.estadoJuego = EstadoJuego.MenuPrincipal;
             });
-         
+            buttons[0].selected = true;
         }
 
         public override void setHeader(string headerFile)
@@ -72,25 +79,11 @@ namespace AlumnoEjemplos.Milanesa_3D
         {
             GuiController.Instance.Drawer2D.beginDrawSprite();
             this.defaultBackgroud.render();
-            this.handleClicks();
+            this.handleKeyboard();
             this.header.render();
             this.buttons.ForEach(button => button.render());
             GuiController.Instance.Drawer2D.endDrawSprite();
         }
 
-        public void handleClicks()
-        {
-            TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
-            float mouseX = d3dInput.Xpos;
-            float mouseY = d3dInput.Ypos;
-
-            if (d3dInput.buttonDown(TgcD3dInput.MouseButtons.BUTTON_LEFT))
-            {
-                foreach(MenuButton button in buttons)
-                {
-                    button.handleClick(parent, mouseX, mouseY);
-                }
-            }
-        }
     }
 }

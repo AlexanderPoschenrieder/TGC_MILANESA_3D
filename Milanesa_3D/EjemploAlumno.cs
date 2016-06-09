@@ -164,8 +164,9 @@ namespace AlumnoEjemplos.Milanesa_3D
             piso = TgcBox.fromExtremes(new Vector3(-2600, -500, -4000), new Vector3(2600, 0, 4000));
 
             arcoPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 0, 4000), new Vector3(500, 400, 4500) });
+            arcoPositivo.setRenderColor(Color.Red);
             arcoNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 0, -4000), new Vector3(500, 400, -4500) });
-
+            arcoNegativo.setRenderColor(Color.Blue);
 
             limiteArcoNegativo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2800, -500, -4250), new Vector3(-500, 1000, -4000) });
             limiteArcoNegativo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(500, -500, -4250), new Vector3(2800, 1000, -4000) });
@@ -790,6 +791,8 @@ namespace AlumnoEjemplos.Milanesa_3D
             //arcoNegativo.render();
             skyBox.render();
 
+            arcoPositivo.render();
+            arcoNegativo.render();
 
             /*
             scene.renderAll();

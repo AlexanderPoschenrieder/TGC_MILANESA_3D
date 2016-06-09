@@ -25,7 +25,9 @@ namespace AlumnoEjemplos.Milanesa_3D
         public List<MenuButton> buttons = new List<MenuButton>();
         public TgcSprite header;
         public TgcSprite defaultBackgroud = new TgcSprite();
+        public int selectorPosition = 0;
         private System.Windows.Forms.Control panel;
+
         EjemploAlumno parent;
 
         public Menu()
@@ -35,7 +37,15 @@ namespace AlumnoEjemplos.Milanesa_3D
         public Menu(EjemploAlumno par)
         {
             parent = par;
-            panel = GuiController.Instance.Panel3d;
+            if (GuiController.Instance.FullScreenEnable)
+            {
+                panel = GuiController.Instance.FullScreenPanel;
+            }
+            else
+            {
+                panel = GuiController.Instance.Panel3d;
+            }
+            
             this.defaultBackgroud.Texture = TgcTexture.createTexture(
                 EjemploAlumno.mediaFolder +"\\menu\\fondo.jpg");
             this.defaultBackgroud.Position = new Vector2(0, 0);
@@ -53,10 +63,7 @@ namespace AlumnoEjemplos.Milanesa_3D
             {
                 ej.estadoJuego = EstadoJuego.MenuControles;
             });
-            //addButton(3, "configuracion.png", (EjemploAlumno ej) =>
-            //{
-            //});
-         
+            buttons[0].selected = true;
         }
 
 
@@ -85,24 +92,41 @@ namespace AlumnoEjemplos.Milanesa_3D
         {
             GuiController.Instance.Drawer2D.beginDrawSprite();
             this.defaultBackgroud.render();
-            this.handleClicks();
+            this.handleKeyboard();
             this.header.render();
             this.buttons.ForEach(button => button.render());
             GuiController.Instance.Drawer2D.endDrawSprite();
         }
 
-        public void handleClicks()
+        public void handleKeyboard()
         {
             TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
-            float mouseX = d3dInput.Xpos;
-            float mouseY = d3dInput.Ypos;
 
-            if (d3dInput.buttonDown(TgcD3dInput.MouseButtons.BUTTON_LEFT))
+            if (d3dInput.keyDown(Key.Down))
             {
-                foreach(MenuButton button in buttons)
+                if (selectorPosition == buttons.Count-1)
                 {
-                    button.handleClick(parent, mouseX, mouseY);
+                    return;
                 }
+
+                buttons[selectorPosition].selected = false;
+                selectorPosition++;
+                buttons[selectorPosition].selected = true;
+            }
+            else if (d3dInput.keyPressed(Key.Up))
+            {
+                if (selectorPosition == 0)
+                {
+                    return;
+                }
+
+                buttons[selectorPosition].selected = false;
+                selectorPosition--;
+                buttons[selectorPosition].selected = true;
+            }
+            else if (d3dInput.keyPressed(Key.Return))
+            {
+                buttons[selectorPosition].callback(parent);
             }
         }
     }
