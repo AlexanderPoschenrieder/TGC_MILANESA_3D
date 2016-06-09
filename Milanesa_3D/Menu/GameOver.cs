@@ -24,13 +24,16 @@ namespace AlumnoEjemplos.Milanesa_3D
     {
         public TgcSprite header;
         public TgcSprite resultsFrame;
+        public TgcSprite disclaimerFrame;
         public TgcSprite defaultBackgroud = new TgcSprite();
+        public TgcSprite milanesaBackgroud = new TgcSprite();
         private System.Windows.Forms.Control panel;
         EjemploAlumno parent;
 
         TgcText2d ganador = new TgcText2d();
         TgcText2d scoreLocal;
         TgcText2d scoreVisitante;
+        private bool disclaimer=false;
 
         public GameOver(EjemploAlumno par)
         {
@@ -53,16 +56,24 @@ namespace AlumnoEjemplos.Milanesa_3D
                 (float)panel.Size.Height / this.defaultBackgroud.Texture.Height);
             this.setHeader("game_over.png");
             this.SetResults();
-            
+            initDisclaimer();
 
             addButton(6, "volver.png", (EjemploAlumno ej) =>
             {
-                this.ganador.dispose();
-                this.scoreLocal.dispose();
-                this.scoreVisitante.dispose();
-                parent.resetGame();
+                disclaimer = true;
             });
             buttons[0].selected = true;
+        }
+
+        private void initDisclaimer()
+        {
+            this.milanesaBackgroud.Texture = TgcTexture.createTexture(
+               EjemploAlumno.mediaFolder + "\\menu\\milanesa.jpg");
+            this.milanesaBackgroud.Position = new Vector2(0, 0);
+            this.milanesaBackgroud.Scaling = new Vector2(
+                (float)panel.Size.Width / this.defaultBackgroud.Texture.Width,
+                (float)panel.Size.Height / this.defaultBackgroud.Texture.Height);
+            this.SetDisclaimer();
         }
 
         private void SetResults()
@@ -71,6 +82,15 @@ namespace AlumnoEjemplos.Milanesa_3D
             this.resultsFrame.Texture = TgcTexture.createTexture(EjemploAlumno.mediaFolder + "menu\\" + "cuadro_vacio.png");
             this.resultsFrame.Scaling = new Vector2(0.4f, 0.3f);
             this.resultsFrame.Position = new Vector2(
+                (panel.Size.Width - this.header.Texture.Width / 2) / 2 + 50, 100);
+        }
+
+        private void SetDisclaimer()
+        {
+            this.disclaimerFrame = new TgcSprite();
+            this.disclaimerFrame.Texture = TgcTexture.createTexture(EjemploAlumno.mediaFolder + "menu\\" + "disclaimer.png");
+            this.disclaimerFrame.Scaling = new Vector2(0.4f, 0.3f);
+            this.disclaimerFrame.Position = new Vector2(
                 (panel.Size.Width - this.header.Texture.Width / 2) / 2 + 50, 100);
         }
 
@@ -97,17 +117,40 @@ namespace AlumnoEjemplos.Milanesa_3D
  
         public void render()
         {
-            createResults();
-            GuiController.Instance.Drawer2D.beginDrawSprite();
-            this.defaultBackgroud.render();
-            this.handleKeyboard();
-            this.header.render();
-            this.resultsFrame.render();
-            this.buttons.ForEach(button => button.render());
-            GuiController.Instance.Drawer2D.endDrawSprite();
-            this.ganador.render();
-            this.scoreLocal.render();
-            this.scoreVisitante.render();
+
+            if (disclaimer)
+            {
+                GuiController.Instance.Drawer2D.beginDrawSprite();
+                this.milanesaBackgroud.render();
+                this.disclaimerFrame.render();
+                GuiController.Instance.Drawer2D.endDrawSprite();
+            }
+            else
+            {
+                createResults();
+                GuiController.Instance.Drawer2D.beginDrawSprite();
+                this.defaultBackgroud.render();
+                this.handleKeyboard();
+                this.header.render();
+                this.resultsFrame.render();
+                this.buttons.ForEach(button => button.render());
+                GuiController.Instance.Drawer2D.endDrawSprite();
+                this.ganador.render();
+                this.scoreLocal.render();
+                this.scoreVisitante.render();
+            }
+        }
+
+        private void detectInput()
+        {
+            TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
+
+            if (d3dInput.keyPressed(Key.Space) ||
+                d3dInput.keyPressed(Key.Return) ||
+                d3dInput.keyPressed(Key.Escape))
+            {
+                parent.close();
+            }
         }
 
         private void createResults()
