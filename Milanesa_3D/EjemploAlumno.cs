@@ -48,7 +48,7 @@ namespace AlumnoEjemplos.Milanesa_3D
         public Auto2 secondCar;
         IMilanesaCamera camaraActiva1, camaraActiva2;
         float time;
-        float gameDuration = 60f;
+        float gameDuration = 120f;
         CubeTexture cubeTexture;
         //List<TgcMesh> people = new List<TgcMesh>();
 
@@ -89,6 +89,9 @@ namespace AlumnoEjemplos.Milanesa_3D
 
 
         public TgcBox piso;
+        public TgcBox pisoArcoPositivo;
+        public TgcBox pisoArcoNegativo;
+
         public TgcBoundingBox arcoPositivo;
         public TgcBoundingBox arcoNegativo;
 
@@ -115,6 +118,8 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         public TgcBox rejaLateralPositiva;
         public TgcBox rejaLateralNegativa;
+
+        public TgcBox rejaFondoArcoPositivo, rejaInsidePositivoArcoPositivo, rejaInsideNegativoArcoPositivo, rejaTechoArcoPositivo, rejaFondoArcoNegativo, rejaInsidePositivoArcoNegativo, rejaInsideNegativoArcoNegativo, rejaTechoArcoNegativo;
 
 
         static public string rootDir = GuiController.Instance.AlumnoEjemplosDir;
@@ -166,6 +171,9 @@ namespace AlumnoEjemplos.Milanesa_3D
         {
             piso = TgcBox.fromExtremes(new Vector3(-2600, -500, -4000), new Vector3(2600, 0, 4000));
 
+            pisoArcoPositivo = TgcBox.fromExtremes(new Vector3(-500, -500, 4000), new Vector3(500, 0, 4500));
+            pisoArcoNegativo = TgcBox.fromExtremes(new Vector3(-500, -500, -4000), new Vector3(500, 0, -4500));
+
             arcoPositivo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 0, 4000), new Vector3(500, 400, 4500) });
             arcoPositivo.setRenderColor(Color.Red);
             arcoNegativo = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-500, 0, -4000), new Vector3(500, 400, -4500) });
@@ -181,6 +189,19 @@ namespace AlumnoEjemplos.Milanesa_3D
             rejaArcoNegativo1 = TgcBox.fromExtremes(new Vector3(-2600, 100, -4001), new Vector3(-500, 400, -4000));
             rejaArcoNegativo2 = TgcBox.fromExtremes(new Vector3(500, 100, -4001), new Vector3(2600, 400, -4000));
             rejaSuperiorArcoNegativo = TgcBox.fromExtremes(new Vector3(-2600, 400, -4001), new Vector3(2600, 1000, -4001));
+
+            rejaFondoArcoPositivo = TgcBox.fromExtremes(new Vector3(-500, 0, 4500), new Vector3(500, 400, 4501));
+
+            rejaInsidePositivoArcoPositivo = TgcBox.fromExtremes(new Vector3(499, 0, 4000), new Vector3(500, 400, 4500));
+            rejaInsideNegativoArcoPositivo = TgcBox.fromExtremes(new Vector3(-499, 0, 4000), new Vector3(-500, 400, 4500));
+            rejaTechoArcoPositivo = TgcBox.fromExtremes(new Vector3(-500, 400, 4000), new Vector3(500, 401, 4500));
+
+            rejaFondoArcoNegativo = TgcBox.fromExtremes(new Vector3(-500, 0, -4500), new Vector3(500, 400, -4501));
+
+            rejaInsidePositivoArcoNegativo = TgcBox.fromExtremes(new Vector3(499, 0, -4000), new Vector3(500, 400, -4500));
+            rejaInsideNegativoArcoNegativo = TgcBox.fromExtremes(new Vector3(-499, 0, -4000), new Vector3(-500, 400, -4500));
+            rejaTechoArcoNegativo = TgcBox.fromExtremes(new Vector3(-500, 400, -4000), new Vector3(500, 401, -4500));
+
 
             limiteArcoPositivo1 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(-2800, -500, 4000), new Vector3(-500, 1000, 4250) });
             limiteArcoPositivo2 = TgcBoundingBox.computeFromPoints(new Vector3[] { new Vector3(500, -500, 4000), new Vector3(2800, 1000, 4250) });
@@ -207,8 +228,17 @@ namespace AlumnoEjemplos.Milanesa_3D
             piso.setTexture(pasto);
             piso.UVTiling = new Vector2(150, 150);
 
-            cajasVisiblesEscenario.Add(piso);
+            TgcTexture blue = TgcTexture.createTexture(d3dDevice, mediaFolder + "textures\\blue.jpg");
+            TgcTexture red = TgcTexture.createTexture(d3dDevice, mediaFolder + "textures\\red.jpg");
 
+            pisoArcoNegativo.setTexture(blue);
+            pisoArcoPositivo.setTexture(red);
+            pisoArcoPositivo.UVTiling = new Vector2(2, 2);
+            pisoArcoNegativo.UVTiling = new Vector2(2, 2);
+
+            cajasVisiblesEscenario.Add(piso);
+            cajasVisiblesEscenario.Add(pisoArcoNegativo);
+            cajasVisiblesEscenario.Add(pisoArcoPositivo);
 
 
             TgcTexture cemento = TgcTexture.createTexture(d3dDevice, mediaFolder + "textures\\paredRugosa.jpg");
@@ -247,6 +277,14 @@ namespace AlumnoEjemplos.Milanesa_3D
             rejas.Add(rejaArcoNegativo1);
             rejas.Add(rejaArcoNegativo2);
             rejas.Add(rejaSuperiorArcoNegativo);
+            rejas.Add(rejaFondoArcoPositivo);
+            rejas.Add(rejaInsidePositivoArcoPositivo);
+            rejas.Add(rejaInsideNegativoArcoPositivo);
+            rejas.Add(rejaTechoArcoPositivo);
+            rejas.Add(rejaFondoArcoNegativo);
+            rejas.Add(rejaInsidePositivoArcoNegativo);
+            rejas.Add(rejaInsideNegativoArcoNegativo);
+            rejas.Add(rejaTechoArcoNegativo);
 
 
             foreach (TgcBox r in rejas)
@@ -266,6 +304,16 @@ namespace AlumnoEjemplos.Milanesa_3D
             rejaArcoNegativo1.UVTiling = new Vector2(20, 3);
             rejaArcoNegativo2.UVTiling = new Vector2(20, 3);
             rejaSuperiorArcoNegativo.UVTiling = new Vector2(50, 6);
+
+            rejaFondoArcoNegativo.UVTiling = new Vector2(10, 4);
+            rejaFondoArcoPositivo.UVTiling = new Vector2(10, 4);
+            rejaInsideNegativoArcoNegativo.UVTiling = new Vector2(5, 4);
+            rejaInsideNegativoArcoPositivo.UVTiling = new Vector2(5, 4);
+            rejaInsidePositivoArcoNegativo.UVTiling = new Vector2(5, 4);
+            rejaInsidePositivoArcoPositivo.UVTiling = new Vector2(5, 4);
+
+            rejaTechoArcoNegativo.UVTiling = new Vector2(10, 5);
+            rejaTechoArcoPositivo.UVTiling = new Vector2(10, 5);
 
 
             foreach (TgcBox box in cajasVisiblesEscenario)
@@ -489,13 +537,7 @@ namespace AlumnoEjemplos.Milanesa_3D
             lightEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\DiffuseLight.fx");
             sombrasEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\Sombras.fx");
 
-            // mainEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\EnvMap.fx");
-
-            // int[] adj = new int[mainCarMesh.D3dMesh.NumberFaces * 3];
-            // mainCarMesh.D3dMesh.GenerateAdjacency(0, adj);
-            // mainCarMesh.D3dMesh.ComputeNormals(adj);
-            // mainCarMesh.Effect = mainEffect;
-
+       
 
             pelota = new Pelota(this);
 
@@ -857,12 +899,8 @@ namespace AlumnoEjemplos.Milanesa_3D
 
             pelota.ownSphere.Effect = currentShader;
             pelota.ownSphere.Technique = currentTechnique;
-            //arcoPositivo.render();
-            //arcoNegativo.render();
             skyBox.render();
 
-            arcoPositivo.render();
-            arcoNegativo.render();
 
             /*
             scene.renderAll();
@@ -949,13 +987,19 @@ namespace AlumnoEjemplos.Milanesa_3D
 
                 txtScoreVisitante.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
                 txtScoreLocal.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
-                txtTimer.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
                 txtDebug.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
                 txtGol.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
                 txtNitroVisitante.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
                 txtNitroLocal.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
 
-
+                if(time >= 110f)
+                {
+                    txtTimer.Color = Color.Red;
+                }
+                else
+                {
+                    txtTimer.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
+                }
 
                 txtTimer.Text = formatAsTime(time);
                 txtScoreLocal.render();
