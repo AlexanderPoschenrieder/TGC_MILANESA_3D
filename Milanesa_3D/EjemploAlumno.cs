@@ -128,6 +128,8 @@ namespace AlumnoEjemplos.Milanesa_3D
         private TgcBox rejaArcoNegativo2;
         private TgcBox rejaSuperiorArcoNegativo;
 
+        public List<TgcMesh> people;
+
         TgcBox[] lightMeshes;
         Microsoft.DirectX.Direct3D.Effect lightEffect;
         Microsoft.DirectX.Direct3D.Effect sombrasEffect;
@@ -424,7 +426,7 @@ namespace AlumnoEjemplos.Milanesa_3D
         public void createModifiers()
         {
             GuiController.Instance.Modifiers.addFloat("PesoPelota", 25, 125, 75);
-            GuiController.Instance.Modifiers.addFloat("Gravedad", -15, -5, -9.81f);
+            GuiController.Instance.Modifiers.addFloat("Gravedad", -15, -0, -9.81f);
             GuiController.Instance.Modifiers.addColor("ColorHUD", Color.Gold);
 
             GuiController.Instance.Modifiers.addBoolean("lightEnable", "lightEnable", true);
@@ -438,7 +440,6 @@ namespace AlumnoEjemplos.Milanesa_3D
         #region INICIALIZACION
         public override void init()
         {
-            //initPeople();
 
             time = 0f;
             cajasVisiblesEscenario = new List<TgcBox>();
@@ -460,6 +461,7 @@ namespace AlumnoEjemplos.Milanesa_3D
             //la escena se tiene que renderizar ANTES del escenario para asegurar que funcione bien el alpha blending
 
             initMenues();
+            initPeople();
             crearEscenario();
             initLights();
             createVars();
@@ -508,19 +510,68 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         }
 
-        //private void initPeople()
-        //{
-        //    var loader = new TgcSceneLoader();
-        //    int i = 0;
-        //    for(i = 0; i < 100; i++)
-        //    {
-        //        var person = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\People\\3persons\\3-Spectators-TgcScene.xml").Meshes[0];
-        //        person.Position = new Vector3(i*10, 0, i*10);
-        //        people.Add(person);
+        private void initPeople()
+        {
+            var rgen = new Random();
+            var loader = new TgcSceneLoader();
+            people = new List<TgcMesh>();
+            int xpos = 3000;
+            int ypos = 62;
+            int i = 1;
 
-        //    }
+            //tribuna positiva
+            while (i <= 10)
+            {
+                int zpos = -2400;
+                while (zpos < 2600)
+                {
+                    var person = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\People\\dwight\\2D+People+-+Dwight+2-TgcScene.xml").Meshes[0];
+                    //var person = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\People\\3persons\\3-Spectators-TgcScene.xml").Meshes[0];
 
-        //}
+                    zpos = zpos + rgen.Next(10, 300);
+                    person.rotateY(FastMath.PI_HALF);
+                    person.Scale = new Vector3(0.045f, 0.045f, 0.045f);
+                    person.Position = new Vector3(xpos, ypos, zpos);
+                    people.Add(person);
+                    todosLosMeshes.Add(person);
+                    zpos = zpos + rgen.Next(10, 300);
+                }
+
+                xpos = xpos + 180;
+                ypos = ypos + 62;
+
+                i++;
+            }
+
+
+            //Tribuna negativa
+            xpos = -2800;
+            ypos = 62;
+            i = 1;
+
+            while (i <= 10)
+            {
+                int zpos = -2400;
+                while (zpos < 2600)
+                {
+                    var person = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\People\\dwight\\2D+People+-+Dwight+2-TgcScene.xml").Meshes[0];
+                    //var person = loader.loadSceneFromFile(mediaFolder + "meshes\\objects\\People\\3persons\\3-Spectators-TgcScene.xml").Meshes[0];
+
+                    zpos = zpos + rgen.Next(10, 300);
+                    person.rotateY(FastMath.PI_HALF);
+                    person.Scale = new Vector3(0.045f, 0.045f, 0.045f);
+                    person.Position = new Vector3(xpos, ypos, zpos);
+                    people.Add(person);
+                    todosLosMeshes.Add(person);
+                    zpos = zpos + rgen.Next(10, 300);
+                }
+
+                xpos = xpos - 180;
+                ypos = ypos + 62;
+
+                i++;
+            }
+        }
 
         private void initMusic()
         {
@@ -588,7 +639,7 @@ namespace AlumnoEjemplos.Milanesa_3D
                     break;
             }
 
-            people.ForEach(p => p.render());
+           // people.ForEach(p => p.render());
         }
 
         private void renderGame(float elapsedTime)
@@ -904,13 +955,14 @@ namespace AlumnoEjemplos.Milanesa_3D
                 txtNitroVisitante.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
                 txtNitroLocal.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
 
+
+
                 txtTimer.Text = formatAsTime(time);
                 txtScoreLocal.render();
                 txtScoreVisitante.render();
                 txtTimer.render();
                 txtNitroVisitante.render();
                 txtNitroLocal.render();
-                txtDebug.render();
 
                 if (golTimer > 0)
                 {
