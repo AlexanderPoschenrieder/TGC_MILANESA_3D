@@ -45,7 +45,6 @@ float4 lightPosition; //Posicion de las 4 luces
 float4 centroPelota;
 //float lightIntensity; //Intensidad de las 4 luces
 //float lightAttenuation; //Factor de atenuacion de las 4 luces
-float lightOrder;
 
 
 
@@ -86,7 +85,6 @@ VS_OUTPUT proyectar_al_piso_vs(VS_INPUT input)
 	float t = (1-puntoLuz.y)/v.y;
 	
 	float4 puntoProyectado = puntoLuz + v * t;
-	puntoProyectado.y = 0.5 * (1+lightOrder);
 
 	float4 N = normalize(puntoPelota - centroPelota);
 	

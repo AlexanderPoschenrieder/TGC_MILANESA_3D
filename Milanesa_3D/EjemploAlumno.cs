@@ -966,17 +966,22 @@ namespace AlumnoEjemplos.Milanesa_3D
 
                 for (int i = 0; i < lightMeshes.Length; i++)
                 {
-                    TgcBox lightMesh = lightMeshes[i];
+                    int j = (i +1) % 4;
+                    TgcBox lightMesh = lightMeshes[j];
                 
-                    pointLightPositions[i] = TgcParserUtils.vector3ToVector4(lightMesh.Position);
+                    pointLightPositions[j] = TgcParserUtils.vector3ToVector4(lightMesh.Position);
 
 
                     pelota.ownSphere.AlphaBlendEnable = true;
 
                     pelota.ownSphere.Effect.SetValue("matViewProj", d3dDevice.Transform.View * d3dDevice.Transform.Projection);
                     pelota.ownSphere.Effect.SetValue("centroPelota", TgcParserUtils.vector3ToVector4(pelota.pos));
-                    pelota.ownSphere.Effect.SetValue("lightPosition", pointLightPositions[i]);
+                    pelota.ownSphere.Effect.SetValue("lightPosition", pointLightPositions[j]);
+                    pelota.ownSphere.Effect.SetValue("lightOrder", i);
                     pelota.ownSphere.render();
+                    
+
+                    pelota.ownSphere.AlphaBlendEnable = false;
                 }
 
             }
