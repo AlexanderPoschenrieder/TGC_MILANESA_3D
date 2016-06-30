@@ -86,7 +86,7 @@ VS_OUTPUT proyectar_al_piso_vs(VS_INPUT input)
 	float t = (1-puntoLuz.y)/v.y;
 	
 	float4 puntoProyectado = puntoLuz + v * t;
-	puntoProyectado.y = 0.5 * (1+lightOrder);
+	puntoProyectado.y = 0.05 * (3+lightOrder);
 
 	float4 N = normalize(puntoPelota - centroPelota);
 	

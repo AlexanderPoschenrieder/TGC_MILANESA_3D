@@ -121,6 +121,7 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         public TgcBox rejaFondoArcoPositivo, rejaInsidePositivoArcoPositivo, rejaInsideNegativoArcoPositivo, rejaTechoArcoPositivo, rejaFondoArcoNegativo, rejaInsidePositivoArcoNegativo, rejaInsideNegativoArcoNegativo, rejaTechoArcoNegativo;
 
+        public TgcMesh meshPisoAuxiliar;
 
         static public string rootDir = GuiController.Instance.AlumnoEjemplosDir;
         static public string mediaFolder = rootDir + "Milanesa_3D\\media\\";
@@ -137,7 +138,8 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         TgcBox[] lightMeshes;
         Microsoft.DirectX.Direct3D.Effect lightEffect;
-        Microsoft.DirectX.Direct3D.Effect sombrasEffect;
+        Microsoft.DirectX.Direct3D.Effect sombrasEffect, sombrasAutoEffect;
+        Microsoft.DirectX.Direct3D.Effect pisoEffect;
         private string pathSoundtrack = mediaFolder + "music\\t.mp3";
 
         #endregion DECLARACIONES
@@ -329,6 +331,8 @@ namespace AlumnoEjemplos.Milanesa_3D
                 todosLosMeshes.Add(mesh);
 
             }
+
+            meshPisoAuxiliar = piso.toMesh("abc"); 
 
             skyBox = new TgcSkyBox();
             skyBox.Center = new Vector3(0, -500, 0);
@@ -536,8 +540,10 @@ namespace AlumnoEjemplos.Milanesa_3D
 
             lightEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\DiffuseLight.fx");
             sombrasEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\Sombras.fx");
+            sombrasAutoEffect = TgcShaders.loadEffect(mediaFolder + "shaders\\SombrasAuto.fx");
 
-       
+            meshPisoAuxiliar.Effect = lightEffect;
+            meshPisoAuxiliar.Technique = "PisoLocoTechnique";
 
             pelota = new Pelota(this);
 
@@ -739,7 +745,7 @@ namespace AlumnoEjemplos.Milanesa_3D
         }
 
 
-        private void RenderAll()
+        private void RenderAll() 
         {
             Control panel3d = GuiController.Instance.Panel3d;
             float aspectRatio = (float)panel3d.Width / (float)panel3d.Height;
@@ -868,6 +874,7 @@ namespace AlumnoEjemplos.Milanesa_3D
             {
                 mesh.Effect = currentShader;
                 mesh.Technique = currentTechnique;
+
                 if (lightEnable)
                 {
                     mainCarMesh.Effect = carEffect;
@@ -901,27 +908,6 @@ namespace AlumnoEjemplos.Milanesa_3D
             pelota.ownSphere.Technique = currentTechnique;
             skyBox.render();
 
-
-            /*
-            scene.renderAll();
-            
-
-            if (!cubemap)
-            {
-                // dibujo el mesh
-               // mainCarMesh.Technique = "RenderCubeMap";
-                
-                mainCar.render();
-            }
-
-            secondCar.render();
-
-            skyBox.render();
-
-            foreach (TgcMesh box in meshesCajasEscenario)
-            {
-                box.render();
-            }*/
             foreach (TgcMesh mesh in todosLosMeshes)
             {
                 if (lightEnable && mesh != mainCarMesh)
@@ -963,6 +949,10 @@ namespace AlumnoEjemplos.Milanesa_3D
             {
                 pelota.ownSphere.Effect = sombrasEffect;
                 pelota.ownSphere.Technique = "SombrasTechnique";
+                mainCarMesh.Effect = sombrasAutoEffect;
+                mainCarMesh.Technique = "SombrasTechnique";
+                secondCarMesh.Effect = sombrasAutoEffect;
+                secondCarMesh.Technique = "SombrasTechnique";
 
                 for (int i = 0; i < lightMeshes.Length; i++)
                 {
@@ -983,6 +973,48 @@ namespace AlumnoEjemplos.Milanesa_3D
 
                     pelota.ownSphere.AlphaBlendEnable = false;
                 }
+
+                for (int i = 0; i < lightMeshes.Length; i++)
+                {
+                    int j = (i + 1) % 4;
+                    TgcBox lightMesh = lightMeshes[j];
+
+                    pointLightPositions[j] = TgcParserUtils.vector3ToVector4(lightMesh.Position);
+                    
+
+                    mainCarMesh.Effect.SetValue("matViewProj", d3dDevice.Transform.View * d3dDevice.Transform.Projection);
+                    mainCarMesh.Effect.SetValue("centroPelota", TgcParserUtils.vector3ToVector4(mainCar.pos));
+                    mainCarMesh.Effect.SetValue("lightPosition", pointLightPositions[j]);
+                    mainCarMesh.Effect.SetValue("lightOrder", i+4);
+                    mainCarMesh.render();
+                    
+                }
+
+                for (int i = 0; i < lightMeshes.Length; i++)
+                {
+                    int j = (i + 1) % 4;
+                    TgcBox lightMesh = lightMeshes[j];
+
+                    pointLightPositions[j] = TgcParserUtils.vector3ToVector4(lightMesh.Position);
+
+
+                    secondCarMesh.Effect.SetValue("matViewProj", d3dDevice.Transform.View * d3dDevice.Transform.Projection);
+                    secondCarMesh.Effect.SetValue("centroPelota", TgcParserUtils.vector3ToVector4(secondCar.pos));
+                    secondCarMesh.Effect.SetValue("lightPosition", pointLightPositions[j]);
+                    secondCarMesh.Effect.SetValue("lightOrder", i + 8);
+                    secondCarMesh.render();
+
+                }
+
+
+                if (lightEnable)
+                {
+                    meshPisoAuxiliar.AlphaBlendEnable = true;
+                    meshPisoAuxiliar.render();
+                }
+                
+                
+                                
 
             }
 

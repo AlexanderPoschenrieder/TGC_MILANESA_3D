@@ -98,6 +98,32 @@ VS_OUTPUT vs_general(VS_INPUT input)
 	return output;
 }
 
+//Vertex Shader
+VS_OUTPUT vs_especial(VS_INPUT input)
+{
+	VS_OUTPUT output;
+
+	//Proyectar posicion
+	float4 pos = input.Position;
+	pos.y = pos.y+1;
+	
+	output.Position = mul(pos, matWorldViewProj);
+
+	//Enviar Texcoord directamente
+	output.Texcoord = input.Texcoord;
+
+	//Posicion pasada a World-Space (necesaria para atenuación por distancia)
+	output.WorldPosition = mul(input.Position, matWorld);
+
+	/* Pasar normal a World-Space 
+	Solo queremos rotarla, no trasladarla ni escalarla.
+	Por eso usamos matInverseTransposeWorld en vez de matWorld */
+	output.WorldNormal = mul(input.Normal, matInverseTransposeWorld).xyz;
+	
+
+	return output;
+}
+
 
 //Input del Pixel Shader
 struct PS_INPUT
@@ -157,6 +183,32 @@ float4 point_light_nospec_ps(PS_INPUT input) : COLOR0
 	return texelColor;
 }
 
+float4 alpha_point_light_nospec_ps(PS_INPUT input) : COLOR0
+{      
+	float3 Nn = normalize(input.WorldNormal);
+
+	//Emissive + Diffuse de 4 luces PointLight
+	float3 diffuseLighting = materialEmissiveColor;
+
+	//Diffuse 0
+	diffuseLighting += computeDiffuseComponent(input.WorldPosition, Nn, 0);
+
+	//Diffuse 1
+	diffuseLighting += computeDiffuseComponent(input.WorldPosition, Nn, 1);
+	
+	//Diffuse 2
+	diffuseLighting += computeDiffuseComponent(input.WorldPosition, Nn, 2);
+	
+	//Diffuse 3
+	diffuseLighting += computeDiffuseComponent(input.WorldPosition, Nn, 3);
+	
+	//Obtener texel de la textura
+	float4 texelColor = tex2D(diffuseMap, input.Texcoord);
+	texelColor.rgb *= diffuseLighting;
+	texelColor.a = 0.5;
+	return texelColor;
+}
+
 /*
 * Technique con iluminacion
 */
@@ -172,3 +224,12 @@ technique MultiDiffuseLightsTechnique
 
 }
 
+technique PisoLocoTechnique
+{
+   pass Pass_0
+   {
+	  VertexShader = compile vs_3_0 vs_especial();
+	  PixelShader = compile ps_3_0 alpha_point_light_nospec_ps();
+   }
+
+}

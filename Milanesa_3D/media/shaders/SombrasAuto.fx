@@ -45,6 +45,7 @@ float4 lightPosition; //Posicion de las 4 luces
 float4 centroPelota;
 //float lightIntensity; //Intensidad de las 4 luces
 //float lightAttenuation; //Factor de atenuacion de las 4 luces
+float lightOrder;
 
 
 
@@ -85,6 +86,7 @@ VS_OUTPUT proyectar_al_piso_vs(VS_INPUT input)
 	float t = (1-puntoLuz.y)/v.y;
 	
 	float4 puntoProyectado = puntoLuz + v * t;
+	puntoProyectado.y = 0.05 * (3+lightOrder);
 
 	float4 N = normalize(puntoPelota - centroPelota);
 	
@@ -105,7 +107,7 @@ struct PS_INPUT
 
 float4 make_black_shadow_ps(PS_INPUT input) : COLOR0
 {      
-	float4 pixel = float4(0, 0, 0, input.Alpha);
+	float4 pixel = float4(0, 0, 0, 1);
 	//pixel = float4(0, 0, 0, 0.5f);
 	return pixel;
 }
