@@ -105,7 +105,7 @@ VS_OUTPUT vs_especial(VS_INPUT input)
 
 	//Proyectar posicion
 	float4 pos = input.Position;
-	pos.y = pos.y+1;
+	pos.y = pos.y+0.55;
 	
 	output.Position = mul(pos, matWorldViewProj);
 
