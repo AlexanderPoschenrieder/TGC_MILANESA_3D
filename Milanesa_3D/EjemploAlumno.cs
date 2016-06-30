@@ -954,6 +954,8 @@ namespace AlumnoEjemplos.Milanesa_3D
                 secondCarMesh.Effect = sombrasAutoEffect;
                 secondCarMesh.Technique = "SombrasTechnique";
 
+                
+
                 for (int i = 0; i < lightMeshes.Length; i++)
                 {
                     int j = (i +1) % 4;

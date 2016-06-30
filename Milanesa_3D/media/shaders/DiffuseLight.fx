@@ -105,9 +105,10 @@ VS_OUTPUT vs_especial(VS_INPUT input)
 
 	//Proyectar posicion
 	float4 pos = input.Position;
-	pos.y = pos.y+0.55;
+	//pos.y = pos.y+0.55; //elija esta línea para el artifact nro 1
 	
 	output.Position = mul(pos, matWorldViewProj);
+	output.Position.z = output.Position.z - 0.02; //y con esta se puede llevar el artifact nro 2
 
 	//Enviar Texcoord directamente
 	output.Texcoord = input.Texcoord;
