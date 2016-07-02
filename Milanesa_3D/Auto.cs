@@ -23,7 +23,7 @@ namespace AlumnoEjemplos.Milanesa_3D
         const float CONST_SALTO = 7f;
         //Luego de pasar a matrices esta constante simplifica todo
         const float CONSTANTE_LOCA = 0.01f;
-        
+
 
         float gravedad = -9.81f;
         float handling = 5f;
@@ -33,12 +33,13 @@ namespace AlumnoEjemplos.Milanesa_3D
         #region Atributos
 
         public float nitroTimer = 0;
-        public float rotacionAcumuladaEnElSalto = 0;
+        public float pitchAcumuladoEnElSalto = 0;
+        public float rollAcumuladoEnElSalto = 0;
 
         public float velocidadHorizontal;
         public float velocidadVertical;
         public Vector3 pos;
-        public float rotacion = 0;
+        public float yawAcumulado = 0;
         Matrix matWorld;
 
         protected float velocidadMaximaReversa = -7500f;
@@ -55,7 +56,7 @@ namespace AlumnoEjemplos.Milanesa_3D
         protected float alturaObb;
         protected bool colisionando = false;
         public Vector3 desvio = new Vector3(0, 0, 0);
-        private bool reposicionar=false;
+        private bool reposicionar = false;
         public TgcText2d nitroHUD;
 
         #endregion
@@ -140,11 +141,15 @@ namespace AlumnoEjemplos.Milanesa_3D
             obb.Center = pos + new Vector3(0, alturaObb, 0);
         }
 
-        public void rotate(Vector3 axisRotation, float angle)
+        public void rotate(Vector3 axisRotation, float angle, bool isRoll = false, bool isYaw = false)
         {
-            var axis = Vector3.Cross(direccion,new Vector3(0,1,0));
+            var axis = Vector3.Cross(direccion, new Vector3(0, 1, 0));
+            if (isRoll)
+            {
+                axis = -direccion;
+            }
+
             Matrix originalMatWorld = matWorld;
-            rotacion += angle;
             Matrix gotoObjectSpace = Matrix.Invert(matWorld);
             //axisRotation.TransformCoordinate(gotoObjectSpace);
             var rotMat = Matrix.RotationAxis(axisRotation, angle);
@@ -152,9 +157,15 @@ namespace AlumnoEjemplos.Milanesa_3D
             matWorld = Matrix.Identity * rotMat;
             matWorld = matWorld * originalMatWorld;
             //Rotación OBB defectuosa
+            //La rotación en Yaw se calcula afuera en el Método Rotar,
+            //Funciona mejor si la dejo ahi afuera
+            if (isYaw)
+            {
+                return;
+            }
             obb.Orientation = Vector3.TransformCoordinate(obb.Orientation, rotObb);
-            
-            
+
+
         }
 
         public void scale(float k)
@@ -185,7 +196,7 @@ namespace AlumnoEjemplos.Milanesa_3D
             }
 
             nitroHUD.Text = this.formatNitroTime(nitroTimer);
-            
+
             gravedad = (float)GuiController.Instance.Modifiers["Gravedad"];
 
 
@@ -206,12 +217,12 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         public void usarNitro()
         {
-            if(nitroTimer > 0.0001f)
+            if (nitroTimer > 0.0001f)
             {
                 //notificar al usuario que no puede usar nitro!
                 return;
             }
-            if(velocidadHorizontal < 0)
+            if (velocidadHorizontal < 0)
             {
                 return; //no usar nitro en marcha atrás
             }
@@ -225,12 +236,26 @@ namespace AlumnoEjemplos.Milanesa_3D
             TgcD3dInput input = GuiController.Instance.D3dInput;
             if (input.keyDown(Key.A))
             {
-                if (!saltando) Rotar(-1);
+                if (!saltando)
+                {
+                    Rotar(-1);
+                }
+                else
+                {
+                    rotacionPitchRoll(0, -1);
+                }
             }
             else if (input.keyDown(Key.D))
             {
-                if (!saltando) Rotar(1);
-              
+                if (!saltando)
+                {
+                    Rotar(1);
+                }
+                else
+                {
+                    rotacionPitchRoll(0, 1);
+                }
+
             }
 
             if (input.keyDown(Key.W))
@@ -241,6 +266,7 @@ namespace AlumnoEjemplos.Milanesa_3D
                 }
                 else
                 {
+                    rotacionPitchRoll(1, 0);
                     Acelerar(0);
                 }
 
@@ -253,6 +279,7 @@ namespace AlumnoEjemplos.Milanesa_3D
                 }
                 else
                 {
+                    rotacionPitchRoll(-1, 0);
                     Acelerar(0);
                 }
 
@@ -270,19 +297,20 @@ namespace AlumnoEjemplos.Milanesa_3D
                 }
 
             }
-            
+
             if (input.keyPressed(Key.Space))
             {
-                if(saltando)
+                if (saltando)
                 {
+                    direccion = Vector3.Cross(direccion, new Vector3(0, 1, 0));
                     usarNitro();
                 }
 
                 else
                 {
                     saltando = true;
-                    rotacionAcumuladaEnElSalto = 0;
-                    
+                    pitchAcumuladoEnElSalto = 0;
+                    rollAcumuladoEnElSalto = 0;
                     velocidadVertical = 100;
                 }
             }
@@ -292,6 +320,17 @@ namespace AlumnoEjemplos.Milanesa_3D
                 usarNitro();
             }
 
+        }
+
+        protected void rotacionPitchRoll(int p, int y)
+        {
+            var pitchAngle = elapsedTime * 0.04f * CONST_SALTO * p;
+            rotate(new Vector3(1, 0, 0), pitchAngle);
+            pitchAcumuladoEnElSalto += pitchAngle;
+
+            var yawAngle = elapsedTime * 0.04f * CONST_SALTO * y;
+            rotate(new Vector3(0, 0, 1), yawAngle, true);
+            rollAcumuladoEnElSalto += yawAngle;
         }
 
         public void desviar(Vector3 d)
@@ -315,15 +354,18 @@ namespace AlumnoEjemplos.Milanesa_3D
 
             if (bajando && chocaPiso())
             {
-                rotate(new Vector3(1, 0, 0), -rotacionAcumuladaEnElSalto);
+                rotate(new Vector3(1, 0, 0), -pitchAcumuladoEnElSalto);
+                rotate(new Vector3(0, 0, 1), -rollAcumuladoEnElSalto, isRoll: true);
+                obb.dispose();
+                obb = TgcObb.computeFromAABB(meshAuto.BoundingBox);
                 return;
             }
 
             if (!colisionando) translate(0, velocidadVertical * elapsedTime * CONST_SALTO, 0);
 
             if (!colisionando) aplicarGravedad(elapsedTime);
-            
-            rotacionSalto();
+
+            //rotacionSalto();
 
         }
 
@@ -331,10 +373,10 @@ namespace AlumnoEjemplos.Milanesa_3D
         {
             float k = 1;
 
-            k = velocidadVertical * elapsedTime*0.004f;
+            k = velocidadVertical * elapsedTime * 0.004f;
             rotate(new Vector3(1, 0, 0), CONST_SALTO * k);
-            rotacionAcumuladaEnElSalto += CONST_SALTO * k;
-            
+            pitchAcumuladoEnElSalto += CONST_SALTO * k;
+
         }
 
         public void aplicarGravedad(float elapsedTime)
@@ -346,16 +388,16 @@ namespace AlumnoEjemplos.Milanesa_3D
         {
             meshAuto.Transform = matWorld;
 
-           /* if (this.GetType().Name == "Auto")
-            {
-                GuiController.Instance.UserVars.setValue("Pos Auto 1", TgcParserUtils.printVector3(pos));
-                GuiController.Instance.UserVars.setValue("Pos Obb 1", TgcParserUtils.printVector3(obb.Position));
-            }
-            else
-            {
-                GuiController.Instance.UserVars.setValue("Pos Auto 2", TgcParserUtils.printVector3(pos));
-                GuiController.Instance.UserVars.setValue("Pos Obb 2", TgcParserUtils.printVector3(obb.Position));
-            }*/
+            /* if (this.GetType().Name == "Auto")
+             {
+                 GuiController.Instance.UserVars.setValue("Pos Auto 1", TgcParserUtils.printVector3(pos));
+                 GuiController.Instance.UserVars.setValue("Pos Obb 1", TgcParserUtils.printVector3(obb.Position));
+             }
+             else
+             {
+                 GuiController.Instance.UserVars.setValue("Pos Auto 2", TgcParserUtils.printVector3(pos));
+                 GuiController.Instance.UserVars.setValue("Pos Obb 2", TgcParserUtils.printVector3(obb.Position));
+             }*/
 
         }
 
@@ -373,28 +415,29 @@ namespace AlumnoEjemplos.Milanesa_3D
                 return;
             }
 
-            var rot = (unaDireccion * elapsedTime*(handling  * velocidadHorizontal / 2500)); 
-            rotate(new Vector3(0, 1, 0), rot);
-            obb.setRotation(new Vector3(0f, rotacion, 0f));
+            var rot = (unaDireccion * elapsedTime * (handling * velocidadHorizontal / 2500));
+            yawAcumulado += rot;
+            rotate(new Vector3(0, 1, 0), rot, isYaw: true);
+            obb.setRotation(new Vector3(0f,yawAcumulado,0f));
             direccion.TransformCoordinate(Matrix.RotationAxis(new Vector3(0, 1, 0), rot));
             direccion.Normalize();
 
-            
+
         }
 
         protected void Acelerar(float aumento)
         {
             velocidadHorizontal += (aumento - Rozamiento()) * elapsedTime;
             AjustarVelocidad();
-            translate(direccion * velocidadHorizontal*CONSTANTE_LOCA);
+            translate(direccion * velocidadHorizontal * CONSTANTE_LOCA);
         }
 
         public void AjustarVelocidad()
         {
-          
+
             if (velocidadHorizontal > velocidadMaxima) velocidadHorizontal -= elapsedTime * (velocidadHorizontal + velocidadMaxima) / 2;
-            if (velocidadHorizontal < velocidadMaximaReversa) velocidadHorizontal =+ elapsedTime * ( velocidadMaximaReversa + velocidadHorizontal ) /2;
-                       
+            if (velocidadHorizontal < velocidadMaximaReversa) velocidadHorizontal = +elapsedTime * (velocidadMaximaReversa + velocidadHorizontal) / 2;
+
         }
 
         public void EstablecerVelocidadMáximaEn(float velMaxima)
@@ -426,7 +469,7 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         public void render()
         {
-           //ojo que esto no lo estamos llamando nunca!
+            //ojo que esto no lo estamos llamando nunca!
             meshAuto.render();
             obb.render();
         }
@@ -476,7 +519,7 @@ namespace AlumnoEjemplos.Milanesa_3D
 
                 //pro-tip: no leer los 4 ifs que siguen
 
-                if(TgcCollisionUtils.testObbAABB(obb, parent.limiteLateralPositivo))
+                if (TgcCollisionUtils.testObbAABB(obb, parent.limiteLateralPositivo))
                 {
                     float perpendicularidadChoque = Vector3.Dot(new Vector3(1, 0, 0), Vector3.Normalize((direccion * velocidadHorInicial) + desvio));
                     translate(-transVec);
@@ -493,7 +536,7 @@ namespace AlumnoEjemplos.Milanesa_3D
                 }
 
 
-                if (TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoPositivo1) || TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoPositivo2) || TgcCollisionUtils.testObbAABB(obb, parent.arcoPositivo)) 
+                if (TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoPositivo1) || TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoPositivo2) || TgcCollisionUtils.testObbAABB(obb, parent.arcoPositivo))
                 {
                     float perpendicularidadChoque = Vector3.Dot(new Vector3(0, 0, 1), Vector3.Normalize((direccion * velocidadHorInicial) + desvio));
                     translate(-transVec);
@@ -534,7 +577,7 @@ namespace AlumnoEjemplos.Milanesa_3D
 
                         //¿puede mejorarse? sí
                         //¿lo voy a mejorar? no creo
-                        
+
 
                     }
                 }
@@ -549,19 +592,19 @@ namespace AlumnoEjemplos.Milanesa_3D
                     TgcRay ray = new TgcRay(lastPos, spherePosition - lastPos);
                     TgcCollisionUtils.intersectRayObb(ray, obb, out collisionPos);
 
-                    float pesadezPelota = (float) GuiController.Instance.Modifiers.getValue("PesoPelota");
+                    float pesadezPelota = (float)GuiController.Instance.Modifiers.getValue("PesoPelota");
 
-                    Vector3 velocidadATransmitir = 1/pesadezPelota * (spherePosition - collisionPos) * FastMath.Abs(velocidadTotalInicial);
+                    Vector3 velocidadATransmitir = 1 / pesadezPelota * (spherePosition - collisionPos) * FastMath.Abs(velocidadTotalInicial);
                     velocidadATransmitir = new Vector3(velocidadATransmitir.X, velocidadATransmitir.Y * 0.2f, velocidadATransmitir.Z);
 
                     //translate(spherePosition - lastPos);
                     parent.pelota.velocity = parent.pelota.velocity + velocidadATransmitir;
                     parent.pelota.mover(elapsedTime);
-                    velocidadHorizontal = velocidadHorInicial * (1/i*i) * (50/pesadezPelota);
+                    velocidadHorizontal = velocidadHorInicial * (1 / i * i) * (50 / pesadezPelota);
 
                     colisionando = true;
                     if (i == 5) velocidadHorizontal = -velocidadHorizontal;
-                    
+
                 }
                 else
                 {

@@ -32,17 +32,30 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         protected override void CalcularMovimiento()
         {
-TgcD3dInput input = GuiController.Instance.D3dInput;
-            
-                if (input.keyDown(Key.Left))
+            TgcD3dInput input = GuiController.Instance.D3dInput;
+            if (input.keyDown(Key.Left))
+            {
+                if (!saltando)
                 {
-                    if (!saltando) Rotar(-1);
+                    Rotar(-1);
+                }
+                else
+                {
+                    rotacionPitchRoll(0, -1);
+                }
+            }
+            else if (input.keyDown(Key.Right))
+            {
+                if (!saltando)
+                {
+                    Rotar(1);
+                }
+                else
+                {
+                    rotacionPitchRoll(0, 1);
                 }
 
-                else if (input.keyDown(Key.Right))
-                {
-                    if (!saltando) Rotar(1);
-                }
+            }
 
             if (input.keyDown(Key.Up))
             {
@@ -52,6 +65,7 @@ TgcD3dInput input = GuiController.Instance.D3dInput;
                 }
                 else
                 {
+                    rotacionPitchRoll(1, 0);
                     Acelerar(0);
                 }
 
@@ -64,6 +78,7 @@ TgcD3dInput input = GuiController.Instance.D3dInput;
                 }
                 else
                 {
+                    rotacionPitchRoll(-1, 0);
                     Acelerar(0);
                 }
 
@@ -79,31 +94,31 @@ TgcD3dInput input = GuiController.Instance.D3dInput;
                 {
                     FrenoDeMano();
                 }
-            
+
             }
 
             if (input.keyPressed(Key.RightShift))
             {
                 if (saltando)
                 {
+                    direccion = Vector3.Cross(direccion, new Vector3(0, 1, 0));
                     usarNitro();
                 }
-                if (!saltando)
+
+                else
                 {
                     saltando = true;
-                    rotacionAcumuladaEnElSalto = 0;
-
+                    pitchAcumuladoEnElSalto = 0;
+                    rollAcumuladoEnElSalto = 0;
                     velocidadVertical = 100;
                 }
             }
 
-            if(input.keyPressed(Key.Period))
+            if (input.keyPressed(Key.Period))
             {
                 usarNitro();
             }
-
         }
-
         #endregion
 
     }
