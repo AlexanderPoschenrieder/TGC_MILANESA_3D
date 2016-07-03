@@ -34,7 +34,6 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         public float nitroTimer = 0;
         public float pitchAcumuladoEnElSalto = 0;
-        public float rollAcumuladoEnElSalto = 0;
 
         public float velocidadHorizontal;
         public float velocidadVertical;
@@ -52,7 +51,7 @@ namespace AlumnoEjemplos.Milanesa_3D
         protected EjemploAlumno parent;
         protected bool saltando = false;
         public Vector3 direccion;
-        public Vector3 ejeRotacionSalto;
+        public Vector3 direccionPreSalto;
         protected float alturaObb;
         protected bool colisionando = false;
         public Vector3 desvio = new Vector3(0, 0, 0);
@@ -141,14 +140,13 @@ namespace AlumnoEjemplos.Milanesa_3D
             obb.Center = pos + new Vector3(0, alturaObb, 0);
         }
 
-        public void rotate(Vector3 axisRotation, float angle, bool isRoll = false, bool isYaw = false)
+        public void rotate(Vector3 axisRotation, float angle, bool isPitch = false)
         {
-            var axis = Vector3.Cross(direccion, new Vector3(0, 1, 0));
-            if (isRoll)
+            var axis = new Vector3(0, 1, 0);
+            if (isPitch)
             {
-                axis = -direccion;
+                axis = Vector3.Cross(direccion, new Vector3(0, 1, 0));
             }
-
             Matrix originalMatWorld = matWorld;
             Matrix gotoObjectSpace = Matrix.Invert(matWorld);
             //axisRotation.TransformCoordinate(gotoObjectSpace);
@@ -159,10 +157,10 @@ namespace AlumnoEjemplos.Milanesa_3D
             //Rotación OBB defectuosa
             //La rotación en Yaw se calcula afuera en el Método Rotar,
             //Funciona mejor si la dejo ahi afuera
-            if (isYaw)
-            {
-                return;
-            }
+            //if (isYaw)
+            //{
+            //    return;
+            //}
             obb.Orientation = Vector3.TransformCoordinate(obb.Orientation, rotObb);
 
 
@@ -234,8 +232,14 @@ namespace AlumnoEjemplos.Milanesa_3D
             }
 
             Vector3 direccionNitro;
-            direccionNitro = Vector3.TransformCoordinate(new Vector3(0, 0, -1), matWorld) - pos;
-
+            if (saltando)
+            {
+                direccionNitro = Vector3.TransformCoordinate(new Vector3(0, 0, -1), matWorld) - pos;
+            }
+            else
+            {
+                direccionNitro = direccion;
+            }
             desviar(Vector3.Normalize(direccionNitro) * 2000);
             velocidadHorizontal = FastMath.Max(750, velocidadHorizontal * 2);
             nitroTimer = 5;
@@ -247,26 +251,11 @@ namespace AlumnoEjemplos.Milanesa_3D
             TgcD3dInput input = GuiController.Instance.D3dInput;
             if (input.keyDown(Key.A))
             {
-                if (!saltando)
-                {
-                    Rotar(-1);
-                }
-                else
-                {
-                    rotacionPitchRoll(0, -1);
-                }
+                Rotar(-1);
             }
             else if (input.keyDown(Key.D))
             {
-                if (!saltando)
-                {
-                    Rotar(1);
-                }
-                else
-                {
-                    rotacionPitchRoll(0, 1);
-                }
-
+                Rotar(1);
             }
 
             if (input.keyDown(Key.W))
@@ -277,7 +266,7 @@ namespace AlumnoEjemplos.Milanesa_3D
                 }
                 else
                 {
-                    rotacionPitchRoll(1, 0);
+                    rotacionPitch(1);
                     Acelerar(0);
                 }
 
@@ -290,7 +279,7 @@ namespace AlumnoEjemplos.Milanesa_3D
                 }
                 else
                 {
-                    rotacionPitchRoll(-1, 0);
+                    rotacionPitch(-1);
                     Acelerar(0);
                 }
 
@@ -313,15 +302,14 @@ namespace AlumnoEjemplos.Milanesa_3D
             {
                 if (saltando)
                 {
-                    direccion = Vector3.Cross(direccion, new Vector3(0, 1, 0));
                     usarNitro();
                 }
 
                 else
                 {
                     saltando = true;
+                    direccionPreSalto = direccion;
                     pitchAcumuladoEnElSalto = 0;
-                    rollAcumuladoEnElSalto = 0;
                     velocidadVertical = 100;
                 }
             }
@@ -333,15 +321,11 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         }
 
-        protected void rotacionPitchRoll(int p, int y)
+        protected void rotacionPitch(int p)
         {
             var pitchAngle = elapsedTime * 0.04f * CONST_SALTO * p;
-            rotate(new Vector3(1, 0, 0), pitchAngle);
+            rotate(new Vector3(1, 0, 0), pitchAngle, isPitch:true);
             pitchAcumuladoEnElSalto += pitchAngle;
-
-            var yawAngle = elapsedTime * 0.04f * CONST_SALTO * y;
-            rotate(new Vector3(0, 0, 1), yawAngle, true);
-            rollAcumuladoEnElSalto += yawAngle;
         }
 
         public void desviar(Vector3 d)
@@ -354,7 +338,6 @@ namespace AlumnoEjemplos.Milanesa_3D
             if (reposicionar)
             {
                 translate(0, pos.Y * -1, 0);
-
                 reposicionar = false;
             }
 
@@ -365,10 +348,7 @@ namespace AlumnoEjemplos.Milanesa_3D
 
             if (bajando && chocaPiso())
             {
-                rotate(new Vector3(1, 0, 0), -pitchAcumuladoEnElSalto);
-                rotate(new Vector3(0, 0, 1), -rollAcumuladoEnElSalto, isRoll: true);
-                obb.dispose();
-                obb = TgcObb.computeFromAABB(meshAuto.BoundingBox);
+                rotate(new Vector3(1, 0, 0), -pitchAcumuladoEnElSalto,isPitch:true);
                 return;
             }
 
@@ -376,19 +356,8 @@ namespace AlumnoEjemplos.Milanesa_3D
 
             if (!colisionando) aplicarGravedad(elapsedTime);
 
-            //rotacionSalto();
-
         }
 
-        private void rotacionSalto()
-        {
-            float k = 1;
-
-            k = velocidadVertical * elapsedTime * 0.004f;
-            rotate(new Vector3(1, 0, 0), CONST_SALTO * k);
-            pitchAcumuladoEnElSalto += CONST_SALTO * k;
-
-        }
 
         public void aplicarGravedad(float elapsedTime)
         {
@@ -428,19 +397,19 @@ namespace AlumnoEjemplos.Milanesa_3D
 
             var rot = (unaDireccion * elapsedTime * (handling * velocidadHorizontal / 2500));
             yawAcumulado += rot;
-            rotate(new Vector3(0, 1, 0), rot, isYaw: true);
-            obb.setRotation(new Vector3(0f,yawAcumulado,0f));
+            rotate(new Vector3(0, 1, 0), rot);
+            //obb.setRotation(new Vector3(0f, yawAcumulado, 0f));
             direccion.TransformCoordinate(Matrix.RotationAxis(new Vector3(0, 1, 0), rot));
             direccion.Normalize();
-
 
         }
 
         protected void Acelerar(float aumento)
         {
+            var direccionAux = saltando ? direccionPreSalto : direccion;
             velocidadHorizontal += (aumento - Rozamiento()) * elapsedTime;
             AjustarVelocidad();
-            translate(direccion * velocidadHorizontal * CONSTANTE_LOCA);
+            translate(direccionAux * velocidadHorizontal * CONSTANTE_LOCA);
         }
 
         public void AjustarVelocidad()
@@ -476,16 +445,7 @@ namespace AlumnoEjemplos.Milanesa_3D
         {
             Acelerar(-CONSTANTEMARCHAATRAS);
         }
-
-
-        public void render()
-        {
-            //ojo que esto no lo estamos llamando nunca!
-            meshAuto.render();
-            obb.render();
-        }
-
-
+        
         #endregion
 
         #region Colisiones

@@ -625,7 +625,7 @@ namespace AlumnoEjemplos.Milanesa_3D
         {
             GuiController.Instance.Mp3Player.FileName = pathSoundtrack;
             var player = GuiController.Instance.Mp3Player;
-            player.play(true);
+            //player.play(true);
         }
 
         private void initMenues()
