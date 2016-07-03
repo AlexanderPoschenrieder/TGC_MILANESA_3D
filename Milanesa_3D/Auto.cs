@@ -143,25 +143,23 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         public void rotateYaw( float angle)
         {
-            if (saltando)
-            {
-                rotatePitch(-pitchAcumuladoEnElSalto);
-            }
 
             var axis = new Vector3(0, 1, 0);
 
             Matrix originalMatWorld = matWorld;
             var rotMat = Matrix.RotationAxis(axis, angle);
+            if (saltando)
+            {
+                rotMat = Matrix.RotationAxis(new Vector3(1, 0, 0), pitchAcumuladoEnElSalto) 
+                    * rotMat * Matrix.RotationAxis(new Vector3(1, 0, 0), -pitchAcumuladoEnElSalto);
+            }
             var rotObb = Matrix.RotationAxis(axis, angle);
             matWorld = Matrix.Identity * rotMat;
             matWorld = matWorld * originalMatWorld;
 
             obb.Orientation = Vector3.TransformCoordinate(obb.Orientation, rotObb);
 
-            if (saltando)
-            {
-                rotatePitch(pitchAcumuladoEnElSalto);
-            }
+            
         }
 
         public void rotatePitch(float angle)
