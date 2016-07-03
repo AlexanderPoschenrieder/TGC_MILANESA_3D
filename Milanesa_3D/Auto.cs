@@ -212,7 +212,13 @@ namespace AlumnoEjemplos.Milanesa_3D
         protected void CalcularExtraInvoluntario()
         {
             translate(desvio * elapsedTime);
-            desvio = desvio * 0.92f;
+            //desvio.Y = desvio.Y * 0.99f;
+            if (TgcCollisionUtils.testObbAABB(obb, parent.piso.BoundingBox))
+            {
+                desvio.Y = 0;
+                desvio.X = desvio.X * 0.92f;
+                desvio.Z = desvio.Z * 0.92f;
+            }
         }
 
         public void usarNitro()
@@ -226,7 +232,12 @@ namespace AlumnoEjemplos.Milanesa_3D
             {
                 return; //no usar nitro en marcha atrás
             }
-            velocidadHorizontal = FastMath.Max(750, velocidadHorizontal * 3);
+
+            Vector3 direccionNitro;
+            direccionNitro = Vector3.TransformCoordinate(new Vector3(0, 0, -1), matWorld) - pos;
+
+            desviar(Vector3.Normalize(direccionNitro) * 2000);
+            velocidadHorizontal = FastMath.Max(750, velocidadHorizontal * 2);
             nitroTimer = 5;
 
         }
