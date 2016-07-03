@@ -23,7 +23,7 @@ namespace AlumnoEjemplos.Milanesa_3D
         public Auto2(TgcMesh mesh, EjemploAlumno p)
             : base(mesh, p)
         {
-            rotate(new Vector3(0, 1, 0), FastMath.PI);
+            rotateYaw(FastMath.PI);
             direccion = -direccion;
         }
 
@@ -94,6 +94,7 @@ namespace AlumnoEjemplos.Milanesa_3D
                     saltando = true;
                     direccionPreSalto = direccion;
                     pitchAcumuladoEnElSalto = 0;
+                    yawAcumuladoEnElSalto = 0;
                     velocidadVertical = 100;
                 }
             }

@@ -34,11 +34,12 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         public float nitroTimer = 0;
         public float pitchAcumuladoEnElSalto = 0;
+        public float yawAcumuladoEnElSalto = 0;
 
         public float velocidadHorizontal;
         public float velocidadVertical;
         public Vector3 pos;
-        public float yawAcumulado = 0;
+        public float rotacion = 0;
         Matrix matWorld;
 
         protected float velocidadMaximaReversa = -7500f;
@@ -140,29 +141,41 @@ namespace AlumnoEjemplos.Milanesa_3D
             obb.Center = pos + new Vector3(0, alturaObb, 0);
         }
 
-        public void rotate(Vector3 axisRotation, float angle, bool isPitch = false)
+        public void rotateYaw( float angle)
         {
-            var axis = new Vector3(0, 1, 0);
-            if (isPitch)
+            if (saltando)
             {
-                axis = Vector3.Cross(direccion, new Vector3(0, 1, 0));
+                rotatePitch(-pitchAcumuladoEnElSalto);
             }
+
+            var axis = new Vector3(0, 1, 0);
+
             Matrix originalMatWorld = matWorld;
-            Matrix gotoObjectSpace = Matrix.Invert(matWorld);
-            //axisRotation.TransformCoordinate(gotoObjectSpace);
-            var rotMat = Matrix.RotationAxis(axisRotation, angle);
+            var rotMat = Matrix.RotationAxis(axis, angle);
             var rotObb = Matrix.RotationAxis(axis, angle);
             matWorld = Matrix.Identity * rotMat;
             matWorld = matWorld * originalMatWorld;
-            //Rotación OBB defectuosa
-            //La rotación en Yaw se calcula afuera en el Método Rotar,
-            //Funciona mejor si la dejo ahi afuera
-            //if (isYaw)
-            //{
-            //    return;
-            //}
+
             obb.Orientation = Vector3.TransformCoordinate(obb.Orientation, rotObb);
 
+            if (saltando)
+            {
+                rotatePitch(pitchAcumuladoEnElSalto);
+            }
+        }
+
+        public void rotatePitch(float angle)
+        {
+            var axis = Vector3.Cross(direccion, new Vector3(0, 1, 0));
+
+            Matrix originalMatWorld = matWorld;
+            var rotMat = Matrix.RotationAxis(new Vector3(1,0,0), angle);
+            var rotObb = Matrix.RotationAxis(axis, angle);
+            matWorld = Matrix.Identity * rotMat;
+            matWorld = matWorld * originalMatWorld;
+
+            obb.Orientation = Vector3.TransformCoordinate(obb.Orientation, rotObb);
+         
 
         }
 
@@ -310,6 +323,7 @@ namespace AlumnoEjemplos.Milanesa_3D
                     saltando = true;
                     direccionPreSalto = direccion;
                     pitchAcumuladoEnElSalto = 0;
+                    yawAcumuladoEnElSalto = 0;
                     velocidadVertical = 100;
                 }
             }
@@ -324,7 +338,7 @@ namespace AlumnoEjemplos.Milanesa_3D
         protected void rotacionPitch(int p)
         {
             var pitchAngle = elapsedTime * 0.04f * CONST_SALTO * p;
-            rotate(new Vector3(1, 0, 0), pitchAngle, isPitch:true);
+            rotatePitch(pitchAngle);
             pitchAcumuladoEnElSalto += pitchAngle;
         }
 
@@ -348,7 +362,7 @@ namespace AlumnoEjemplos.Milanesa_3D
 
             if (bajando && chocaPiso())
             {
-                rotate(new Vector3(1, 0, 0), -pitchAcumuladoEnElSalto,isPitch:true);
+                rotatePitch(-pitchAcumuladoEnElSalto);
                 return;
             }
 
@@ -396,9 +410,12 @@ namespace AlumnoEjemplos.Milanesa_3D
             }
 
             var rot = (unaDireccion * elapsedTime * (handling * velocidadHorizontal / 2500));
-            yawAcumulado += rot;
-            rotate(new Vector3(0, 1, 0), rot);
-            //obb.setRotation(new Vector3(0f, yawAcumulado, 0f));
+            if (saltando)
+            {
+                yawAcumuladoEnElSalto += rot;
+            }
+            rotacion += rot;
+            rotateYaw(rot);
             direccion.TransformCoordinate(Matrix.RotationAxis(new Vector3(0, 1, 0), rot));
             direccion.Normalize();
 
