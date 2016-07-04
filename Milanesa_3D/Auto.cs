@@ -35,7 +35,8 @@ namespace AlumnoEjemplos.Milanesa_3D
         public float nitroTimer = 0;
         public float pitchAcumuladoEnElSalto = 0;
         public float yawAcumuladoEnElSalto = 0;
-        public Boolean volando = false;
+        public bool volando = false;
+        public bool volo = false;
 
         public float velocidadHorizontal;
         public float velocidadVertical;
@@ -252,7 +253,12 @@ namespace AlumnoEjemplos.Milanesa_3D
             if (saltando)
             {
                 direccionNitro = Vector3.TransformCoordinate(new Vector3(0, 0, -1), matWorld) - pos;
-                if (direccionNitro.Y > 0 ) volando = true;
+                if (direccionNitro.Y > 0)
+                {
+                    volando = true;
+                    volo = true;
+                }
+
                 direccionPreSalto = direccionNitro;
                 direccionPreSalto.Y = 0;
                 //direccionNitro.Y *= 1.2f;
@@ -347,9 +353,12 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         protected void rotacionPitch(int p)
         {
-            var pitchAngle = elapsedTime * 0.08f * CONST_SALTO * p;
-            rotatePitch(pitchAngle);
-            pitchAcumuladoEnElSalto += pitchAngle;
+            if (!volo)
+            {
+                var pitchAngle = elapsedTime * 0.08f * CONST_SALTO * p;
+                rotatePitch(pitchAngle);
+                pitchAcumuladoEnElSalto += pitchAngle;
+            }
         }
 
         public void desviar(Vector3 d)
@@ -375,6 +384,7 @@ namespace AlumnoEjemplos.Milanesa_3D
                 rotatePitch(-pitchAcumuladoEnElSalto);
                 desviar(velocidadHorizontal * direccionPreSalto);
                 velocidadHorizontal = velocidadHorizontal * 0.3f;
+                volo = false;
                 return;
             }
 
