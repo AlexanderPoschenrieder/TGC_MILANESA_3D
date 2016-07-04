@@ -35,10 +35,12 @@ namespace AlumnoEjemplos.Milanesa_3D
         public float nitroTimer = 0;
         public float pitchAcumuladoEnElSalto = 0;
         public float yawAcumuladoEnElSalto = 0;
+        public Boolean volando = false;
 
         public float velocidadHorizontal;
         public float velocidadVertical;
         public Vector3 pos;
+
         public float rotacion = 0;
         Matrix matWorld;
 
@@ -203,6 +205,10 @@ namespace AlumnoEjemplos.Milanesa_3D
             {
                 nitroTimer -= elapsedTime;
             }
+            if (nitroTimer < 4.5f)
+            {
+                volando = false;
+            }
 
             nitroHUD.Text = this.formatNitroTime(nitroTimer);
 
@@ -246,12 +252,18 @@ namespace AlumnoEjemplos.Milanesa_3D
             if (saltando)
             {
                 direccionNitro = Vector3.TransformCoordinate(new Vector3(0, 0, -1), matWorld) - pos;
+                if (direccionNitro.Y > 0 ) volando = true;
+                direccionPreSalto = direccionNitro;
+                direccionPreSalto.Y = 0;
+                //direccionNitro.Y *= 1.2f;
             }
             else
             {
+                
                 direccionNitro = direccion;
+                
             }
-            desviar(Vector3.Normalize(direccionNitro) * 2000);
+            desviar(Vector3.Normalize(direccionNitro) * 1000);
             velocidadHorizontal = FastMath.Max(750, velocidadHorizontal * 2);
             nitroTimer = 5;
 
@@ -322,7 +334,7 @@ namespace AlumnoEjemplos.Milanesa_3D
                     direccionPreSalto = direccion;
                     pitchAcumuladoEnElSalto = 0;
                     yawAcumuladoEnElSalto = 0;
-                    velocidadVertical = 100;
+                    velocidadVertical = 120;
                 }
             }
 
@@ -335,7 +347,7 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         protected void rotacionPitch(int p)
         {
-            var pitchAngle = elapsedTime * 0.04f * CONST_SALTO * p;
+            var pitchAngle = elapsedTime * 0.08f * CONST_SALTO * p;
             rotatePitch(pitchAngle);
             pitchAcumuladoEnElSalto += pitchAngle;
         }
@@ -361,6 +373,8 @@ namespace AlumnoEjemplos.Milanesa_3D
             if (bajando && chocaPiso())
             {
                 rotatePitch(-pitchAcumuladoEnElSalto);
+                desviar(velocidadHorizontal * direccionPreSalto);
+                velocidadHorizontal = velocidadHorizontal * 0.3f;
                 return;
             }
 
@@ -373,7 +387,10 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         public void aplicarGravedad(float elapsedTime)
         {
+            float velAnterior = velocidadVertical;
             velocidadVertical += gravedad * 20f * elapsedTime;
+            if (volando && velocidadVertical < 0) velocidadVertical = 0;
+            if (volando && desvio.Y < 0) desvio.Y = 0;
         }
 
         private void MoverMesh()
