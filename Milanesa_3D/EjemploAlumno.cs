@@ -1015,15 +1015,15 @@ namespace AlumnoEjemplos.Milanesa_3D
                     meshPisoAuxiliar.render();
                 }
 
-                mainCar.obb.render();
-                secondCar.obb.render();
+                //mainCar.obb.render();
+                //secondCar.obb.render();
                                 
 
             }
 
 
             if (!cubemap)
-            { //ningún hud debería aparecer en el cubemap
+            { //ningún hud debería aparecer en el cubemap cuando lo estamos generando
 
                 txtScoreVisitante.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
                 txtScoreLocal.Color = (Color)GuiController.Instance.Modifiers.getValue("ColorHUD");
@@ -1051,14 +1051,6 @@ namespace AlumnoEjemplos.Milanesa_3D
                 if (golTimer > 0)
                 {
                     txtGol.render();
-                }
-
-                int i = 0;
-
-                while (i < 4)
-                {
-                    lightMeshes[i].render();
-                    i++;
                 }
 
             }
@@ -1214,9 +1206,15 @@ namespace AlumnoEjemplos.Milanesa_3D
             secondCar.meshAuto.dispose();
             pelota.ownSphere.dispose();
 
+            foreach (TgcMesh mesh in meshesCajasEscenario)
+            {
+                mesh.dispose();
+            }
 
             scene.disposeAll();
             piso.dispose();
+            pisoArcoNegativo.dispose();
+            pisoArcoPositivo.dispose();
 
             foreach (TgcBox box in cajasVisiblesEscenario)
             {
@@ -1233,6 +1231,11 @@ namespace AlumnoEjemplos.Milanesa_3D
             arcoNegativo.dispose();
             arcoPositivo.dispose();
 
+            foreach(TgcMesh dwight in people)
+            {
+                dwight.dispose();
+            }
+
             int i = 0;
 
             while (i < 4)
@@ -1242,6 +1245,7 @@ namespace AlumnoEjemplos.Milanesa_3D
             }
 
             skyBox.dispose();
+            meshPisoAuxiliar.dispose();
         }
 
         public void resetGame()
