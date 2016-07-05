@@ -549,7 +549,7 @@ namespace AlumnoEjemplos.Milanesa_3D
                 }
 
 
-                if (TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoPositivo1) || TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoPositivo2) || TgcCollisionUtils.testObbAABB(obb, parent.arcoPositivo))
+                if (TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoPositivo1) || TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoPositivo2) || TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoPositivo3) || TgcCollisionUtils.testObbAABB(obb, parent.arcoPositivo))
                 {
                     float perpendicularidadChoque = Vector3.Dot(new Vector3(0, 0, 1), Vector3.Normalize((direccion * velocidadHorInicial) + desvio));
                     translate(-transVec);
@@ -557,7 +557,7 @@ namespace AlumnoEjemplos.Milanesa_3D
                     velocidadHorizontal = velocidadHorInicial * Math.Abs(1 - perpendicularidadChoque * perpendicularidadChoque);
                 }
 
-                if (TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoNegativo1) || TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoNegativo2) || TgcCollisionUtils.testObbAABB(obb, parent.arcoNegativo))
+                if (TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoNegativo1) || TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoNegativo2) || TgcCollisionUtils.testObbAABB(obb, parent.limiteArcoNegativo3) || TgcCollisionUtils.testObbAABB(obb, parent.arcoNegativo))
                 {
                     float perpendicularidadChoque = Vector3.Dot(new Vector3(0, 0, 1), Vector3.Normalize((direccion * velocidadHorInicial) + desvio));
                     translate(-transVec);

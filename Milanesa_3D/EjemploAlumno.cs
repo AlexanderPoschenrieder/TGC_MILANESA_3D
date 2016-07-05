@@ -478,7 +478,7 @@ namespace AlumnoEjemplos.Milanesa_3D
         public void createModifiers()
         {
             GuiController.Instance.Modifiers.addFloat("PesoPelota", 25, 125, 75);
-            GuiController.Instance.Modifiers.addFloat("Gravedad", -15, -0, -9.81f);
+            GuiController.Instance.Modifiers.addFloat("Gravedad", -14, -7, -9.81f);
             GuiController.Instance.Modifiers.addColor("ColorHUD", Color.Gold);
 
             GuiController.Instance.Modifiers.addBoolean("lightEnable", "lightEnable", true);
