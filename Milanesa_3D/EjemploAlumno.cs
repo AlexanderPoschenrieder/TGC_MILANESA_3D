@@ -625,7 +625,7 @@ namespace AlumnoEjemplos.Milanesa_3D
         {
             GuiController.Instance.Mp3Player.FileName = pathSoundtrack;
             var player = GuiController.Instance.Mp3Player;
-            //player.play(true);
+            player.play(true);
         }
 
         private void initMenues()
@@ -1016,6 +1016,7 @@ namespace AlumnoEjemplos.Milanesa_3D
                 }
 
                 mainCar.obb.render();
+                secondCar.obb.render();
                                 
 
             }
@@ -1194,7 +1195,6 @@ namespace AlumnoEjemplos.Milanesa_3D
             txtScoreLocal.Text = "Equipo Rojo: " + scoreLocal.ToString();
             txtScoreVisitante.Text = "Equipo Azul: " + scoreVisitante.ToString();
             
-            mainCar.obb = TgcObb.computeFromAABB(mainCar.meshAuto.BoundingBox);
             pelota.ownSphere.dispose();
             pelota = new Pelota(this);
             SetCarPositions();
