@@ -188,8 +188,8 @@ namespace AlumnoEjemplos.Milanesa_3D
             paredArcoNegativo1 = TgcBox.fromExtremes(new Vector3(-2600, 0, -4050), new Vector3(-500, 100, -4000));
             paredArcoNegativo2 = TgcBox.fromExtremes(new Vector3(500, 0, -4050), new Vector3(2600, 100, -4000));
 
-            rejaArcoNegativo1 = TgcBox.fromExtremes(new Vector3(-2600, 100, -4001), new Vector3(-500, 400, -4000));
-            rejaArcoNegativo2 = TgcBox.fromExtremes(new Vector3(500, 100, -4001), new Vector3(2600, 400, -4000));
+            rejaArcoNegativo1 = TgcBox.fromExtremes(new Vector3(-2600, 100, -4000), new Vector3(-500, 400, -4001));
+            rejaArcoNegativo2 = TgcBox.fromExtremes(new Vector3(500, 100, -4000), new Vector3(2600, 400, -4001));
             rejaSuperiorArcoNegativo = TgcBox.fromExtremes(new Vector3(-2600, 400, -4001), new Vector3(2600, 1000, -4001));
 
             rejaFondoArcoPositivo = TgcBox.fromExtremes(new Vector3(-500, 0, 4500), new Vector3(500, 400, 4501));
@@ -377,10 +377,10 @@ namespace AlumnoEjemplos.Milanesa_3D
 
                 i++;
             }
-            lightMeshes[0].Position = new Vector3(2550, 1000, 3950);
-            lightMeshes[1].Position = new Vector3(-2550, 1000, 3950);
-            lightMeshes[2].Position = new Vector3(2550, 1000, -3950);
-            lightMeshes[3].Position = new Vector3(-2550, 1000, -3950);
+            lightMeshes[0].Position = new Vector3(2550, 2000, 3950);
+            lightMeshes[1].Position = new Vector3(-2550, 2000, 3950);
+            lightMeshes[2].Position = new Vector3(2550, 2000, -3950);
+            lightMeshes[3].Position = new Vector3(-2550, 2000, -3950);
             //Meshes
 
             initReflectors();
@@ -482,7 +482,7 @@ namespace AlumnoEjemplos.Milanesa_3D
             GuiController.Instance.Modifiers.addColor("ColorHUD", Color.Gold);
 
             GuiController.Instance.Modifiers.addBoolean("lightEnable", "lightEnable", true);
-            GuiController.Instance.Modifiers.addFloat("lightIntensity", 0, 1000, 200);
+            GuiController.Instance.Modifiers.addFloat("lightIntensity", 0, 1000, 300);
             GuiController.Instance.Modifiers.addFloat("lightAttenuation", 0.1f, 2, 0.15f);
             
 

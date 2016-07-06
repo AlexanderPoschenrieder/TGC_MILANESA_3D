@@ -79,7 +79,6 @@ VS_OUTPUT proyectar_al_piso_vs(VS_INPUT input)
 
 	float4 puntoPelota = mul(input.Position, matWorld);
 	float4 puntoLuz = lightPosition;
-	puntoLuz.y = puntoLuz.y * 2;
 	
 	float4 v = normalize(puntoPelota-puntoLuz);
 	float4 vc = normalize(centroPelota-puntoLuz);
