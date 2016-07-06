@@ -1137,7 +1137,7 @@ namespace AlumnoEjemplos.Milanesa_3D
             //conviene deshabilitar ambas camaras para que no haya interferencia
             if (input.keyDown(Key.RightAlt))
             {
-                camaraAuto2.RotationY = secondCar.rotacion;
+                camaraAuto2.RotationY = secondCar.rotacion + FastMath.PI;
                 camaraAuto2.Target = auto2Pos;
                 camaraActiva2 = camaraAuto2;
             }
@@ -1161,7 +1161,7 @@ namespace AlumnoEjemplos.Milanesa_3D
             camaraAuto2 = new MilanesaThirdPersonCamera();
 
             camaraAuto1.setCamera(mainCar.pos, 40, 250);
-            camaraPelota1.setCamera(mainCar.pos, 0, 0);
+            camaraPelota1.setCamera(mainCar.pos, 0, 0);            
 
             camaraAuto2.setCamera(secondCar.pos, 40, 250);
             camaraPelota2.setCamera(secondCar.pos, 0, 0);
