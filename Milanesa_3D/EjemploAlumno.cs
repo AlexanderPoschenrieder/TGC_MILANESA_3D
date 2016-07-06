@@ -477,6 +477,8 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         public void createModifiers()
         {
+            GuiController.Instance.Modifiers.addInt("Distancia cámara",0,400,280);
+
             GuiController.Instance.Modifiers.addFloat("PesoPelota", 25, 125, 75);
             GuiController.Instance.Modifiers.addFloat("Gravedad", -14, -7, -9.81f);
             GuiController.Instance.Modifiers.addColor("ColorHUD", Color.Gold);

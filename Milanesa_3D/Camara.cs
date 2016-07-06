@@ -9,6 +9,7 @@ using TgcViewer.Utils.TgcGeometry;
 
 namespace AlumnoEjemplos.Milanesa_3D
 {
+    
     public interface IMilanesaCamera
     {
         Matrix GetUpdatedViewMatrix();
@@ -17,6 +18,7 @@ namespace AlumnoEjemplos.Milanesa_3D
 
     public class MilanesaThirdPersonCamera : TgcCamera, IMilanesaCamera
     {
+
         static readonly Vector3 UP_VECTOR = new Vector3(0, 1, 0);
 
         public Matrix GetUpdatedViewMatrix()
@@ -204,11 +206,13 @@ namespace AlumnoEjemplos.Milanesa_3D
 
     public class TwoTargetsCamera : TgcCamera, IMilanesaCamera
     {
+        public int alejamientoMaximo;
+
         static readonly Vector3 UP_VECTOR = new Vector3(0, 1, 0);
         TgcObb obb;
 
         float offsetHeight;
-        public float alejamiento =200;
+        public float alejamiento;
         EjemploAlumno parent;
 
         private Matrix viewMatrix;
@@ -315,7 +319,7 @@ namespace AlumnoEjemplos.Milanesa_3D
         public TwoTargetsCamera(EjemploAlumno ej)
         {
             resetValues();
-            obb = TgcObb.computeFromPoints(new Vector3[] { new Vector3(2, 2, 2), new Vector3(2, 2, 2) });
+            obb = TgcObb.computeFromPoints(new Vector3[] { new Vector3(1, 1, 1), new Vector3(-1, -1, -1) });
             parent = ej;
         }
 
@@ -353,10 +357,11 @@ namespace AlumnoEjemplos.Milanesa_3D
         /// <returns>Futura matriz de view generada</returns>
         public Matrix generateViewMatrix()
         {
+            alejamientoMaximo = (int)GuiController.Instance.Modifiers.getValue("Distancia cámara");
             var lastPos = position;
             var newPos = new Vector3();
 
-            var desplazamiento = new Vector3(0, 80, 0);
+            var desplazamiento = new Vector3(0,80, 0);
 
             var targetCenter = Vector3.Add(firstTarget, desplazamiento);
             var vectorDirector = Vector3.Normalize(secondTarget - targetCenter);
@@ -389,10 +394,10 @@ namespace AlumnoEjemplos.Milanesa_3D
                 newPos = targetCenter - director * alejamiento;
                 obb.Center = newPos;
             }
-            if(alejamiento < 200)
+            if(alejamiento < alejamientoMaximo)
             {
                 var valor = alejamiento +2;
-                alejamiento = valor > 200 ? 200 : valor;
+                alejamiento = valor > alejamientoMaximo ? alejamientoMaximo : valor;
                 newPos = targetCenter - director * alejamiento;
                 obb.Center = newPos;
                 if (Colisiona())
