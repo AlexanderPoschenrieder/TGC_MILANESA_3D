@@ -1264,8 +1264,8 @@ namespace AlumnoEjemplos.Milanesa_3D
             time = 0;
             scoreLocal = 0;
             scoreVisitante = 0;
-            txtScoreLocal.Text = "Equipo Rojo: " + scoreLocal.ToString();
-            txtScoreVisitante.Text = "Equipo Azul: " + scoreVisitante.ToString();
+            createHud();
+            
             mainCar.nitroTimer = 0;
             mainCar.setearNitroHUD();
             mainCar.velocidadHorizontal = 0;
@@ -1275,7 +1275,10 @@ namespace AlumnoEjemplos.Milanesa_3D
             pelota.ownSphere.dispose();
             pelota = new Pelota(this);
 
+            gameOver.disclaimer = false;
+            
             GuiController.Instance.Mp3Player.closeFile();
+            
             SetCarPositions();
             initCarCameras();
             initMusic();

@@ -30,14 +30,14 @@ namespace AlumnoEjemplos.Milanesa_3D
         public MenuControles(EjemploAlumno par)
         {
             parent = par;
-            if (GuiController.Instance.FullScreenEnable)
-            {
-                panel = GuiController.Instance.FullScreenPanel;
-            }
-            else
-            {
+            //if (GuiController.Instance.FullScreenEnable)
+            //{
+            //    panel = GuiController.Instance.FullScreenPanel;
+            //}
+            //else
+            //{
                 panel = GuiController.Instance.Panel3d;
-            }
+            //}
             
             this.defaultBackgroud.Texture = TgcTexture.createTexture(
                 EjemploAlumno.mediaFolder +"\\menu\\fondo.jpg");

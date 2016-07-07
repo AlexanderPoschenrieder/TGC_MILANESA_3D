@@ -33,7 +33,7 @@ namespace AlumnoEjemplos.Milanesa_3D
         TgcText2d ganador = new TgcText2d();
         TgcText2d scoreLocal;
         TgcText2d scoreVisitante;
-        private bool disclaimer=false;
+        public bool disclaimer=false;
 
         public GameOver(EjemploAlumno par)
         {
@@ -58,7 +58,11 @@ namespace AlumnoEjemplos.Milanesa_3D
             this.SetResults();
             initDisclaimer();
 
-            addButton(6, "volver.png", (EjemploAlumno ej) =>
+            addButton(6, "volverJugar.png", (EjemploAlumno ej) =>
+            {
+                parent.resetGame();
+            });
+            addButton(7, "volver.png", (EjemploAlumno ej) =>
             {
                 disclaimer = true;
             });
