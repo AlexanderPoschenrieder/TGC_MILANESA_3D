@@ -162,7 +162,7 @@ namespace AlumnoEjemplos.Milanesa_3D
         /// <returns></returns>
         public override string getDescription()
         {
-            return "Rocket League - Futbol de autos. El juego dura dos minutos. Con V se habilita o deshabilita el split screen.";
+            return "Rocket League - Futbol de autos. El juego dura dos minutos. Con V se habilita o deshabilita el split screen. Con F10 reinicia.";
         }
 
         #endregion
@@ -554,10 +554,20 @@ namespace AlumnoEjemplos.Milanesa_3D
             CreateCars();
             SetCarPositions();
             CreateViewports();
+            createCameras();
             initCarCameras();
             initMusic();
             ResizeFrustum();
 
+        }
+
+        private void createCameras()
+        {
+            camaraPelota1 = new TwoTargetsCamera(this);
+            camaraAuto1 = new MilanesaThirdPersonCamera();
+
+            camaraPelota2 = new TwoTargetsCamera(this);
+            camaraAuto2 = new MilanesaThirdPersonCamera();
         }
 
         private void initPeople()
@@ -666,6 +676,10 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         public override void render(float elapsedTime)
         {
+            if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.F10))
+            {
+                resetGame();
+            }
             if (time >= gameDuration)
             {
                 estadoJuego = EstadoJuego.GameOver;
@@ -694,7 +708,6 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         private void renderGame(float elapsedTime)
         {
-
             lastElapsedTime = elapsedTime;
 
             foreach (var auto in autitus)
@@ -1156,12 +1169,6 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         private void initCarCameras()
         {
-            camaraPelota1 = new TwoTargetsCamera(this);
-            camaraAuto1 = new MilanesaThirdPersonCamera();
-
-            camaraPelota2 = new TwoTargetsCamera(this);
-            camaraAuto2 = new MilanesaThirdPersonCamera();
-
             camaraAuto1.setCamera(mainCar.pos, 40, 250);
             camaraPelota1.setCamera(mainCar.pos, 0, 0);            
 
@@ -1252,8 +1259,30 @@ namespace AlumnoEjemplos.Milanesa_3D
 
         public void resetGame()
         {
-            close();
-            init();
+
+            d3dDevice.Viewport = ViewF;
+            time = 0;
+            scoreLocal = 0;
+            scoreVisitante = 0;
+            txtScoreLocal.Text = "Equipo Rojo: " + scoreLocal.ToString();
+            txtScoreVisitante.Text = "Equipo Azul: " + scoreVisitante.ToString();
+            mainCar.nitroTimer = 0;
+            mainCar.setearNitroHUD();
+            mainCar.velocidadHorizontal = 0;
+            secondCar.nitroTimer = 0;
+            secondCar.setearNitroHUD();
+            secondCar.velocidadHorizontal = 0;
+            pelota.ownSphere.dispose();
+            pelota = new Pelota(this);
+
+            GuiController.Instance.Mp3Player.closeFile();
+            SetCarPositions();
+            initCarCameras();
+            initMusic();
+            ResizeFrustum();
+            estadoJuego = EstadoJuego.MenuPrincipal;
+            //close();
+            //init();
         }
     }
 }

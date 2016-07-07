@@ -30,7 +30,7 @@ namespace AlumnoEjemplos.Milanesa_3D
         public MenuControles(EjemploAlumno par)
         {
             parent = par;
-                        if (GuiController.Instance.FullScreenEnable)
+            if (GuiController.Instance.FullScreenEnable)
             {
                 panel = GuiController.Instance.FullScreenPanel;
             }
